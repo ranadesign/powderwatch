@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowderWatch — Live Snow Conditions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.css" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#f7f5f0;--bg2:#efece5;--bg3:#e8e4dc;--bg4:#ddd8ce;
+--sf:#ffffff;--text:#1a1a18;--t2:#4a4a45;--tm:#8a8a82;--tl:#b0afa8;
+--ac:#2e5a88;--acl:#4a7ab5;--acs:rgba(46,90,136,0.08);
+--deep:#1e3f66;--good:#3a6e9e;--light:#7aadcc;--thin:#b5d4e6;
+--r:12px;--rs:8px;--rl:20px;
+--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans','Helvetica Neue',sans-serif;
+--ease:cubic-bezier(0.22,1,0.36,1);
+--sh:0 4px 20px rgba(0,0,0,0.06);--shl:0 12px 40px rgba(0,0,0,0.08);
+}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.6}
+::selection{background:var(--ac);color:#fff}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease)}
+nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--bg3)}
+.logo{font-family:var(--serif);font-size:1.5rem;color:var(--text);text-decoration:none}.logo em{font-style:italic;color:var(--ac)}
+.nav-r{display:flex;gap:2rem;align-items:center}
+.nav-r a{font-size:.8rem;font-weight:500;color:var(--t2);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .3s}
+.nav-r a:hover{color:var(--ac)}
+.nav-pill{background:var(--ac)!important;color:#fff!important;padding:8px 20px;border-radius:100px;font-size:.75rem!important}
+
+.hero{min-height:100vh;display:flex;align-items:center;padding:6rem 2rem 4rem}
+.hero-inner{max-width:1300px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-text{opacity:0;animation:fadeUp 1s var(--ease) .2s forwards}
+.ey{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+.ey::before{content:'';width:24px;height:1px;background:var(--ac)}
+.hero h1{font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
+.hero h1 em{font-style:italic;color:var(--ac)}
+.hero-desc{font-size:1.05rem;color:var(--t2);font-weight:300;margin-top:1.5rem;max-width:440px;line-height:1.7}
+.hero-cta{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
+.btn{padding:14px 30px;border-radius:100px;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .35s var(--ease);border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:var(--sh)}
+.btn-o{background:transparent;color:var(--text);border:1.5px solid var(--bg4)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
+
+.hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards}
+.hero-card{background:var(--sf);border-radius:var(--rl);padding:2rem;box-shadow:var(--shl);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--deep),var(--good),var(--light))}
+.hc-title{font-family:var(--serif);font-size:1.3rem;margin-bottom:.25rem}
+.hc-sub{font-size:.75rem;color:var(--tm);margin-bottom:1.5rem}
+.hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.hc-s{text-align:center;padding:1rem .5rem;background:var(--bg);border-radius:var(--rs)}
+.hc-s .v{font-family:var(--serif);font-size:1.8rem;color:var(--ac)}.hc-s .l{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tm);margin-top:2px}
+.hf{position:absolute;background:var(--sf);border-radius:var(--r);padding:12px 18px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px;animation:float 6s ease-in-out infinite}
+.hf1{top:-10px;right:-10px}.hf2{bottom:20px;left:-20px;animation-delay:2s}
+.hf-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.hf-v{font-weight:600;font-size:.9rem}.hf-l{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+
+.source-badge{position:fixed;bottom:1rem;right:1rem;z-index:90;background:var(--sf);border:1px solid var(--bg3);border-radius:100px;padding:6px 14px;font-size:.6rem;color:var(--tm);box-shadow:var(--sh);display:flex;align-items:center;gap:6px}
+.source-dot{width:6px;height:6px;border-radius:50%;background:#34a853;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.stats{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.st{padding:2rem;text-align:center;position:relative;transition:background .3s}.st:hover{background:#fafaf7}
+.st:not(:last-child)::after{content:'';position:absolute;right:0;top:25%;height:50%;width:1px;background:var(--bg3)}
+.st-v{font-family:var(--serif);font-size:2rem}.st-l{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-top:.25rem}
+
+.sh{text-align:center;padding:5rem 2rem 2.5rem}
+.sh .ey2{font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:.75rem}
+.sh h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400}.sh h2 em{font-style:italic}
+.sh p{color:var(--tm);margin-top:.5rem;font-size:.95rem;font-weight:300}
+
+.mw{padding:0 2rem 2rem;max-width:1400px;margin:0 auto}
+.mc{position:relative;height:70vh;min-height:520px;border-radius:var(--rl);overflow:hidden;box-shadow:var(--shl);border:1px solid var(--bg3)}
+#map{width:100%;height:100%}
+.map-ctrl{position:absolute;top:1rem;left:1rem;z-index:10}
+.mb{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:10px 16px;font-family:var(--sans);font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:7px}
+.mb:hover{background:#fff;border-color:var(--ac);color:var(--ac)}
+.mb.on{background:var(--acs);border-color:var(--ac);color:var(--ac)}
+.ml{position:absolute;bottom:1rem;right:1rem;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:14px 18px}
+.ml-t{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-bottom:6px;font-weight:600}
+.ml-bar{width:180px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--thin),var(--light),var(--good),var(--deep));margin-bottom:4px}
+.ml-lab{display:flex;justify-content:space-between;font-size:.6rem;color:var(--tl)}
+
+.rs{padding:0 2rem 5rem;max-width:1400px;margin:0 auto}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.25rem;margin-top:2rem}
+.rc{background:var(--sf);border:1px solid var(--bg3);border-radius:var(--r);padding:1.75rem;cursor:pointer;transition:all .4s var(--ease)}
+.rc:hover{transform:translateY(-4px);box-shadow:var(--shl);border-color:var(--bg4)}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem}
+.rc-nm{font-family:var(--serif);font-size:1.3rem}.rc-st{font-size:.65rem;color:var(--tm);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.08em}
+.ct{padding:4px 12px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.ct.deep{background:rgba(30,63,102,.08);color:var(--deep)}.ct.good{background:rgba(58,110,158,.08);color:var(--good)}.ct.light{background:rgba(122,173,204,.1);color:var(--light)}.ct.closed{background:rgba(180,40,40,.06);color:#b42828}
+.rc-data{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;padding-top:1.25rem;border-top:1px solid var(--bg)}
+.rm{text-align:center}.rm .rv{font-family:var(--serif);font-size:1.3rem}.rm .ru{font-size:.7rem;color:var(--tm)}.rm .rl{font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl);margin-top:2px}
+.rc-extra{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+.rc-tag{padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:500;background:var(--bg);color:var(--tm);letter-spacing:.04em}
+.rc-tag.open{background:rgba(52,168,83,.08);color:#2d8a4e}
+.rc-link{display:inline-flex;align-items:center;gap:4px;margin-top:.75rem;font-size:.7rem;color:var(--ac);text-decoration:none;font-weight:500;transition:gap .3s}
+.rc-link:hover{gap:8px}
+.fc{padding:8px 18px;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;border:1.5px solid var(--bg3);background:var(--sf);color:var(--t2);transition:all .3s;letter-spacing:.02em;font-family:var(--sans)}
+.fc:hover{border-color:var(--ac);color:var(--ac)}
+.fc.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+.maplibregl-popup-content{background:rgba(255,255,255,.96)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:12px!important;padding:16px 20px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:var(--shl)!important;min-width:220px}
+.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:8px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
+.maplibregl-popup-tip{border-top-color:rgba(255,255,255,.96)!important}
+.maplibregl-popup-close-button{color:var(--tm)!important;font-size:18px!important}
+.pn{font-family:var(--serif);font-size:1.05rem;margin-bottom:1px}.pl{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pm .pv{font-family:var(--serif);font-size:1.1rem;color:var(--ac)}.pm .pk{font-size:.55rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+.ps{margin-top:8px;padding-top:8px;border-top:1px solid var(--bg);font-size:.55rem;color:var(--tl)}
+
+.lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
+.lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.lr{width:40px;height:40px;border:2px solid var(--bg3);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+.lt{margin-top:1.25rem;font-size:.75rem;color:var(--tm);letter-spacing:.1em}
+
+footer{border-top:1px solid var(--bg3);padding:3rem 2rem;text-align:center;background:var(--sf)}
+.fl{font-family:var(--serif);font-size:1.3rem;margin-bottom:.5rem}.fl em{font-style:italic;color:var(--ac)}
+footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--ac);text-decoration:none}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
+@media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}}
+</style>
+</head>
+<body>
+
+<div class="lo" id="loader"><div class="lr"></div><div class="lt">Loading snow reports…</div></div>
+<div class="source-badge"><span class="source-dot"></span><span id="srcTxt">Resort-reported via OnTheSnow</span></div>
+
+<nav id="nav">
+  <a href="#" class="logo">Powder<em>Watch</em></a>
+  <div class="nav-r"><a href="#map-section">Map</a><a href="#resorts">Resorts</a><a href="#map-section" class="nav-pill">Explore</a></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="ey">Resort-Reported Data</div>
+      <h1>Know the snow<br>before <em>you go</em></h1>
+      <p class="hero-desc">Real base depths, lift counts, and snowfall sourced directly from ski patrols via OnTheSnow — updated twice daily.</p>
+      <div class="hero-cta">
+        <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
+        <a href="#resorts" class="btn btn-o">View Resorts</a>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <div class="hero-card">
+        <div class="hc-title" id="heroName">Loading…</div>
+        <div class="hc-sub" id="heroLoc">—</div>
+        <div class="hc-stats">
+          <div class="hc-s"><div class="v" id="heroBase">—</div><div class="l">Base Depth</div></div>
+          <div class="hc-s"><div class="v" id="hero7d">—</div><div class="l">7-Day Snow</div></div>
+          <div class="hc-s"><div class="v" id="heroLifts">—</div><div class="l">Lifts Open</div></div>
+        </div>
+      </div>
+      <div class="hf hf1"><div class="hf-icon" style="background:var(--acs)">❄️</div><div><div class="hf-v" id="fSnow">—</div><div class="hf-l">Deepest Base</div></div></div>
+      <div class="hf hf2"><div class="hf-icon" style="background:rgba(196,135,59,.1)">🏔️</div><div><div class="hf-v" id="fCount">—</div><div class="hf-l">Resorts Tracked</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="st"><div class="st-v" id="sR">—</div><div class="st-l">Resorts</div></div>
+  <div class="st"><div class="st-v" id="sA">—</div><div class="st-l">Avg Base</div></div>
+  <div class="st"><div class="st-v" id="sD">—</div><div class="st-l">Deepest</div></div>
+  <div class="st"><div class="st-v" id="s7">—</div><div class="st-l">Avg 7-Day Snow</div></div>
+</div>
+
+<section id="map-section">
+  <div class="sh"><div class="ey2">Interactive 3D Map</div><h2>Topographic <em>snow map</em></h2><p>Real terrain with resort-reported conditions</p></div>
+  <div class="mw">
+    <div class="mc">
+      <div id="map"></div>
+      <div class="map-ctrl"><button class="mb on" id="tBtn" onclick="toggleTerrain()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20L9 6l5 8 3-4 5 10z"/></svg>3D Terrain</button></div>
+      <div class="ml"><div class="ml-t">7-Day Snowfall</div><div class="ml-bar" style="background:linear-gradient(90deg,#c8ddf0,#8bb8e0,#4a8cc4,#1e5a94,#0d3b6e)"></div><div class="ml-lab"><span>0"</span><span>5"</span><span>10"</span><span>15"</span><span>20"+</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="resorts">
+  <div class="sh"><div class="ey2">Conditions</div><h2>Resort <em>snow reports</em></h2><p>50 resorts scraped from OnTheSnow — sorted by deepest base</p></div>
+  <div class="rs">
+    <div style="max-width:460px;margin:0 auto 1.5rem;position:relative">
+      <svg style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--tl);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search" placeholder="Search by resort or state…" aria-label="Search" style="width:100%;padding:14px 22px 14px 44px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s" onfocus="this.style.borderColor='var(--ac)';this.style.boxShadow='0 0 0 4px var(--acs)'" onblur="this.style.borderColor='var(--bg3)';this.style.boxShadow='none'">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:2rem;flex-wrap:wrap" id="filters">
+      <button class="fc on" data-f="all">All</button>
+      <button class="fc" data-f="CO">Colorado</button>
+      <button class="fc" data-f="UT">Utah</button>
+      <button class="fc" data-f="CA">California</button>
+      <button class="fc" data-f="west">West</button>
+      <button class="fc" data-f="east">East</button>
+      <button class="fc" data-f="open">Open Only</button>
+    </div>
+    <div class="rg" id="grid"></div>
+  </div>
+</section>
+
+<footer><div class="fl">Powder<em>Watch</em></div><p>Data scraped from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> resort snow reports twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> &middot; Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch</p></footer>
+
+<script>
+// ━━━ EMBEDDED SNOW DATA (updated by scraper agent) ━━━
+// In production, fetch this from snow_data.json served alongside this page.
+// For now, data is embedded directly so the prototype works standalone.
+const SNOW_DATA = {"resorts":[{"name":"Vail","state":"CO","lat":39.6403,"lng":-106.3742,"base_depth":35,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":8,"lifts_total":33,"runs_open":28,"runs_total":277,"status":"Open","last_updated":"Apr 01","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/vail/skireport"},{"name":"Breckenridge","state":"CO","lat":39.4817,"lng":-106.0384,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":10,"lifts_total":35,"runs_open":72,"runs_total":187,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/breckenridge/skireport"},{"name":"Keystone","state":"CO","lat":39.6045,"lng":-105.9498,"base_depth":40,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":128,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/keystone/skireport"},{"name":"Steamboat","state":"CO","lat":40.457,"lng":-106.804,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":9,"lifts_total":18,"runs_open":85,"runs_total":169,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/steamboat/skireport"},{"name":"Beaver Creek","state":"CO","lat":39.6042,"lng":-106.5165,"base_depth":38,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":5,"snowfall_24h":0,"lifts_open":0,"lifts_total":25,"runs_open":0,"runs_total":150,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/beaver-creek/skireport"},{"name":"Winter Park","state":"CO","lat":39.8868,"lng":-105.7625,"base_depth":55,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":10,"snowfall_24h":1,"lifts_open":12,"lifts_total":25,"runs_open":90,"runs_total":166,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/winter-park-resort/skireport"},{"name":"Copper Mountain","state":"CO","lat":39.5022,"lng":-106.1497,"base_depth":46,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":8,"snowfall_24h":0,"lifts_open":8,"lifts_total":23,"runs_open":65,"runs_total":140,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/copper-mountain-resort/skireport"},{"name":"Snowmass","state":"CO","lat":39.2084,"lng":-106.949,"base_depth":42,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":6,"lifts_total":21,"runs_open":45,"runs_total":98,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/snowmass/skireport"},{"name":"Telluride","state":"CO","lat":37.9375,"lng":-107.8123,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":4,"snowfall_24h":0,"lifts_open":0,"lifts_total":18,"runs_open":0,"runs_total":148,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/telluride/skireport"},{"name":"Aspen Mountain","state":"CO","lat":39.1869,"lng":-106.8182,"base_depth":33,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":8,"runs_open":0,"runs_total":76,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-mountain/skireport"},{"name":"Aspen Highlands","state":"CO","lat":39.1822,"lng":-106.8552,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":5,"runs_open":0,"runs_total":144,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-highlands/skireport"},{"name":"Crested Butte","state":"CO","lat":38.8986,"lng":-106.965,"base_depth":41,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport"},{"name":"Arapahoe Basin","state":"CO","lat":39.6426,"lng":-105.8719,"base_depth":50,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":1,"lifts_open":5,"lifts_total":9,"runs_open":45,"runs_total":147,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport"},{"name":"Loveland","state":"CO","lat":39.68,"lng":-105.8978,"base_depth":44,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":7,"snowfall_24h":0,"lifts_open":4,"lifts_total":11,"runs_open":32,"runs_total":94,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/loveland/skireport"},{"name":"Wolf Creek","state":"CO","lat":37.4747,"lng":-106.7934,"base_depth":72,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":12,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":77,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport"},{"name":"Park City","state":"UT","lat":40.6461,"lng":-111.498,"base_depth":63,"surface_condition":"","snowfall_7d":13,"snowfall_24h":0,"lifts_open":6,"lifts_total":41,"runs_open":13,"runs_total":349,"status":"Open","last_updated":"Apr 05","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/park-city-mountain-resort/skireport"},{"name":"Snowbird","state":"UT","lat":40.583,"lng":-111.6538,"base_depth":82,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":16,"snowfall_24h":2,"lifts_open":8,"lifts_total":13,"runs_open":65,"runs_total":170,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbird-ski-summer-resort/skireport"},{"name":"Alta","state":"UT","lat":40.5884,"lng":-111.6386,"base_depth":90,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":18,"snowfall_24h":3,"lifts_open":7,"lifts_total":11,"runs_open":72,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/alta-ski-area/skireport"},{"name":"Deer Valley","state":"UT","lat":40.6374,"lng":-111.4783,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":10,"snowfall_24h":0,"lifts_open":4,"lifts_total":21,"runs_open":22,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/deer-valley-resort/skireport"},{"name":"Brighton","state":"UT","lat":40.598,"lng":-111.5832,"base_depth":68,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":13,"snowfall_24h":1,"lifts_open":4,"lifts_total":7,"runs_open":40,"runs_total":66,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/brighton-resort/skireport"},{"name":"Solitude","state":"UT","lat":40.6199,"lng":-111.5927,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":3,"lifts_total":8,"runs_open":35,"runs_total":82,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/solitude-mountain-resort/skireport"},{"name":"Snowbasin","state":"UT","lat":41.216,"lng":-111.8569,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":8,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":107,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbasin-resort/skireport"},{"name":"Mammoth Mountain","state":"CA","lat":37.6308,"lng":-119.0326,"base_depth":38,"mid_depth":48,"summit_depth":107,"surface_condition":"Powder","snowfall_7d":4,"snowfall_24h":4,"lifts_open":19,"lifts_total":25,"runs_open":121,"runs_total":180,"status":"Open","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport"},{"name":"Heavenly","state":"CA","lat":38.9353,"lng":-119.94,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":5,"snowfall_24h":0,"lifts_open":6,"lifts_total":28,"runs_open":30,"runs_total":97,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/heavenly-mountain-resort/skireport"},{"name":"Palisades Tahoe","state":"CA","lat":39.1968,"lng":-120.2354,"base_depth":58,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":12,"lifts_total":30,"runs_open":95,"runs_total":270,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/palisades-tahoe/skireport"},{"name":"Northstar","state":"CA","lat":39.2746,"lng":-120.121,"base_depth":34,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":20,"runs_open":28,"runs_total":100,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/northstar-california/skireport"},{"name":"Bear Mountain","state":"CA","lat":34.2275,"lng":-116.859,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":32,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/bear-mountain/skireport"},{"name":"Snow Summit","state":"CA","lat":34.2326,"lng":-116.8728,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":35,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/snow-summit/skireport"},{"name":"Sugar Bowl","state":"CA","lat":39.3049,"lng":-120.3344,"base_depth":60,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":0,"lifts_open":6,"lifts_total":13,"runs_open":50,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/sugar-bowl-resort/skireport"},{"name":"Jackson Hole","state":"WY","lat":43.5877,"lng":-110.828,"base_depth":56,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":50,"runs_total":133,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/jackson-hole/skireport"},{"name":"Grand Targhee","state":"WY","lat":43.7903,"lng":-110.9572,"base_depth":78,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":15,"snowfall_24h":3,"lifts_open":4,"lifts_total":7,"runs_open":55,"runs_total":79,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport"},{"name":"Big Sky","state":"MT","lat":45.2833,"lng":-111.4014,"base_depth":45,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":8,"lifts_total":39,"runs_open":75,"runs_total":317,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/big-sky-resort/skireport"},{"name":"Whitefish","state":"MT","lat":48.4816,"lng":-114.3582,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":105,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport"},{"name":"Sun Valley","state":"ID","lat":43.6977,"lng":-114.3514,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":19,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/sun-valley/skireport"},{"name":"Schweitzer","state":"ID","lat":48.3678,"lng":-116.623,"base_depth":65,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":48,"runs_total":92,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/schweitzer-mountain-resort/skireport"},{"name":"Crystal Mountain","state":"WA","lat":46.9282,"lng":-121.5045,"base_depth":80,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":14,"snowfall_24h":2,"lifts_open":7,"lifts_total":11,"runs_open":40,"runs_total":57,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/crystal-mountain/skireport"},{"name":"Stevens Pass","state":"WA","lat":47.7448,"lng":-121.089,"base_depth":74,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":35,"runs_total":52,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/stevens-pass-resort/skireport"},{"name":"Mt. Baker","state":"WA","lat":48.8566,"lng":-121.6647,"base_depth":126,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":20,"snowfall_24h":3,"lifts_open":8,"lifts_total":10,"runs_open":31,"runs_total":38,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/mt-baker/skireport"},{"name":"Mt. Bachelor","state":"OR","lat":43.9792,"lng":-121.6886,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":121,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-bachelor/skireport"},{"name":"Mt. Hood Meadows","state":"OR","lat":45.3307,"lng":-121.6649,"base_depth":70,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":1,"lifts_open":8,"lifts_total":14,"runs_open":55,"runs_total":87,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-hood-meadows/skireport"},{"name":"Alyeska","state":"AK","lat":60.9604,"lng":-149.0987,"base_depth":96,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":22,"snowfall_24h":4,"lifts_open":7,"lifts_total":9,"runs_open":55,"runs_total":76,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/alaska/alyeska-resort/skireport"},{"name":"Killington","state":"VT","lat":43.6045,"lng":-72.8201,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":22,"runs_open":25,"runs_total":155,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/killington-resort/skireport"},{"name":"Okemo","state":"VT","lat":43.4012,"lng":-72.7173,"base_depth":18,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport"},{"name":"Stowe","state":"VT","lat":44.5303,"lng":-72.7814,"base_depth":24,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":3,"snowfall_24h":0,"lifts_open":3,"lifts_total":14,"runs_open":18,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport"},{"name":"Sugarbush","state":"VT","lat":44.1359,"lng":-72.9013,"base_depth":20,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":2,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":111,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/sugarbush/skireport"},{"name":"Stratton","state":"VT","lat":43.1134,"lng":-72.9079,"base_depth":16,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":99,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stratton-mountain/skireport"},{"name":"Jay Peak","state":"VT","lat":44.9267,"lng":-72.529,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":5,"snowfall_24h":0,"lifts_open":3,"lifts_total":9,"runs_open":22,"runs_total":81,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/jay-peak/skireport"},{"name":"Sunday River","state":"ME","lat":44.4733,"lng":-70.8567,"base_depth":22,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":4,"lifts_total":18,"runs_open":28,"runs_total":135,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sunday-river/skireport"},{"name":"Sugarloaf","state":"ME","lat":45.0314,"lng":-70.3131,"base_depth":32,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":5,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":40,"runs_total":162,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sugarloaf/skireport"},{"name":"Snowshoe","state":"WV","lat":38.4073,"lng":-79.994,"base_depth":14,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":61,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport"}],"generated_at":"2026-04-06T12:00:00Z"};
+
+let data=[], map, terrainOn=true, curFilter='all';
+const WEST=['CO','UT','CA','WY','MT','ID','WA','OR','AK','NM'];
+const EAST=['VT','ME','WV','NH','NY','NC'];
+
+async function loadData(){
+  try{
+    const res=await fetch('snow_data.json');
+    if(res.ok){const j=await res.json();if(j.resorts?.length)return j.resorts;}
+  }catch(e){}
+  return SNOW_DATA.resorts;
+}
+
+function applyFilter(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  let filtered=data;
+  if(curFilter==='west')filtered=data.filter(r=>WEST.includes(r.state));
+  else if(curFilter==='east')filtered=data.filter(r=>EAST.includes(r.state));
+  else if(curFilter==='open')filtered=data.filter(r=>r.status==='Open');
+  else if(curFilter!=='all')filtered=data.filter(r=>r.state===curFilter);
+  if(q)filtered=filtered.filter(r=>r.name.toLowerCase().includes(q)||r.state.toLowerCase().includes(q));
+  renderCards(filtered);
+}
+
+function dCol(d){if(d>=120)return'#1e3f66';if(d>=80)return'#2e5a88';if(d>=40)return'#3a6e9e';if(d>=20)return'#7aadcc';return'#b5d4e6';}
+function dSz(d){return Math.max(16,Math.min(44,16+d/4));}
+function cLvl(r){
+  if(r.status==='Closed')return{label:'Closed',cls:'closed'};
+  
+  if(r.base_depth>=100)return{label:'Deep',cls:'deep'};
+  if(r.base_depth>=40)return{label:'Good',cls:'good'};
+  return{label:'Light',cls:'light'};
+}
+
+function updateStats(){
+  const n=data.length;
+  document.getElementById('sR').textContent=n;
+  const avg=Math.round(data.reduce((s,r)=>s+r.base_depth,0)/n);
+  document.getElementById('sA').textContent=avg+'"';
+  const deep=Math.max(...data.map(r=>r.base_depth));
+  document.getElementById('sD').textContent=deep+'"';
+  const avg7=Math.round(data.reduce((s,r)=>s+r.snowfall_7d,0)/n);
+  document.getElementById('s7').textContent=avg7+'"';
+  const best=[...data].sort((a,b)=>b.base_depth-a.base_depth)[0];
+  document.getElementById('heroName').textContent=best.name;
+  document.getElementById('heroLoc').textContent=best.state+' · Deepest Base Right Now';
+  document.getElementById('heroBase').textContent=best.base_depth+'"';
+  document.getElementById('hero7d').textContent=best.snowfall_7d+'"';
+  document.getElementById('heroLifts').textContent=best.lifts_open+'/'+best.lifts_total;
+  document.getElementById('fSnow').textContent=deep+'"';
+  document.getElementById('fCount').textContent=n+' resorts';
+  // Update source timestamp
+  const ts=SNOW_DATA.generated_at;
+  if(ts){
+    const d=new Date(ts);
+    document.getElementById('srcTxt').textContent='Updated '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  }
+}
+
+function renderCards(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  [...data].sort((a,b)=>b.base_depth-a.base_depth).forEach((r,i)=>{
+    const c=cLvl(r);
+    const card=document.createElement('div');
+    card.className='rc';card.style.animation=`cardIn .5s ${i*.08}s var(--ease) both`;
+    const tags=[];
+    if(r.lifts_open>0)tags.push(`<span class="rc-tag open">${r.lifts_open}/${r.lifts_total} lifts</span>`);
+    if(r.runs_open>0)tags.push(`<span class="rc-tag">${r.runs_open}/${r.runs_total} runs</span>`);
+    if(r.surface_condition)tags.push(`<span class="rc-tag">${r.surface_condition}</span>`);
+    if(r.last_updated)tags.push(`<span class="rc-tag">Updated ${r.last_updated}</span>`);
+    card.innerHTML=`
+      <div class="rc-top"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><span class="ct ${c.cls}">${c.label}</span></div>
+      <div class="rc-data">
+        <div class="rm"><div class="rv">${r.base_depth}<span class="ru">"</span></div><div class="rl">Base</div></div>
+        <div class="rm"><div class="rv">${r.snowfall_7d}<span class="ru">"</span></div><div class="rl">7-Day Snow</div></div>
+        <div class="rm"><div class="rv">${r.snowfall_24h}<span class="ru">"</span></div><div class="rl">Fresh 24h</div></div>
+        <div class="rm"><div class="rv">${r.lifts_open}<span class="ru">/${r.lifts_total}</span></div><div class="rl">Lifts</div></div>
+      </div>
+      ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>`;
+    card.addEventListener('click',e=>{if(e.target.tagName==='A')return;if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:60,bearing:Math.random()*30-15,duration:2500});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}document.getElementById('map-section').scrollIntoView({behavior:'smooth'});});
+    g.appendChild(card);
+  });
+}
+
+function showPopup(r){
+  const c=cLvl(r);
+  activePopup = new maplibregl.Popup({offset:25,closeButton:true,maxWidth:'260px',className:'full-popup'}).setLngLat([r.lng,r.lat]).setHTML(`
+    <div class="pn">${r.name}</div><div class="pl">${r.state} · ${r.status}</div>
+    <div class="pg">
+      <div class="pm"><div class="pv">${r.base_depth}"</div><div class="pk">Base</div></div>
+      <div class="pm"><div class="pv">${r.snowfall_7d}"</div><div class="pk">7-Day</div></div>
+      <div class="pm"><div class="pv">${r.snowfall_24h}"</div><div class="pk">24h</div></div>
+      <div class="pm"><div class="pv">${r.lifts_open}/${r.lifts_total}</div><div class="pk">Lifts</div></div>
+    </div>
+    ${r.surface_condition?`<div class="ps">Surface: ${r.surface_condition}</div>`:''}
+    <div class="ps">Updated ${r.last_updated} via OnTheSnow</div>
+  `).addTo(map);
+}
+
+let activePopup=null, hoverPopup=null;
+
+// Resolve overlapping resorts by nudging coordinates
+function deconflictResorts(resorts){
+  const grid={};
+  const cellSize=0.15; // ~10mi grid cells
+  const result=resorts.map(r=>({...r,dlng:r.lng,dlat:r.lat}));
+  result.forEach(r=>{
+    const key=Math.round(r.lat/cellSize)+'_'+Math.round(r.lng/cellSize);
+    if(!grid[key])grid[key]=[];
+    grid[key].push(r);
+  });
+  Object.values(grid).forEach(group=>{
+    if(group.length<=1)return;
+    const cx=group.reduce((s,r)=>s+r.lng,0)/group.length;
+    const cy=group.reduce((s,r)=>s+r.lat,0)/group.length;
+    const angleStep=(2*Math.PI)/group.length;
+    const spread=0.08;
+    group.forEach((r,i)=>{
+      r.dlng=cx+Math.cos(angleStep*i)*spread;
+      r.dlat=cy+Math.sin(angleStep*i)*spread;
+    });
+  });
+  return result;
+}
+
+function snowColor(s7d){
+  // Blue-to-white gradient: more snow = whiter/brighter
+  if(s7d>=20)return'#e8f0fa';
+  if(s7d>=15)return'#c0d8f0';
+  if(s7d>=10)return'#7ab4de';
+  if(s7d>=5)return'#4a8cc4';
+  if(s7d>0)return'#2a6a9e';
+  return'#8aabbf';
+}
+
+function barHeight(s7d){
+  // Height in meters for the extrusion — scale 7d snowfall
+  return Math.max(800, Math.min(12000, s7d * 500));
+}
+
+async function initMap(){
+  map=new maplibregl.Map({
+    container:'map',zoom:5,center:[-115,42],pitch:60,bearing:-15,maxPitch:85,antialias:true,
+    style:{
+      version:8,
+      glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources:{
+        'carto':{type:'raster',tiles:['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png','https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png'],tileSize:256,attribution:'&copy; CARTO',maxzoom:19},
+        'terrainSource':{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15},
+        'hillshadeSource':{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15}
+      },
+      layers:[
+        {id:'base',type:'raster',source:'carto'},
+        {id:'hillshade',type:'hillshade',source:'hillshadeSource',layout:{visibility:'visible'},paint:{'hillshade-shadow-color':'#473B24','hillshade-highlight-color':'#ffffff','hillshade-accent-color':'#d4d0c8','hillshade-exaggeration':0.6}}
+      ],
+      terrain:{source:'terrainSource',exaggeration:3.5}
+    }
+  });
+  map.addControl(new maplibregl.NavigationControl(),'top-right');
+
+  map.on('load',()=>{
+    const deconf = deconflictResorts(data);
+    // Create small polygon bars (thin rectangles) for each resort
+    const barWidth = 0.02; // degrees width of bar
+    const features = deconf.map(r=>{
+      const hw = barWidth/2;
+      const hl = barWidth/3; // thinner depth
+      return {
+        type:'Feature',
+        geometry:{
+          type:'Polygon',
+          coordinates:[[
+            [r.dlng-hw, r.dlat-hl],
+            [r.dlng+hw, r.dlat-hl],
+            [r.dlng+hw, r.dlat+hl],
+            [r.dlng-hw, r.dlat+hl],
+            [r.dlng-hw, r.dlat-hl]
+          ]]
+        },
+        properties:{
+          name:r.name, state:r.state, snowfall_7d:r.snowfall_7d,
+          base_depth:r.base_depth, height:barHeight(r.snowfall_7d),
+          color:snowColor(r.snowfall_7d), olng:r.lng, olat:r.lat
+        }
+      };
+    });
+
+    map.addSource('bars',{type:'geojson',data:{type:'FeatureCollection',features}});
+
+    // 3D extruded bars
+    map.addLayer({
+      id:'bar-extrusion',
+      type:'fill-extrusion',
+      source:'bars',
+      paint:{
+        'fill-extrusion-color':['get','color'],
+        'fill-extrusion-height':['get','height'],
+        'fill-extrusion-base':0,
+        'fill-extrusion-opacity':0.88,
+        'fill-extrusion-vertical-gradient':true
+      }
+    });
+
+    // Invisible wider hit area for easier hover/click
+    map.addSource('hit-areas',{type:'geojson',data:{type:'FeatureCollection',
+      features:deconf.map(r=>({
+        type:'Feature',
+        geometry:{type:'Point',coordinates:[r.dlng,r.dlat]},
+        properties:{name:r.name,state:r.state,snowfall_7d:r.snowfall_7d,
+          base_depth:r.base_depth,snowfall_24h:r.snowfall_24h,
+          lifts_open:r.lifts_open,lifts_total:r.lifts_total,
+          runs_open:r.runs_open,runs_total:r.runs_total,
+          surface_condition:r.surface_condition||'',status:r.status||'',
+          last_updated:r.last_updated||'',url:r.url||'',
+          olng:r.lng,olat:r.lat}
+      }))
+    }});
+    map.addLayer({
+      id:'hit-circles',type:'circle',source:'hit-areas',
+      paint:{'circle-radius':14,'circle-opacity':0,'circle-stroke-width':0}
+    });
+
+    // HOVER: show lightweight tooltip with name + 7d snowfall
+    map.on('mouseenter','hit-circles',e=>{
+      map.getCanvas().style.cursor='pointer';
+      const p=e.features[0].properties;
+      if(hoverPopup)hoverPopup.remove();
+      hoverPopup=new maplibregl.Popup({offset:20,closeButton:false,closeOnClick:false,className:'hover-popup'})
+        .setLngLat(e.lngLat)
+        .setHTML(`<strong>${p.name}</strong><br><span style="color:var(--ac);font-weight:600">${p.snowfall_7d}" </span><span style="font-size:.65rem;color:var(--tm)">7-day snow</span>`)
+        .addTo(map);
+    });
+    map.on('mouseleave','hit-circles',()=>{
+      map.getCanvas().style.cursor='';
+      if(hoverPopup){hoverPopup.remove();hoverPopup=null;}
+    });
+
+    // CLICK: show full info card
+    map.on('click','hit-circles',e=>{
+      const p=e.features[0].properties;
+      const r=data.find(x=>x.name===p.name);
+      if(!r)return;
+      if(hoverPopup){hoverPopup.remove();hoverPopup=null;}
+      if(activePopup)activePopup.remove();
+      showPopup(r);
+    });
+  });
+}
+function toggleTerrain(){terrainOn=!terrainOn;document.getElementById('tBtn').classList.toggle('on',terrainOn);try{map.setTerrain(terrainOn?{source:'terrainSource',exaggeration:3.5}:null);}catch(e){}}
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);},{passive:true});
+document.getElementById('search').addEventListener('input',applyFilter);
+document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
+  curFilter=c.dataset.f;
+  document.querySelectorAll('.fc').forEach(x=>x.classList.toggle('on',x.dataset.f===curFilter));
+  applyFilter();
+}));
+
+(async()=>{
+  data=await loadData();
+  updateStats();applyFilter();
+  await initMap();
+  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),600);
+})();
+</script>
+</body>
+</html>
