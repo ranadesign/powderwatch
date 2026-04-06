@@ -1,0 +1,29 @@
+name: Scrape Snow Data
+
+on:
+  schedule:
+    # Runs at 6am and 4pm Eastern (11:00 and 21:00 UTC)
+    - cron: '0 11,21 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run scraper
+        run: python3 scraper.py
+
+      - name: Commit and push data
+        run: |
+          git config user.name "PowderWatch Bot"
+          git config user.email "bot@powderwatch.app"
+          git add snow_data.csv snow_data.json
+          git diff --cached --quiet || git commit -m "Update snow data $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
