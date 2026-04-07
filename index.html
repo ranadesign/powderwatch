@@ -50,13 +50,13 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .hero-vis-img{position:absolute;inset:0;border-radius:var(--rl);overflow:hidden;background:url('IMG_0165.jpg') center center/cover no-repeat;z-index:0}
 .hero-vis-overlay{display:none}
 .hero-vis-content{position:relative;z-index:2;width:100%;padding:2.5rem;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:420px;padding-bottom:3.5rem}
-.hero-card{background:rgba(0,0,0,0.25);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);border-radius:var(--r);padding:.75rem;box-shadow:var(--shl);position:relative;overflow:hidden;width:100%}
-.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.7)}
-.hc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:.2rem;color:#fff}
-.hc-sub{font-size:.68rem;color:rgba(255,255,255,0.75);margin-bottom:.75rem}
+.hero-card{background:#fff;border:none;border-radius:var(--r);padding:.75rem;box-shadow:var(--shl);position:relative;overflow:hidden;width:100%}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ac)}
+.hc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:.2rem;color:var(--text)}
+.hc-sub{font-size:.68rem;color:var(--tm);margin-bottom:.75rem}
 .hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
-.hc-s{text-align:center;padding:.5rem .4rem;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:var(--rs)}
-.hc-s .v{font-family:var(--serif);font-size:1.9rem;line-height:1;color:#fff}.hc-s .l{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.7);margin-top:4px}
+.hc-s{text-align:center;padding:.5rem .4rem;background:var(--bg);border-radius:var(--rs)}
+.hc-s .v{font-family:var(--serif);font-size:1.9rem;line-height:1;color:var(--ac)}.hc-s .l{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tm);margin-top:4px}
 .hf{position:absolute;background:#fff;border-radius:var(--rs);padding:7px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.12);display:flex;align-items:center;gap:7px;animation:float 6s ease-in-out infinite;z-index:50;pointer-events:none}
 .hf1{}.hf2{animation-delay:2s}
 .hf-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem}

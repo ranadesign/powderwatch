@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Run scraper
-        run: python3 scraper.py
+        run: python3 powderwatch_scraper.py
 
       - name: Commit and push data
         run: |
