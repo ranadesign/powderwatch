@@ -238,6 +238,13 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   </div>
 </section>
 
+<section id="fresh-24h" style="display:none">
+  <div class="sh"><div class="ey2">Fresh Snow</div><h2>Most snowfall <em>last 24h</em></h2></div>
+  <div class="rs" style="padding-bottom:1rem">
+    <div class="rg" id="fresh-24h-grid" style="max-width:1140px;margin:0 auto"></div>
+  </div>
+</section>
+
 <section id="resorts">
   <div class="sh"><div class="ey2">Conditions</div><h2>Park <em>snow reports</em></h2></div>
   <div class="rs">
@@ -340,6 +347,55 @@ function renderTopPicks(){
   });
 }
 
+function renderFresh24h(){
+  const fresh = [...data]
+    .filter(r => r.snowfall_24h > 0)
+    .sort((a,b) => b.snowfall_24h - a.snowfall_24h)
+    .slice(0, 3);
+  const section = document.getElementById('fresh-24h');
+  const g = document.getElementById('fresh-24h-grid');
+  // Hide the whole section if nobody has fresh snow
+  if(fresh.length === 0){ section.style.display = 'none'; return; }
+  section.style.display = '';
+  g.innerHTML = '';
+  const labels = ['❄️ Most Fresh', '❄️ Runner Up', '❄️ Third Place'];
+  fresh.forEach((r, i) => {
+    const c = cLvl(r);
+    const trend = getTrend(r);
+    const isFav = favorites.has(r.name);
+    const card = document.createElement('div');
+    card.className = 'rc';
+    card.style.animation = `cardIn .5s ${i*.1}s var(--ease) both`;
+    const tags = [];
+    if(r.lifts_open>0) tags.push(`<span class="rc-tag open">${r.lifts_open}/${r.lifts_total} lifts</span>`);
+    if(r.surface_condition) tags.push(`<span class="rc-tag">${r.surface_condition}</span>`);
+    card.innerHTML = `
+      <div class="top-pick-badge">${labels[i]}</div>
+      <div class="rc-top" style="padding-right:2rem"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="ct ${c.cls}">${c.label}</span>${trend?`<span class="trend ${trend.cls}" style="margin-top:0">${trend.arrow} ${trend.label}</span>`:''}</div></div>
+      <div class="rc-data">
+        <div class="rm"><div class="rv">${r.snowfall_24h}<span class="ru">"</span></div><div class="rl">Fresh 24h</div></div>
+        <div class="rm"><div class="rv">${r.snowfall_7d}<span class="ru">"</span></div><div class="rl">7-Day Snow</div></div>
+        <div class="rm"><div class="rv">${r.base_depth}<span class="ru">"</span></div><div class="rl">Base</div></div>
+      </div>
+      ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>
+      <button class="rc-fav-btn${isFav?' active':''}" data-name="${r.name}" title="Save to My Parks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'#e05a5a':'none'}" stroke="${isFav?'#e05a5a':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>`;
+    card.querySelector('.rc-fav-btn').addEventListener('click', e=>{
+      e.stopPropagation();
+      toggleFavorite(r.name);
+      const btn=e.currentTarget;
+      const isFavNow=favorites.has(r.name);
+      btn.classList.toggle('active',isFavNow);
+      btn.querySelector('svg').setAttribute('fill',isFavNow?'#e05a5a':'none');
+      btn.querySelector('svg').setAttribute('stroke',isFavNow?'#e05a5a':'currentColor');
+    });
+    card.addEventListener('click',e=>{if(e.target.tagName==='A'||e.target.closest('.rc-fav-btn'))return;if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:60,bearing:Math.random()*30-15,duration:2500});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}document.getElementById('map-section').scrollIntoView({behavior:'smooth'});});
+    g.appendChild(card);
+  });
+}
+
 async function loadData(){
   try{
     const res=await fetch('snow_data.json');
@@ -417,7 +473,7 @@ function updateStats(generatedAt){
   document.getElementById('sD').textContent=deep+'"';
   const avg7=Math.round(data.reduce((s,r)=>s+r.snowfall_7d,0)/n);
   document.getElementById('s7').textContent=avg7+'"';
-  const best=[...data].sort((a,b)=>b.snowfall_7d-a.snowfall_7d)[0];
+  const best=[...data].filter(r=>r.status==='Open').sort((a,b)=>b.snowfall_7d-a.snowfall_7d)[0]||[...data].sort((a,b)=>b.snowfall_7d-a.snowfall_7d)[0];
   document.getElementById('heroName').textContent=best.name;
   document.getElementById('heroLoc').textContent=best.state+' · Most Snow This Week';
   document.getElementById('hero7d').textContent=best.snowfall_7d+'"';
@@ -947,7 +1003,7 @@ document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
 (async()=>{
   const loaded=await loadData();
   data=loaded.resorts;
-  updateStats(loaded.generated_at);applyFilter();renderTopPicks();
+  updateStats(loaded.generated_at);applyFilter();renderTopPicks();renderFresh24h();
   await initMap();
   setTimeout(()=>document.getElementById('loader').classList.add('hidden'),600);
 })();
