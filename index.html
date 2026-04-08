@@ -343,9 +343,9 @@ function renderTopPicks(){
 async function loadData(){
   try{
     const res=await fetch('snow_data.json');
-    if(res.ok){const j=await res.json();if(j.resorts?.length)return j.resorts;}
+    if(res.ok){const j=await res.json();if(j.resorts?.length)return j;}
   }catch(e){}
-  return SNOW_DATA.resorts;
+  return SNOW_DATA;
 }
 
 function applyFilter(){
@@ -408,7 +408,7 @@ function getTrend(r){
   return              {cls:'trend-down',   arrow:'↓', label:'Fading'};
 }
 
-function updateStats(){
+function updateStats(generatedAt){
   const n=data.length;
   document.getElementById('sR').textContent=n;
   const avg=Math.round(data.reduce((s,r)=>s+r.base_depth,0)/n);
@@ -425,7 +425,7 @@ function updateStats(){
   document.getElementById('heroLifts').textContent=best.lifts_open+'/'+best.lifts_total;
   document.getElementById('fCount').textContent=n+' parks';
   // Update source timestamp — show when data was generated
-  const ts=SNOW_DATA.generated_at;
+  const ts=generatedAt||SNOW_DATA.generated_at;
   if(ts){
     const d=new Date(ts);
     document.getElementById('srcTxt').textContent='Data as of '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
@@ -908,7 +908,7 @@ window.addEventListener('load', ()=>{ setTimeout(positionBadges, 300); });
 window.addEventListener('resize', positionBadges);
 // Also re-run once data loads and card content changes size
 const _origUpdateStats = updateStats;
-updateStats = function(){ _origUpdateStats(); setTimeout(positionBadges, 50); };
+updateStats = function(generatedAt){ _origUpdateStats(generatedAt); setTimeout(positionBadges, 50); };
 window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);},{passive:true});
 
 // Re-trigger pillar animation when map section scrolls into view
@@ -945,8 +945,9 @@ document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
 }));
 
 (async()=>{
-  data=await loadData();
-  updateStats();applyFilter();renderTopPicks();
+  const loaded=await loadData();
+  data=loaded.resorts;
+  updateStats(loaded.generated_at);applyFilter();renderTopPicks();
   await initMap();
   setTimeout(()=>document.getElementById('loader').classList.add('hidden'),600);
 })();
