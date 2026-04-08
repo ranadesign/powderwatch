@@ -51,7 +51,7 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .hero-vis-overlay{display:none}
 .hero-vis-content{position:relative;z-index:2;width:100%;padding:2.5rem;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:420px;padding-bottom:3.5rem}
 .hero-card{background:#fff;border:none;border-radius:var(--r);padding:.75rem;box-shadow:var(--shl);position:relative;overflow:hidden;width:100%}
-.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ac)}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.7)}
 .hc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:.2rem;color:var(--text)}
 .hc-sub{font-size:.68rem;color:var(--tm);margin-bottom:.75rem}
 .hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
@@ -107,6 +107,33 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .fc{padding:8px 18px;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;border:1.5px solid var(--bg3);background:var(--sf);color:var(--t2);transition:all .3s;letter-spacing:.02em;font-family:var(--sans)}
 .fc:hover{border-color:var(--ac);color:var(--ac)}
 .fc.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.fc-fav{border-color:var(--ac)!important;color:var(--ac)!important;display:inline-flex;align-items:center}
+.fc-fav.on{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)!important}
+.fc-fav.on svg{stroke:#fff}
+.fc-ikon{border-color:#f5c800!important;color:#b89400!important}
+.fc-ikon.on{background:#f5c800!important;color:#5a4800!important;border-color:#f5c800!important}
+.fc-epic{border-color:#005daa!important;color:#005daa!important}
+.fc-epic.on{background:#005daa!important;color:#fff!important;border-color:#005daa!important}
+.pass-legend{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1.5rem;font-size:.7rem;color:var(--tm)}
+.pass-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.pass-dot.ikon{background:#f5c800}
+.pass-dot.epic{background:#005daa}
+.rc-fav-btn{position:absolute;top:1.1rem;right:1.1rem;background:none;border:none;cursor:pointer;padding:4px;border-radius:50%;transition:transform .2s var(--ease);color:var(--tl);line-height:0}
+.rc-fav-btn:hover{transform:scale(1.2);color:var(--ac)}
+.rc-fav-btn.active{color:#e05a5a}
+.rc-fav-btn.active svg{fill:#e05a5a;stroke:#e05a5a}
+.rc{position:relative}
+.top-pick-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(46,90,136,.12),rgba(46,90,136,.06));color:var(--ac);border:1px solid rgba(46,90,136,.15);margin-bottom:.5rem}
+.no-favs{text-align:center;padding:3rem 1rem;color:var(--tm);font-size:.9rem;grid-column:1/-1}
+.no-favs svg{display:block;margin:0 auto 1rem;opacity:.3}
+.trend{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.04em;margin-top:.6rem}
+.trend-up{background:rgba(34,139,80,.08);color:#228b50}
+.trend-rising{background:rgba(58,130,90,.07);color:#3a7a5a}
+.trend-hold{background:rgba(120,120,110,.08);color:#6a6a62}
+.trend-fading{background:rgba(180,120,30,.08);color:#a06820}
+.trend-down{background:rgba(180,60,40,.07);color:#b03c28}
+.snow-marker{pointer-events:none;cursor:default;}
+.snow-marker-inner{display:block;}
 
 .maplibregl-popup-content{background:rgba(255,255,255,.96)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:12px!important;padding:16px 20px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:var(--shl)!important;min-width:220px}
 .hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:8px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
@@ -193,23 +220,32 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   <div class="mw">
     <div class="mc">
       <div id="map"></div>
-      <div class="map-ctrl" style="display:flex;gap:8px;">
+      <div class="map-ctrl" style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="mb on" id="tBtn" onclick="toggleTerrain()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20L9 6l5 8 3-4 5 10z"/></svg>3D Terrain</button>
         <button class="mb on" id="rBtn" onclick="resetMap()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset View</button>
+        <button class="mb" id="ikonBtn" onclick="setMapPass('ikon')" style="background:#fff;border-color:#f5c800;color:#b89400">Ikon</button>
+        <button class="mb" id="epicBtn" onclick="setMapPass('epic')" style="background:#fff;border-color:#005daa;color:#005daa">Epic</button>
       </div>
       <div class="ml"><div class="ml-t">7-Day Snowfall</div><div class="ml-bar" style="background:linear-gradient(90deg,#c8ddf0,#8bb8e0,#4a8cc4,#1e5a94,#0d3b6e)"></div><div class="ml-lab"><span>0"</span><span>5"</span><span>10"</span><span>15"</span><span>20"+</span></div></div>
     </div>
   </div>
 </section>
 
+<section id="top-picks">
+  <div class="sh"><div class="ey2">Top Picks Right Now</div><h2>Best conditions <em>today</em></h2></div>
+  <div class="rs" style="padding-bottom:1rem">
+    <div class="rg" id="top-picks-grid" style="max-width:1140px;margin:0 auto"></div>
+  </div>
+</section>
+
 <section id="resorts">
-  <div class="sh"><div class="ey2">Conditions</div><h2>Park <em>snow reports</em></h2><p>50 parks scraped from OnTheSnow — sorted by 7-day snowfall</p></div>
+  <div class="sh"><div class="ey2">Conditions</div><h2>Park <em>snow reports</em></h2></div>
   <div class="rs">
     <div style="max-width:460px;margin:0 auto 1.5rem;position:relative">
       <svg style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--tl);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="search" placeholder="Search by park or state…" aria-label="Search" style="width:100%;padding:14px 22px 14px 44px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s" onfocus="this.style.borderColor='var(--ac)';this.style.boxShadow='0 0 0 4px var(--acs)'" onblur="this.style.borderColor='var(--bg3)';this.style.boxShadow='none'">
     </div>
-    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:2rem;flex-wrap:wrap" id="filters">
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:1rem;flex-wrap:wrap" id="filters">
       <button class="fc on" data-f="all">All</button>
       <button class="fc" data-f="CO">Colorado</button>
       <button class="fc" data-f="UT">Utah</button>
@@ -217,12 +253,19 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
       <button class="fc" data-f="west">West</button>
       <button class="fc" data-f="east">East</button>
       <button class="fc" data-f="open">Open Only</button>
+      <button class="fc fc-ikon" data-f="ikon">Ikon</button>
+      <button class="fc fc-epic" data-f="epic">Epic</button>
+      <button class="fc fc-fav" data-f="favorites" id="favBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>My Parks</button>
+    </div>
+    <div class="pass-legend" id="passLegend" style="display:none">
+      <span id="ikonLegend"><span class="pass-dot ikon"></span>Ikon Pass resort</span>
+      <span id="epicLegend"><span class="pass-dot epic"></span>Epic Pass resort</span>
     </div>
     <div class="rg" id="grid"></div>
   </div>
 </section>
 
-<footer><div class="fl">Powder<em>Watch</em></div><p>Data scraped from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> resort snow reports twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> &middot; Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch</p></footer>
+<footer><div class="fl">Powder<em>Watch</em></div><p>Data from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> and gathered twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> &middot; Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch</p></footer>
 
 <script>
 // ━━━ EMBEDDED SNOW DATA (updated by scraper agent) ━━━
@@ -230,9 +273,72 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 // For now, data is embedded directly so the prototype works standalone.
 const SNOW_DATA = {"resorts":[{"name":"Vail","state":"CO","lat":39.6403,"lng":-106.3742,"base_depth":35,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":8,"lifts_total":33,"runs_open":28,"runs_total":277,"status":"Open","last_updated":"Apr 01","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/vail/skireport"},{"name":"Breckenridge","state":"CO","lat":39.4817,"lng":-106.0384,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":10,"lifts_total":35,"runs_open":72,"runs_total":187,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/breckenridge/skireport"},{"name":"Keystone","state":"CO","lat":39.6045,"lng":-105.9498,"base_depth":40,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":128,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/keystone/skireport"},{"name":"Steamboat","state":"CO","lat":40.457,"lng":-106.804,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":9,"lifts_total":18,"runs_open":85,"runs_total":169,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/steamboat/skireport"},{"name":"Beaver Creek","state":"CO","lat":39.6042,"lng":-106.5165,"base_depth":38,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":5,"snowfall_24h":0,"lifts_open":0,"lifts_total":25,"runs_open":0,"runs_total":150,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/beaver-creek/skireport"},{"name":"Winter Park","state":"CO","lat":39.8868,"lng":-105.7625,"base_depth":55,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":10,"snowfall_24h":1,"lifts_open":12,"lifts_total":25,"runs_open":90,"runs_total":166,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/winter-park-resort/skireport"},{"name":"Copper Mountain","state":"CO","lat":39.5022,"lng":-106.1497,"base_depth":46,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":8,"snowfall_24h":0,"lifts_open":8,"lifts_total":23,"runs_open":65,"runs_total":140,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/copper-mountain-resort/skireport"},{"name":"Snowmass","state":"CO","lat":39.2084,"lng":-106.949,"base_depth":42,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":6,"lifts_total":21,"runs_open":45,"runs_total":98,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/snowmass/skireport"},{"name":"Telluride","state":"CO","lat":37.9375,"lng":-107.8123,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":4,"snowfall_24h":0,"lifts_open":0,"lifts_total":18,"runs_open":0,"runs_total":148,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/telluride/skireport"},{"name":"Aspen Mountain","state":"CO","lat":39.1869,"lng":-106.8182,"base_depth":33,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":8,"runs_open":0,"runs_total":76,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-mountain/skireport"},{"name":"Aspen Highlands","state":"CO","lat":39.1822,"lng":-106.8552,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":5,"runs_open":0,"runs_total":144,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-highlands/skireport"},{"name":"Crested Butte","state":"CO","lat":38.8986,"lng":-106.965,"base_depth":41,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport"},{"name":"Arapahoe Basin","state":"CO","lat":39.6426,"lng":-105.8719,"base_depth":50,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":1,"lifts_open":5,"lifts_total":9,"runs_open":45,"runs_total":147,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport"},{"name":"Loveland","state":"CO","lat":39.68,"lng":-105.8978,"base_depth":44,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":7,"snowfall_24h":0,"lifts_open":4,"lifts_total":11,"runs_open":32,"runs_total":94,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/loveland/skireport"},{"name":"Wolf Creek","state":"CO","lat":37.4747,"lng":-106.7934,"base_depth":72,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":12,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":77,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport"},{"name":"Park City","state":"UT","lat":40.6461,"lng":-111.498,"base_depth":63,"surface_condition":"","snowfall_7d":13,"snowfall_24h":0,"lifts_open":6,"lifts_total":41,"runs_open":13,"runs_total":349,"status":"Open","last_updated":"Apr 05","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/park-city-mountain-resort/skireport"},{"name":"Snowbird","state":"UT","lat":40.583,"lng":-111.6538,"base_depth":82,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":16,"snowfall_24h":2,"lifts_open":8,"lifts_total":13,"runs_open":65,"runs_total":170,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbird-ski-summer-resort/skireport"},{"name":"Alta","state":"UT","lat":40.5884,"lng":-111.6386,"base_depth":90,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":18,"snowfall_24h":3,"lifts_open":7,"lifts_total":11,"runs_open":72,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/alta-ski-area/skireport"},{"name":"Deer Valley","state":"UT","lat":40.6374,"lng":-111.4783,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":10,"snowfall_24h":0,"lifts_open":4,"lifts_total":21,"runs_open":22,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/deer-valley-resort/skireport"},{"name":"Brighton","state":"UT","lat":40.598,"lng":-111.5832,"base_depth":68,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":13,"snowfall_24h":1,"lifts_open":4,"lifts_total":7,"runs_open":40,"runs_total":66,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/brighton-resort/skireport"},{"name":"Solitude","state":"UT","lat":40.6199,"lng":-111.5927,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":3,"lifts_total":8,"runs_open":35,"runs_total":82,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/solitude-mountain-resort/skireport"},{"name":"Snowbasin","state":"UT","lat":41.216,"lng":-111.8569,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":8,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":107,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbasin-resort/skireport"},{"name":"Mammoth Mountain","state":"CA","lat":37.6308,"lng":-119.0326,"base_depth":38,"mid_depth":48,"summit_depth":107,"surface_condition":"Powder","snowfall_7d":4,"snowfall_24h":4,"lifts_open":19,"lifts_total":25,"runs_open":121,"runs_total":180,"status":"Open","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport"},{"name":"Heavenly","state":"CA","lat":38.9353,"lng":-119.94,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":5,"snowfall_24h":0,"lifts_open":6,"lifts_total":28,"runs_open":30,"runs_total":97,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/heavenly-mountain-resort/skireport"},{"name":"Palisades Tahoe","state":"CA","lat":39.1968,"lng":-120.2354,"base_depth":58,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":12,"lifts_total":30,"runs_open":95,"runs_total":270,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/palisades-tahoe/skireport"},{"name":"Northstar","state":"CA","lat":39.2746,"lng":-120.121,"base_depth":34,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":20,"runs_open":28,"runs_total":100,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/northstar-california/skireport"},{"name":"Bear Mountain","state":"CA","lat":34.2275,"lng":-116.859,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":32,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/bear-mountain/skireport"},{"name":"Snow Summit","state":"CA","lat":34.2326,"lng":-116.8728,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":35,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/snow-summit/skireport"},{"name":"Sugar Bowl","state":"CA","lat":39.3049,"lng":-120.3344,"base_depth":60,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":0,"lifts_open":6,"lifts_total":13,"runs_open":50,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/sugar-bowl-resort/skireport"},{"name":"Jackson Hole","state":"WY","lat":43.5877,"lng":-110.828,"base_depth":56,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":50,"runs_total":133,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/jackson-hole/skireport"},{"name":"Grand Targhee","state":"WY","lat":43.7903,"lng":-110.9572,"base_depth":78,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":15,"snowfall_24h":3,"lifts_open":4,"lifts_total":7,"runs_open":55,"runs_total":79,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport"},{"name":"Big Sky","state":"MT","lat":45.2833,"lng":-111.4014,"base_depth":45,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":8,"lifts_total":39,"runs_open":75,"runs_total":317,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/big-sky-resort/skireport"},{"name":"Whitefish","state":"MT","lat":48.4816,"lng":-114.3582,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":105,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport"},{"name":"Sun Valley","state":"ID","lat":43.6977,"lng":-114.3514,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":19,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/sun-valley/skireport"},{"name":"Schweitzer","state":"ID","lat":48.3678,"lng":-116.623,"base_depth":65,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":48,"runs_total":92,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/schweitzer-mountain-resort/skireport"},{"name":"Crystal Mountain","state":"WA","lat":46.9282,"lng":-121.5045,"base_depth":80,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":14,"snowfall_24h":2,"lifts_open":7,"lifts_total":11,"runs_open":40,"runs_total":57,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/crystal-mountain/skireport"},{"name":"Stevens Pass","state":"WA","lat":47.7448,"lng":-121.089,"base_depth":74,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":35,"runs_total":52,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/stevens-pass-resort/skireport"},{"name":"Mt. Baker","state":"WA","lat":48.8566,"lng":-121.6647,"base_depth":126,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":20,"snowfall_24h":3,"lifts_open":8,"lifts_total":10,"runs_open":31,"runs_total":38,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/mt-baker/skireport"},{"name":"Mt. Bachelor","state":"OR","lat":43.9792,"lng":-121.6886,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":121,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-bachelor/skireport"},{"name":"Mt. Hood Meadows","state":"OR","lat":45.3307,"lng":-121.6649,"base_depth":70,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":1,"lifts_open":8,"lifts_total":14,"runs_open":55,"runs_total":87,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-hood-meadows/skireport"},{"name":"Alyeska","state":"AK","lat":60.9604,"lng":-149.0987,"base_depth":96,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":22,"snowfall_24h":4,"lifts_open":7,"lifts_total":9,"runs_open":55,"runs_total":76,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/alaska/alyeska-resort/skireport"},{"name":"Killington","state":"VT","lat":43.6045,"lng":-72.8201,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":22,"runs_open":25,"runs_total":155,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/killington-resort/skireport"},{"name":"Okemo","state":"VT","lat":43.4012,"lng":-72.7173,"base_depth":18,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport"},{"name":"Stowe","state":"VT","lat":44.5303,"lng":-72.7814,"base_depth":24,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":3,"snowfall_24h":0,"lifts_open":3,"lifts_total":14,"runs_open":18,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport"},{"name":"Sugarbush","state":"VT","lat":44.1359,"lng":-72.9013,"base_depth":20,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":2,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":111,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/sugarbush/skireport"},{"name":"Stratton","state":"VT","lat":43.1134,"lng":-72.9079,"base_depth":16,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":99,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stratton-mountain/skireport"},{"name":"Jay Peak","state":"VT","lat":44.9267,"lng":-72.529,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":5,"snowfall_24h":0,"lifts_open":3,"lifts_total":9,"runs_open":22,"runs_total":81,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/jay-peak/skireport"},{"name":"Sunday River","state":"ME","lat":44.4733,"lng":-70.8567,"base_depth":22,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":4,"lifts_total":18,"runs_open":28,"runs_total":135,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sunday-river/skireport"},{"name":"Sugarloaf","state":"ME","lat":45.0314,"lng":-70.3131,"base_depth":32,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":5,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":40,"runs_total":162,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sugarloaf/skireport"},{"name":"Snowshoe","state":"WV","lat":38.4073,"lng":-79.994,"base_depth":14,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":61,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport"}],"generated_at":"2026-04-06T12:00:00Z"};
 
-let data=[], map, terrainOn=true, curFilter='all', animatePillarsIn;
+let data=[], map, terrainOn=true, curFilter='all', animatePillarsIn, rebuildMapSlices=()=>{};
 const WEST=['CO','UT','CA','WY','MT','ID','WA','OR','AK','NM'];
 const EAST=['VT','ME','WV','NH','NY','NC'];
+
+// Pass affiliations (as of 2025-26 season)
+const IKON_PASS = new Set(['Steamboat','Winter Park','Copper Mountain','Snowmass','Aspen Mountain','Aspen Highlands','Crested Butte','Arapahoe Basin','Mammoth Mountain','Palisades Tahoe','Northstar','Sugar Bowl','Jackson Hole','Grand Targhee','Big Sky','Whitefish','Schweitzer','Crystal Mountain','Stevens Pass','Mt. Baker','Mt. Bachelor','Mt. Hood Meadows','Killington','Sugarbush','Stratton','Sunday River','Sugarloaf','Snowshoe','Deer Valley','Solitude','Brighton']);
+const EPIC_PASS = new Set(['Vail','Breckenridge','Keystone','Beaver Creek','Park City','Heavenly','Northstar','Stowe','Okemo','Snowbasin','Afton Alps','Wilmot','Alyeska']);
+
+// ── Favorites (localStorage) ──────────────────────────────────────────────
+let favorites = new Set(JSON.parse(localStorage.getItem('pw_favorites')||'[]'));
+function saveFavorites(){ localStorage.setItem('pw_favorites', JSON.stringify([...favorites])); }
+function toggleFavorite(name){
+  if(favorites.has(name)) favorites.delete(name); else favorites.add(name);
+  saveFavorites();
+}
+
+// ── Powder score (powder chasers: fresh snow weighted heavily) ────────────
+function powderScore(r){
+  if(r.status==='Closed') return -1;
+  return (r.snowfall_24h * 5) + (r.snowfall_7d * 2) + (r.base_depth * 0.3) + (r.lifts_open > 0 ? 20 : 0);
+}
+
+function renderTopPicks(){
+  const top = [...data]
+    .filter(r => r.status === 'Open')
+    .sort((a,b) => powderScore(b) - powderScore(a))
+    .slice(0, 3);
+  const g = document.getElementById('top-picks-grid');
+  g.innerHTML = '';
+  const labels = ['🥇 Top Pick', '🥈 Runner Up', '🥉 Third Place'];
+  top.forEach((r, i) => {
+    const c = cLvl(r);
+    const trend = getTrend(r);
+    const isFav = favorites.has(r.name);
+    const card = document.createElement('div');
+    card.className = 'rc';
+    card.style.animation = `cardIn .5s ${i*.1}s var(--ease) both`;
+    const tags = [];
+    if(r.lifts_open>0) tags.push(`<span class="rc-tag open">${r.lifts_open}/${r.lifts_total} lifts</span>`);
+    if(r.surface_condition) tags.push(`<span class="rc-tag">${r.surface_condition}</span>`);
+    card.innerHTML = `
+      <div class="top-pick-badge">${labels[i]}</div>
+      <div class="rc-top" style="padding-right:2rem"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="ct ${c.cls}">${c.label}</span>${trend?`<span class="trend ${trend.cls}" style="margin-top:0">${trend.arrow} ${trend.label}</span>`:''}</div></div>
+      <div class="rc-data">
+        <div class="rm"><div class="rv">${r.snowfall_7d}<span class="ru">"</span></div><div class="rl">7-Day Snow</div></div>
+        <div class="rm"><div class="rv">${r.snowfall_24h}<span class="ru">"</span></div><div class="rl">Fresh 24h</div></div>
+        <div class="rm"><div class="rv">${r.base_depth}<span class="ru">"</span></div><div class="rl">Base</div></div>
+      </div>
+      ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>
+      <button class="rc-fav-btn${isFav?' active':''}" data-name="${r.name}" title="Save to My Parks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'#e05a5a':'none'}" stroke="${isFav?'#e05a5a':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>`;
+    card.querySelector('.rc-fav-btn').addEventListener('click', e=>{
+      e.stopPropagation();
+      toggleFavorite(r.name);
+      const btn=e.currentTarget;
+      const isFavNow=favorites.has(r.name);
+      btn.classList.toggle('active',isFavNow);
+      btn.querySelector('svg').setAttribute('fill',isFavNow?'#e05a5a':'none');
+      btn.querySelector('svg').setAttribute('stroke',isFavNow?'#e05a5a':'currentColor');
+    });
+    card.addEventListener('click',e=>{if(e.target.tagName==='A'||e.target.closest('.rc-fav-btn'))return;if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:60,bearing:Math.random()*30-15,duration:2500});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}document.getElementById('map-section').scrollIntoView({behavior:'smooth'});});
+    g.appendChild(card);
+  });
+}
 
 async function loadData(){
   try{
@@ -245,7 +351,10 @@ async function loadData(){
 function applyFilter(){
   const q=document.getElementById('search').value.toLowerCase().trim();
   let filtered=data;
-  if(curFilter==='west')filtered=data.filter(r=>WEST.includes(r.state));
+  if(curFilter==='favorites') filtered=data.filter(r=>favorites.has(r.name));
+  else if(curFilter==='ikon') filtered=data.filter(r=>IKON_PASS.has(r.name));
+  else if(curFilter==='epic') filtered=data.filter(r=>EPIC_PASS.has(r.name));
+  else if(curFilter==='west')filtered=data.filter(r=>WEST.includes(r.state));
   else if(curFilter==='east')filtered=data.filter(r=>EAST.includes(r.state));
   else if(curFilter==='open')filtered=data.filter(r=>r.status==='Open');
   else if(curFilter!=='all')filtered=data.filter(r=>r.state===curFilter);
@@ -276,10 +385,27 @@ function dCol(d){if(d>=120)return'#1e3f66';if(d>=80)return'#2e5a88';if(d>=40)ret
 function dSz(d){return Math.max(16,Math.min(44,16+d/4));}
 function cLvl(r){
   if(r.status==='Closed')return{label:'Closed',cls:'closed'};
-  
   if(r.base_depth>=100)return{label:'Deep',cls:'deep'};
   if(r.base_depth>=40)return{label:'Good',cls:'good'};
   return{label:'Light',cls:'light'};
+}
+
+function getTrend(r){
+  // No snow data at all — can't say
+  if(r.snowfall_7d===0 && r.snowfall_24h===0) return null;
+  if(r.status==='Closed') return null;
+  // Daily average over 7 days
+  const avg7 = r.snowfall_7d / 7;
+  const h24 = r.snowfall_24h;
+  // If no 7d snow but fresh today — actively snowing
+  if(r.snowfall_7d===0 && h24>0) return {cls:'trend-up',arrow:'↑',label:'Snowing now'};
+  // Ratio of today vs weekly average
+  const ratio = avg7 > 0 ? h24 / avg7 : (h24 > 0 ? 99 : 0);
+  if(ratio >= 2.0)  return {cls:'trend-up',    arrow:'↑',  label:'Picking up'};
+  if(ratio >= 1.1)  return {cls:'trend-rising', arrow:'↗', label:'Improving'};
+  if(ratio >= 0.7)  return {cls:'trend-hold',   arrow:'→', label:'Holding'};
+  if(ratio >= 0.2)  return {cls:'trend-fading', arrow:'↘', label:'Tapering'};
+  return              {cls:'trend-down',   arrow:'↓', label:'Fading'};
 }
 
 function updateStats(){
@@ -298,18 +424,24 @@ function updateStats(){
   document.getElementById('hero24h').textContent=best.snowfall_24h+'"';
   document.getElementById('heroLifts').textContent=best.lifts_open+'/'+best.lifts_total;
   document.getElementById('fCount').textContent=n+' parks';
-  // Update source timestamp
+  // Update source timestamp — show when data was generated
   const ts=SNOW_DATA.generated_at;
   if(ts){
     const d=new Date(ts);
-    document.getElementById('srcTxt').textContent='Updated '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    document.getElementById('srcTxt').textContent='Data as of '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
   }
 }
 
 function renderCards(resorts){resorts=resorts||data;
   const g=document.getElementById('grid');g.innerHTML='';
+  if(curFilter==='favorites' && resorts.length===0){
+    g.innerHTML=`<div class="no-favs"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>No saved parks yet — tap the ♥ on any card to save it here.</div>`;
+    return;
+  }
   [...resorts].sort((a,b)=>b.snowfall_7d-a.snowfall_7d).forEach((r,i)=>{
     const c=cLvl(r);
+    const isFav=favorites.has(r.name);
+    const trend=getTrend(r);
     const card=document.createElement('div');
     card.className='rc';card.style.animation=`cardIn .5s ${i*.08}s var(--ease) both`;
     const tags=[];
@@ -318,15 +450,28 @@ function renderCards(resorts){resorts=resorts||data;
     if(r.surface_condition)tags.push(`<span class="rc-tag">${r.surface_condition}</span>`);
     if(r.last_updated)tags.push(`<span class="rc-tag">Updated ${r.last_updated}</span>`);
     card.innerHTML=`
-      <div class="rc-top"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><span class="ct ${c.cls}">${c.label}</span></div>
+      <div class="rc-top" style="padding-right:2rem"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="ct ${c.cls}">${c.label}</span>${trend?`<span class="trend ${trend.cls}" style="margin-top:0">${trend.arrow} ${trend.label}</span>`:''}</div></div>
       <div class="rc-data">
         <div class="rm"><div class="rv">${r.snowfall_7d}<span class="ru">"</span></div><div class="rl">7-Day Snow</div></div>
         <div class="rm"><div class="rv">${r.snowfall_24h}<span class="ru">"</span></div><div class="rl">Fresh 24h</div></div>
         <div class="rm"><div class="rv">${r.lifts_open}<span class="ru">/${r.lifts_total}</span></div><div class="rl">Lifts Open</div></div>
       </div>
       ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
-      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>`;
-    card.addEventListener('click',e=>{if(e.target.tagName==='A')return;if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:60,bearing:Math.random()*30-15,duration:2500});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}document.getElementById('map-section').scrollIntoView({behavior:'smooth'});});
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>
+      <button class="rc-fav-btn${isFav?' active':''}" data-name="${r.name}" title="Save to My Parks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'#e05a5a':'none'}" stroke="${isFav?'#e05a5a':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>`;
+    card.querySelector('.rc-fav-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      toggleFavorite(r.name);
+      const btn=e.currentTarget;
+      const isFavNow=favorites.has(r.name);
+      btn.classList.toggle('active',isFavNow);
+      btn.querySelector('svg').setAttribute('fill',isFavNow?'#e05a5a':'none');
+      btn.querySelector('svg').setAttribute('stroke',isFavNow?'#e05a5a':'currentColor');
+      if(curFilter==='favorites') card.remove();
+    });
+    card.addEventListener('click',e=>{if(e.target.tagName==='A'||e.target.closest('.rc-fav-btn'))return;if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:60,bearing:Math.random()*30-15,duration:2500});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}document.getElementById('map-section').scrollIntoView({behavior:'smooth'});});
     g.appendChild(card);
   });
 }
@@ -517,14 +662,16 @@ async function initMap(){
 
     return deconf.map(r => {
       const isClosed = r.status === 'Closed';
+      const highlighted = isPassHighlighted(r.name);
       const ratio  = Math.max(0.06, r.snowfall_7d / maxSnow);
-      // Closed resorts get a fixed minimum height so they're still visible
       const height = (isClosed ? Math.max(ratio, 0.12) : ratio) * maxH;
-      // Closed: white→light red gradient; Open: white→blue legend gradient
       const t = (tBot + tTop) / 2;
-      const sliceColor = isClosed
-        ? closedGradientColor(t)
-        : gradientColor(t, ratio);
+      let sliceColor;
+      if(!highlighted){
+        sliceColor = `rgb(210,208,204)`;
+      } else {
+        sliceColor = isClosed ? closedGradientColor(t) : gradientColor(t, ratio);
+      }
       return {
         type:'Feature',
         geometry:{
@@ -580,11 +727,20 @@ async function initMap(){
       });
     }
 
+    // Expose rebuild so setMapPass can call it
+    let _deconf = deconf;
+    rebuildMapSlices = function(){
+      for(let s = 0; s < SLICES; s++){
+        const src = map.getSource(`bars-${s}`);
+        if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(_deconf, s)});
+      }
+    };
+
     // Rebuild all slices on zoom to keep pillars in frame
     map.on('zoom', ()=>{
       for(let s = 0; s < SLICES; s++){
         const src = map.getSource(`bars-${s}`);
-        if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(deconf, s)});
+        if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(_deconf, s)});
       }
     });
 
@@ -594,18 +750,16 @@ async function initMap(){
       function frame(now){
         const raw = (now - start) / duration;
         if(raw > 1){
-          // Final frame: set to full height
           for(let s = 0; s < SLICES; s++){
             const src = map.getSource(`bars-${s}`);
-            if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(deconf, s, 1)});
+            if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(_deconf, s, 1)});
           }
           return;
         }
-        // Ease out cubic: starts fast, decelerates into place
         const t = 1 - Math.pow(1 - raw, 3);
         for(let s = 0; s < SLICES; s++){
           const src = map.getSource(`bars-${s}`);
-          if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(deconf, s, t)});
+          if(src) src.setData({type:'FeatureCollection', features: buildSliceFeatures(_deconf, s, t)});
         }
         requestAnimationFrame(frame);
       }
@@ -658,9 +812,82 @@ async function initMap(){
         showPopup(r);
       });
     });
+
+    // ── Snow cloud markers ───────────────────────────────────────────────────
+    const SNOW_THRESHOLD = 1;
+    let cloudMarkers = [];
+
+    function makeCloudSVG(size){
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25))">
+        <path d="M9 18H9.01M15 18H15.01M9 20.5H9.01M12 18H12.01M12 21H12.01M15 20.5H15.01M8.8 15C6.14903 15 4 12.9466 4 10.4137C4 8.31435 5.6 6.375 8 6C8.75283 4.27403 10.5346 3 12.6127 3C15.2747 3 17.4504 4.99072 17.6 7.5C19.0127 8.09561 20 9.55741 20 11.1402C20 13.2719 18.2091 15 16 15L8.8 15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+    }
+
+    function buildClusters(resorts, zoom){
+      const cellDeg = zoom < 5.5 ? 6 : zoom < 7 ? 2 : zoom < 9 ? 0.5 : 0.15;
+      const grid = {};
+      resorts.forEach(r=>{
+        const key = `${Math.floor(r.lat/cellDeg)}_${Math.floor(r.lng/cellDeg)}`;
+        if(!grid[key]) grid[key]=[];
+        grid[key].push(r);
+      });
+      return Object.values(grid).map(group=>{
+        const best = group.reduce((a,b)=>b.snowfall_24h>a.snowfall_24h?b:a);
+        return {lat:best.lat, lng:best.lng, count:group.length, snow:best.snowfall_24h};
+      });
+    }
+
+    function updateClouds(){
+      cloudMarkers.forEach(m=>m.remove());
+      cloudMarkers=[];
+      const zoom = map.getZoom();
+      const snowing = data.filter(r=>r.snowfall_24h>=SNOW_THRESHOLD);
+      if(!snowing.length) return;
+      const clusters = buildClusters(snowing, zoom);
+      clusters.forEach(c=>{
+        const size = zoom < 5.5 ? 32 : zoom < 7 ? 24 : zoom < 9 ? 20 : 16;
+        const el = document.createElement('div');
+        el.className = 'snow-marker';
+        const inner = document.createElement('div');
+        inner.className = 'snow-marker-inner';
+        inner.innerHTML = makeCloudSVG(size);
+        el.appendChild(inner);
+        const marker = new maplibregl.Marker({element:el, anchor:'bottom', offset:[0, 8]})
+          .setLngLat([c.lng, c.lat])
+          .addTo(map);
+        cloudMarkers.push(marker);
+      });
+    }
+
+    map.on('zoomend', updateClouds);
+    map.on('moveend', updateClouds);
+    setTimeout(updateClouds, 1200);
   });
 }
 function toggleTerrain(){terrainOn=!terrainOn;document.getElementById('tBtn').classList.toggle('on',terrainOn);try{map.setTerrain(terrainOn?{source:'terrainSource',exaggeration:3.5}:null);}catch(e){}}
+
+let activeMapPass = null;
+function setMapPass(pass){
+  // Toggle off if same pass clicked again
+  if(activeMapPass === pass){ activeMapPass = null; } else { activeMapPass = pass; }
+  document.getElementById('ikonBtn').classList.toggle('on', activeMapPass==='ikon');
+  document.getElementById('epicBtn').classList.toggle('on', activeMapPass==='epic');
+  // Update ikon button active color
+  document.getElementById('ikonBtn').style.background = activeMapPass==='ikon' ? '#f5c800' : '#fff';
+  document.getElementById('ikonBtn').style.color = activeMapPass==='ikon' ? '#5a4800' : '#b89400';
+  document.getElementById('ikonBtn').style.borderColor = '#f5c800';
+  document.getElementById('epicBtn').style.background = activeMapPass==='epic' ? '#005daa' : '#fff';
+  document.getElementById('epicBtn').style.color = activeMapPass==='epic' ? '#fff' : '#005daa';
+  document.getElementById('epicBtn').style.borderColor = '#005daa';
+  rebuildMapSlices();
+}
+
+function isPassHighlighted(resortName){
+  if(!activeMapPass) return true;
+  if(activeMapPass==='ikon') return IKON_PASS.has(resortName);
+  if(activeMapPass==='epic') return EPIC_PASS.has(resortName);
+  return true;
+}
 function resetMap(){if(!map)return;map.flyTo({center:[-115,42],zoom:5,pitch:60,bearing:-15,duration:1800,essential:true});}
 function positionBadges(){
   const card = document.getElementById('heroCard');
@@ -702,14 +929,24 @@ window.addEventListener('scroll',()=>{document.getElementById('nav').classList.t
 })();
 document.getElementById('search').addEventListener('input',applyFilter);
 document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
-  curFilter=c.dataset.f;
+  const f = c.dataset.f;
+  // Ikon/Epic toggle: clicking active one deselects back to 'all'
+  if((f==='ikon'||f==='epic') && curFilter===f){
+    curFilter='all';
+  } else {
+    curFilter=f;
+  }
   document.querySelectorAll('.fc').forEach(x=>x.classList.toggle('on',x.dataset.f===curFilter));
+  // Show pass legend only when ikon or epic is active
+  const isPass = curFilter==='ikon'||curFilter==='epic';
+  document.getElementById('passLegend').style.display = isPass ? 'flex' : 'none';
+  document.getElementById('passLegend').style.marginBottom = isPass ? '1.5rem' : '0';
   applyFilter();
 }));
 
 (async()=>{
   data=await loadData();
-  updateStats();applyFilter();
+  updateStats();applyFilter();renderTopPicks();
   await initMap();
   setTimeout(()=>document.getElementById('loader').classList.add('hidden'),600);
 })();
