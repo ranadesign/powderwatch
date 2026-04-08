@@ -18,7 +18,7 @@
       "lat": 39.6403,
       "lng": -106.3742,
       "url": "https://www.onthesnow.com/colorado/vail/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Breckenridge",
@@ -38,7 +38,7 @@
       "lat": 39.4817,
       "lng": -106.0384,
       "url": "https://www.onthesnow.com/colorado/breckenridge/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Keystone",
@@ -58,7 +58,7 @@
       "lat": 39.6045,
       "lng": -105.9498,
       "url": "https://www.onthesnow.com/colorado/keystone/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Steamboat",
@@ -78,7 +78,7 @@
       "lat": 40.457,
       "lng": -106.804,
       "url": "https://www.onthesnow.com/colorado/steamboat/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Beaver Creek",
@@ -98,7 +98,7 @@
       "lat": 39.6042,
       "lng": -106.5165,
       "url": "https://www.onthesnow.com/colorado/beaver-creek/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Winter Park",
@@ -118,7 +118,7 @@
       "lat": 39.8868,
       "lng": -105.7625,
       "url": "https://www.onthesnow.com/colorado/winter-park-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Copper Mountain",
@@ -138,7 +138,7 @@
       "lat": 39.5022,
       "lng": -106.1497,
       "url": "https://www.onthesnow.com/colorado/copper-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Aspen/Snowmass",
@@ -158,7 +158,7 @@
       "lat": 39.2084,
       "lng": -106.949,
       "url": "https://www.onthesnow.com/colorado/aspen-snowmass/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Telluride",
@@ -178,7 +178,7 @@
       "lat": 37.9375,
       "lng": -107.8123,
       "url": "https://www.onthesnow.com/colorado/telluride/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Crested Butte",
@@ -198,7 +198,7 @@
       "lat": 38.8986,
       "lng": -106.965,
       "url": "https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Arapahoe Basin",
@@ -218,7 +218,7 @@
       "lat": 39.6426,
       "lng": -105.8719,
       "url": "https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Loveland",
@@ -238,7 +238,7 @@
       "lat": 39.68,
       "lng": -105.8978,
       "url": "https://www.onthesnow.com/colorado/loveland/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Wolf Creek",
@@ -258,7 +258,7 @@
       "lat": 37.4747,
       "lng": -106.7934,
       "url": "https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Park City",
@@ -278,7 +278,7 @@
       "lat": 40.6461,
       "lng": -111.498,
       "url": "https://www.onthesnow.com/utah/park-city-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Snowbird",
@@ -298,7 +298,7 @@
       "lat": 40.583,
       "lng": -111.6538,
       "url": "https://www.onthesnow.com/utah/snowbird/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Alta",
@@ -310,7 +310,7 @@
       "snowfall_24h": 0.0,
       "lifts_open": 5,
       "lifts_total": 8,
-      "runs_open": 102,
+      "runs_open": 97,
       "runs_total": 118,
       "status": "Open",
       "last_updated": "Apr 08",
@@ -318,7 +318,7 @@
       "lat": 40.5884,
       "lng": -111.6386,
       "url": "https://www.onthesnow.com/utah/alta-ski-area/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Deer Valley",
@@ -338,7 +338,7 @@
       "lat": 40.6374,
       "lng": -111.4783,
       "url": "https://www.onthesnow.com/utah/deer-valley-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Brighton",
@@ -358,7 +358,7 @@
       "lat": 40.598,
       "lng": -111.5832,
       "url": "https://www.onthesnow.com/utah/brighton-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Solitude",
@@ -378,7 +378,7 @@
       "lat": 40.6199,
       "lng": -111.5927,
       "url": "https://www.onthesnow.com/utah/solitude-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Snowbasin",
@@ -398,7 +398,7 @@
       "lat": 41.216,
       "lng": -111.8569,
       "url": "https://www.onthesnow.com/utah/snowbasin/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Mammoth Mountain",
@@ -418,7 +418,7 @@
       "lat": 37.6308,
       "lng": -119.0326,
       "url": "https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Heavenly",
@@ -438,7 +438,7 @@
       "lat": 38.9353,
       "lng": -119.94,
       "url": "https://www.onthesnow.com/california/heavenly-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Palisades Tahoe",
@@ -458,7 +458,7 @@
       "lat": 39.1968,
       "lng": -120.2354,
       "url": "https://www.onthesnow.com/california/palisades-tahoe/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Northstar",
@@ -478,7 +478,7 @@
       "lat": 39.2746,
       "lng": -120.121,
       "url": "https://www.onthesnow.com/california/northstar-california/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Bear Mountain",
@@ -498,7 +498,7 @@
       "lat": 34.2275,
       "lng": -116.859,
       "url": "https://www.onthesnow.com/california/bear-mountain/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Snow Summit",
@@ -518,14 +518,14 @@
       "lat": 34.2326,
       "lng": -116.8728,
       "url": "https://www.onthesnow.com/california/snow-summit/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Sugar Bowl",
       "base_depth": 0,
       "mid_depth": 0,
       "summit_depth": 0,
-      "surface_condition": "Powder",
+      "surface_condition": "",
       "snowfall_7d": 0.0,
       "snowfall_24h": 0.0,
       "lifts_open": 0,
@@ -538,7 +538,7 @@
       "lat": 39.3049,
       "lng": -120.3344,
       "url": "https://www.onthesnow.com/california/sugar-bowl-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Jackson Hole",
@@ -558,7 +558,7 @@
       "lat": 43.5877,
       "lng": -110.828,
       "url": "https://www.onthesnow.com/wyoming/jackson-hole/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Grand Targhee",
@@ -578,7 +578,7 @@
       "lat": 43.7903,
       "lng": -110.9572,
       "url": "https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Big Sky",
@@ -588,9 +588,9 @@
       "surface_condition": "Powder",
       "snowfall_7d": 16.4,
       "snowfall_24h": 0.0,
-      "lifts_open": 12,
+      "lifts_open": 14,
       "lifts_total": 40,
-      "runs_open": 4,
+      "runs_open": 10,
       "runs_total": 61,
       "status": "Open",
       "last_updated": "Apr 08",
@@ -598,7 +598,7 @@
       "lat": 45.2833,
       "lng": -111.4014,
       "url": "https://www.onthesnow.com/montana/big-sky-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Whitefish",
@@ -618,7 +618,7 @@
       "lat": 48.4816,
       "lng": -114.3582,
       "url": "https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Sun Valley",
@@ -638,7 +638,7 @@
       "lat": 43.6977,
       "lng": -114.3514,
       "url": "https://www.onthesnow.com/idaho/sun-valley/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Schweitzer",
@@ -658,7 +658,7 @@
       "lat": 48.3678,
       "lng": -116.623,
       "url": "https://www.onthesnow.com/idaho/schweitzer/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Crystal Mountain",
@@ -678,7 +678,7 @@
       "lat": 46.9282,
       "lng": -121.5045,
       "url": "https://www.onthesnow.com/washington/crystal-mountain-wa/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Stevens Pass",
@@ -698,7 +698,7 @@
       "lat": 47.7448,
       "lng": -121.089,
       "url": "https://www.onthesnow.com/washington/stevens-pass-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Mt. Baker",
@@ -718,7 +718,7 @@
       "lat": 48.8566,
       "lng": -121.6647,
       "url": "https://www.onthesnow.com/washington/mt-baker/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Mt. Bachelor",
@@ -738,7 +738,7 @@
       "lat": 43.9792,
       "lng": -121.6886,
       "url": "https://www.onthesnow.com/oregon/mt-bachelor/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Mt. Hood Meadows",
@@ -758,7 +758,7 @@
       "lat": 45.3307,
       "lng": -121.6649,
       "url": "https://www.onthesnow.com/oregon/mt-hood-meadows/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Alyeska",
@@ -778,7 +778,7 @@
       "lat": 60.9604,
       "lng": -149.0987,
       "url": "https://www.onthesnow.com/alaska/alyeska-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Killington",
@@ -798,7 +798,7 @@
       "lat": 43.6045,
       "lng": -72.8201,
       "url": "https://www.onthesnow.com/vermont/killington-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Okemo",
@@ -818,7 +818,7 @@
       "lat": 43.4012,
       "lng": -72.7173,
       "url": "https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Stowe",
@@ -838,7 +838,7 @@
       "lat": 44.5303,
       "lng": -72.7814,
       "url": "https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Sugarbush",
@@ -858,7 +858,7 @@
       "lat": 44.1359,
       "lng": -72.9013,
       "url": "https://www.onthesnow.com/vermont/sugarbush/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Stratton",
@@ -878,7 +878,7 @@
       "lat": 43.1134,
       "lng": -72.9079,
       "url": "https://www.onthesnow.com/vermont/stratton-mountain/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Jay Peak",
@@ -898,7 +898,7 @@
       "lat": 44.9267,
       "lng": -72.529,
       "url": "https://www.onthesnow.com/vermont/jay-peak/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Sunday River",
@@ -913,12 +913,12 @@
       "runs_open": 63,
       "runs_total": 140,
       "status": "Open",
-      "last_updated": "Apr 05",
+      "last_updated": "Apr 08",
       "state": "ME",
       "lat": 44.4733,
       "lng": -70.8567,
       "url": "https://www.onthesnow.com/maine/sunday-river/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Sugarloaf",
@@ -938,7 +938,7 @@
       "lat": 45.0314,
       "lng": -70.3131,
       "url": "https://www.onthesnow.com/maine/sugarloaf/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     },
     {
       "name": "Snowshoe",
@@ -958,9 +958,9 @@
       "lat": 38.4073,
       "lng": -79.994,
       "url": "https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport",
-      "scraped_at": "2026-04-08T18:23:37Z"
+      "scraped_at": "2026-04-08T20:23:14Z"
     }
   ],
-  "generated_at": "2026-04-08T18:23:37Z",
+  "generated_at": "2026-04-08T20:23:14Z",
   "resort_count": 48
 }
