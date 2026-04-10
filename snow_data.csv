@@ -1,49 +1,49 @@
 name,state,lat,lng,base_depth,mid_depth,summit_depth,surface_condition,snowfall_7d,snowfall_24h,lifts_open,lifts_total,runs_open,runs_total,status,last_updated,scraped_at,url
-Vail,CO,39.6403,-106.3742,0,0,0,Powder,1.0,0.0,0,0,0,0,Closed,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/vail/skireport
-Breckenridge,CO,39.4817,-106.0384,0,29,0,,0.0,0.0,11,35,16,188,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/breckenridge/skireport
-Keystone,CO,39.6045,-105.9498,0,0,0,Powder,8.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/keystone/skireport
-Steamboat,CO,40.457,-106.804,0,0,0,Powder,16.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/steamboat/skireport
-Beaver Creek,CO,39.6042,-106.5165,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/beaver-creek/skireport
-Winter Park,CO,39.8868,-105.7625,31,0,0,Spring Snow,0.0,0.0,6,24,0,14,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/winter-park-resort/skireport
-Copper Mountain,CO,39.5022,-106.1497,25,0,0,Spring Snow,0.0,0.0,12,24,5,26,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/copper-mountain-resort/skireport
-Aspen/Snowmass,CO,39.2084,-106.949,19,0,20,Spring Snow,0.0,0.0,2,41,0,74,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/aspen-snowmass/skireport
-Telluride,CO,37.9375,-107.8123,0,0,0,Powder,13.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/telluride/skireport
-Crested Butte,CO,38.8986,-106.965,0,0,0,Powder,14.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport
-Arapahoe Basin,CO,39.6426,-105.8719,0,28,0,Spring Snow,1.0,0.0,5,9,13,147,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport
-Loveland,CO,39.68,-105.8978,0,34,0,Spring Snow,0.0,0.0,4,10,41,94,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/loveland/skireport
-Wolf Creek,CO,37.4747,-106.7934,0,0,0,Powder,19.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport
-Park City,UT,40.6461,-111.498,0,0,0,Powder,13.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/park-city-mountain-resort/skireport
-Snowbird,UT,40.583,-111.6538,0,75,0,Machine Groomed,0.0,0.0,10,14,92,149,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/snowbird/skireport
-Alta,UT,40.5884,-111.6386,83,0,0,Powder,0.0,0.0,5,8,109,118,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/alta-ski-area/skireport
-Deer Valley,UT,40.6374,-111.4783,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/deer-valley-resort/skireport
-Brighton,UT,40.598,-111.5832,72,0,0,Powder,3.0,0.0,6,9,43,67,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/brighton-resort/skireport
-Solitude,UT,40.6199,-111.5927,57,0,0,Powder,1.0,0.0,6,8,26,82,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/solitude-mountain-resort/skireport
-Snowbasin,UT,41.216,-111.8569,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T11:37:47Z,https://www.onthesnow.com/utah/snowbasin/skireport
-Mammoth Mountain,CA,37.6308,-119.0326,38,48,107,Spring Snow,0.0,0.0,16,25,13,27,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport
-Heavenly,CA,38.9353,-119.94,0,0,0,,1.0,0.0,0,0,0,0,Closed,Apr 08,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/heavenly-mountain-resort/skireport
-Palisades Tahoe,CA,39.1968,-120.2354,0,6,46,Powder,0.0,0.0,5,39,34,296,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/palisades-tahoe/skireport
-Northstar,CA,39.2746,-120.121,0,0,0,,17.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/northstar-california/skireport
-Bear Mountain,CA,34.2275,-116.859,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/bear-mountain/skireport
-Snow Summit,CA,34.2326,-116.8728,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/snow-summit/skireport
-Sugar Bowl,CA,39.3049,-120.3344,0,0,0,,0.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T11:37:47Z,https://www.onthesnow.com/california/sugar-bowl-resort/skireport
-Jackson Hole,WY,43.5877,-110.828,0,45,79,Spring Snow,3.0,0.0,10,13,67,141,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/wyoming/jackson-hole/skireport
-Grand Targhee,WY,43.7903,-110.9572,0,91,0,Machine Groomed,1.0,0.0,6,6,88,95,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport
-Big Sky,MT,45.2833,-111.4014,55,0,0,,3.4,0.0,0,0,7,61,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/montana/big-sky-resort/skireport
-Whitefish,MT,48.4816,-114.3582,0,0,0,Powder,10.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T11:37:47Z,https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport
-Sun Valley,ID,43.6977,-114.3514,27,0,50,Spring Snow,0.0,0.0,2,17,25,124,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/idaho/sun-valley/skireport
-Schweitzer,ID,48.3678,-116.623,0,0,0,,8.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T11:37:47Z,https://www.onthesnow.com/idaho/schweitzer/skireport
-Crystal Mountain,WA,46.9282,-121.5045,40,57,69,Corn Snow,0.0,0.0,6,11,5,24,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/washington/crystal-mountain-wa/skireport
-Stevens Pass,WA,47.7448,-121.089,0,60,0,Powder,0.0,0.0,11,14,44,57,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/washington/stevens-pass-resort/skireport
-Mt. Baker,WA,48.8566,-121.6647,92,0,135,Spring Snow,0.0,0.0,7,10,0,0,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/washington/mt-baker/skireport
-Mt. Bachelor,OR,43.9792,-121.6886,31,55,0,Machine Groomed,0.0,0.0,7,15,62,122,Open,Apr 08,2026-04-10T11:37:47Z,https://www.onthesnow.com/oregon/mt-bachelor/skireport
-Mt. Hood Meadows,OR,45.3307,-121.6649,52,89,0,Spring Snow,0.0,0.0,6,12,60,87,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/oregon/mt-hood-meadows/skireport
-Alyeska,AK,60.9604,-149.0987,16,60,106,Machine Groomed,12.0,2.0,7,7,60,76,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/alaska/alyeska-resort/skireport
-Killington,VT,43.6045,-72.8201,10,16,21,Spring Snow,3.0,0.0,11,20,4,21,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/killington-resort/skireport
-Okemo,VT,43.4012,-72.7173,0,36,0,,0.0,0.0,2,21,45,127,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport
-Stowe,VT,44.5303,-72.7814,18,36,48,Spring Snow,7.0,0.0,2,12,60,126,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport
-Sugarbush,VT,44.1359,-72.9013,12,28,42,Spring Snow,5.0,0.0,5,16,2,8,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/sugarbush/skireport
-Stratton,VT,43.1134,-72.9079,16,0,20,Spring Snow,3.0,0.0,3,14,2,11,Open,Apr 10,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/stratton-mountain/skireport
-Jay Peak,VT,44.9267,-72.529,16,0,40,Machine Groomed,7.0,0.0,7,9,68,82,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/vermont/jay-peak/skireport
-Sunday River,ME,44.4733,-70.8567,20,0,0,Machine Groomed,0.0,0.0,0,0,63,140,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/maine/sunday-river/skireport
-Sugarloaf,ME,45.0314,-70.3131,15,0,25,Packed Powder,3.0,0.0,8,15,97,176,Open,Apr 09,2026-04-10T11:37:47Z,https://www.onthesnow.com/maine/sugarloaf/skireport
-Snowshoe,WV,38.4073,-79.994,0,0,0,Powder,14.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T11:37:47Z,https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport
+Vail,CO,39.6403,-106.3742,0,0,0,Powder,1.0,0.0,0,0,0,0,Closed,Apr 09,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/vail/skireport
+Breckenridge,CO,39.4817,-106.0384,0,29,0,,0.0,0.0,11,35,16,188,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/breckenridge/skireport
+Keystone,CO,39.6045,-105.9498,0,0,0,Powder,8.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/keystone/skireport
+Steamboat,CO,40.457,-106.804,0,0,0,Powder,16.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/steamboat/skireport
+Beaver Creek,CO,39.6042,-106.5165,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/beaver-creek/skireport
+Winter Park,CO,39.8868,-105.7625,31,0,0,Spring Snow,0.0,0.0,6,24,0,14,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/winter-park-resort/skireport
+Copper Mountain,CO,39.5022,-106.1497,25,0,0,Spring Snow,0.0,0.0,12,24,5,26,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/copper-mountain-resort/skireport
+Aspen/Snowmass,CO,39.2084,-106.949,18,0,19,Spring Snow,0.0,0.0,2,41,0,74,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/aspen-snowmass/skireport
+Telluride,CO,37.9375,-107.8123,0,0,0,Powder,13.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/telluride/skireport
+Crested Butte,CO,38.8986,-106.965,0,0,0,Powder,14.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport
+Arapahoe Basin,CO,39.6426,-105.8719,0,28,0,Spring Snow,0.0,0.0,5,9,13,147,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport
+Loveland,CO,39.68,-105.8978,0,34,0,Spring Snow,0.0,0.0,4,10,41,94,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/loveland/skireport
+Wolf Creek,CO,37.4747,-106.7934,0,0,0,Powder,19.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport
+Park City,UT,40.6461,-111.498,0,0,0,Powder,13.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/park-city-mountain-resort/skireport
+Snowbird,UT,40.583,-111.6538,0,74,0,Machine Groomed,0.0,0.0,10,14,92,149,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/snowbird/skireport
+Alta,UT,40.5884,-111.6386,83,0,0,Powder,0.0,0.0,5,8,104,118,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/alta-ski-area/skireport
+Deer Valley,UT,40.6374,-111.4783,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/deer-valley-resort/skireport
+Brighton,UT,40.598,-111.5832,72,0,0,Powder,3.0,0.0,6,9,43,67,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/brighton-resort/skireport
+Solitude,UT,40.6199,-111.5927,56,0,0,Powder,0.0,0.0,5,8,24,82,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/solitude-mountain-resort/skireport
+Snowbasin,UT,41.216,-111.8569,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T21:24:44Z,https://www.onthesnow.com/utah/snowbasin/skireport
+Mammoth Mountain,CA,37.6308,-119.0326,38,48,107,Spring Snow,0.0,0.0,16,25,13,27,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport
+Heavenly,CA,38.9353,-119.94,0,0,0,,1.0,0.0,0,0,0,0,Closed,Apr 08,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/heavenly-mountain-resort/skireport
+Palisades Tahoe,CA,39.1968,-120.2354,0,5,45,Powder,0.0,0.0,6,39,35,296,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/palisades-tahoe/skireport
+Northstar,CA,39.2746,-120.121,0,0,0,,17.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/northstar-california/skireport
+Bear Mountain,CA,34.2275,-116.859,0,0,0,,0.0,0.0,0,0,0,0,Closed,Mar 30,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/bear-mountain/skireport
+Snow Summit,CA,34.2326,-116.8728,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/snow-summit/skireport
+Sugar Bowl,CA,39.3049,-120.3344,0,0,0,Powder,0.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T21:24:44Z,https://www.onthesnow.com/california/sugar-bowl-resort/skireport
+Jackson Hole,WY,43.5877,-110.828,0,44,76,Corn Snow,0.0,0.0,10,13,65,141,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/wyoming/jackson-hole/skireport
+Grand Targhee,WY,43.7903,-110.9572,0,90,0,Machine Groomed,0.0,0.0,6,6,88,95,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport
+Big Sky,MT,45.2833,-111.4014,54,0,0,,0.4,0.0,14,40,4,61,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/montana/big-sky-resort/skireport
+Whitefish,MT,48.4816,-114.3582,0,0,0,,10.0,0.0,0,0,0,0,Closed,Apr 07,2026-04-10T21:24:44Z,https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport
+Sun Valley,ID,43.6977,-114.3514,26,0,47,Spring Snow,0.0,0.0,2,17,25,124,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/idaho/sun-valley/skireport
+Schweitzer,ID,48.3678,-116.623,0,0,0,Powder,8.0,0.0,0,0,0,0,Closed,Apr 06,2026-04-10T21:24:44Z,https://www.onthesnow.com/idaho/schweitzer/skireport
+Crystal Mountain,WA,46.9282,-121.5045,40,57,69,,0.0,0.0,7,11,5,24,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/washington/crystal-mountain-wa/skireport
+Stevens Pass,WA,47.7448,-121.089,0,59,0,Powder,0.0,0.0,11,14,44,57,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/washington/stevens-pass-resort/skireport
+Mt. Baker,WA,48.8566,-121.6647,91,0,141,Spring Snow,0.0,0.0,7,10,0,0,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/washington/mt-baker/skireport
+Mt. Bachelor,OR,43.9792,-121.6886,0,26,0,Spring Snow,0.0,0.0,7,15,62,122,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/oregon/mt-bachelor/skireport
+Mt. Hood Meadows,OR,45.3307,-121.6649,52,89,0,Spring Snow,0.0,0.0,7,12,60,87,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/oregon/mt-hood-meadows/skireport
+Alyeska,AK,60.9604,-149.0987,15,59,105,Machine Groomed,12.0,2.0,7,7,60,76,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/alaska/alyeska-resort/skireport
+Killington,VT,43.6045,-72.8201,10,16,21,Spring Snow,3.0,0.0,11,20,4,21,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/killington-resort/skireport
+Okemo,VT,43.4012,-72.7173,0,36,0,Powder,0.0,0.0,2,21,44,127,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport
+Stowe,VT,44.5303,-72.7814,18,36,48,Spring Snow,7.0,0.0,2,12,60,126,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport
+Sugarbush,VT,44.1359,-72.9013,12,28,42,Spring Snow,5.0,0.0,5,16,2,8,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/sugarbush/skireport
+Stratton,VT,43.1134,-72.9079,16,0,20,Spring Snow,3.0,0.0,4,14,2,11,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/stratton-mountain/skireport
+Jay Peak,VT,44.9267,-72.529,16,0,40,Machine Groomed,7.0,0.0,9,9,69,82,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/vermont/jay-peak/skireport
+Sunday River,ME,44.4733,-70.8567,20,0,0,Machine Groomed,0.0,0.0,1,19,15,140,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/maine/sunday-river/skireport
+Sugarloaf,ME,45.0314,-70.3131,15,0,25,Packed Powder,3.0,0.0,8,15,100,176,Open,Apr 10,2026-04-10T21:24:44Z,https://www.onthesnow.com/maine/sugarloaf/skireport
+Snowshoe,WV,38.4073,-79.994,0,0,0,Powder,14.0,0.0,0,0,0,0,Closed,Mar 23,2026-04-10T21:24:44Z,https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport
