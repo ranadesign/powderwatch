@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowderWatch — Live Snow Conditions</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.css" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#f7f5f0;--bg2:#efece5;--bg3:#e8e4dc;--bg4:#ddd8ce;
+--sf:#ffffff;--text:#1a1a18;--t2:#4a4a45;--tm:#8a8a82;--tl:#b0afa8;
+--ac:#2e5a88;--acl:#4a7ab5;--acs:rgba(46,90,136,0.08);
+--deep:#1e3f66;--good:#3a6e9e;--light:#7aadcc;--thin:#b5d4e6;
+--r:12px;--rs:8px;--rl:20px;
+--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans','Helvetica Neue',sans-serif;
+--ease:cubic-bezier(0.22,1,0.36,1);
+--sh:0 4px 20px rgba(0,0,0,0.06);--shl:0 12px 40px rgba(0,0,0,0.08);
+}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.6}
+::selection{background:var(--ac);color:#fff}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease)}
+nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--bg3)}
+.logo{font-family:var(--serif);font-size:1.5rem;color:var(--text);text-decoration:none}.logo em{font-style:italic;color:var(--ac)}
+.nav-r{display:flex;gap:2rem;align-items:center}
+.nav-r a{font-size:.8rem;font-weight:500;color:var(--t2);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .3s}
+.nav-r a:hover{color:var(--ac)}
+.nav-pill{background:var(--ac)!important;color:#fff!important;padding:8px 20px;border-radius:100px;font-size:.75rem!important}
+
+.hero{min-height:100vh;display:flex;align-items:center;padding:6rem 2rem 4rem}
+.hero-inner{max-width:1300px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-text{opacity:0;animation:fadeUp 1s var(--ease) .2s forwards}
+.ey{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+.ey::before{content:'';width:24px;height:1px;background:var(--ac)}
+.hero h1{font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
+.hero h1 em{font-style:italic;color:var(--ac)}
+.hero-desc{font-size:1.05rem;color:var(--t2);font-weight:300;margin-top:1.5rem;max-width:440px;line-height:1.7}
+.hero-cta{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
+.btn{padding:14px 30px;border-radius:100px;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .35s var(--ease);border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:var(--sh)}
+.btn-o{background:transparent;color:var(--text);border:1.5px solid var(--bg4)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
+
+.hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards;min-height:420px;display:flex;align-items:center;justify-content:center}
+.hero-vis-img{position:absolute;inset:0;border-radius:var(--rl);overflow:hidden;background:url('IMG_0165.jpg') center center/cover no-repeat;z-index:0}
+.hero-vis-overlay{display:none}
+.hero-vis-content{position:relative;z-index:2;width:100%;padding:2.5rem;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:420px;padding-bottom:3.5rem}
+.hero-card{background:#fff;border:none;border-radius:var(--r);padding:.75rem;box-shadow:var(--shl);position:relative;overflow:hidden;width:100%}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.7)}
+.hc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:.2rem;color:var(--text)}
+.hc-sub{font-size:.68rem;color:var(--tm);margin-bottom:.75rem}
+.hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.hc-s{text-align:center;padding:.5rem .4rem;background:var(--bg);border-radius:var(--rs)}
+.hc-s .v{font-family:var(--serif);font-size:1.9rem;line-height:1;color:var(--ac)}.hc-s .l{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tm);margin-top:4px}
+.hf{position:absolute;background:#fff;border-radius:var(--rs);padding:7px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.12);display:flex;align-items:center;gap:7px;animation:float 6s ease-in-out infinite;z-index:50;pointer-events:none}
+.hf1{}.hf2{animation-delay:2s}
+.hf-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.hf-v{font-weight:600;font-size:.9rem;color:var(--text)}.hf-l{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+
+.source-badge{position:fixed;bottom:1rem;right:1rem;z-index:90;background:var(--sf);border:1px solid var(--bg3);border-radius:100px;padding:6px 14px;font-size:.6rem;color:var(--tm);box-shadow:var(--sh);display:flex;align-items:center;gap:6px}
+.source-dot{width:6px;height:6px;border-radius:50%;background:#34a853;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.stats{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.st{padding:2rem;text-align:center;position:relative;transition:background .3s}.st:hover{background:#fafaf7}
+.st:not(:last-child)::after{content:'';position:absolute;right:0;top:25%;height:50%;width:1px;background:var(--bg3)}
+.st-v{font-family:var(--serif);font-size:2rem}.st-l{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-top:.25rem}
+
+.sh{text-align:center;padding:5rem 2rem 2.5rem}
+.sh .ey2{font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:.75rem}
+.sh h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400}.sh h2 em{font-style:italic}
+.sh p{color:var(--tm);margin-top:.5rem;font-size:.95rem;font-weight:300}
+
+.mw{padding:0 2rem 2rem;max-width:1400px;margin:0 auto}
+.mc{position:relative;border-radius:var(--rl);overflow:hidden;box-shadow:var(--shl);border:1px solid var(--bg3);height:70vh;min-height:520px}
+#map{width:100%;height:100%}
+.map-ctrl{position:absolute;top:1rem;left:1rem;z-index:10}
+.mb{background:var(--acs);backdrop-filter:blur(12px);border:1px solid var(--ac);border-radius:var(--rs);padding:10px 16px;font-family:var(--sans);font-size:.7rem;font-weight:500;color:var(--ac);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:7px}
+.mb:hover{background:#fff;border-color:var(--ac);color:var(--ac)}
+.mb.on{background:#fff;border-color:var(--bg3);color:var(--t2)}
+.ml{position:absolute;bottom:1rem;left:1rem;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:14px 18px}
+.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib{display:none!important}
+.ml-t{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-bottom:6px;font-weight:600}
+.ml-bar{width:180px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--thin),var(--light),var(--good),var(--deep));margin-bottom:4px}
+.ml-lab{display:flex;justify-content:space-between;font-size:.6rem;color:var(--tl)}
+
+.rs{padding:0 2rem 5rem;max-width:1400px;margin:0 auto}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.25rem;margin-top:2rem}
+.rc{background:var(--sf);border:1px solid var(--bg3);border-radius:var(--r);padding:1.75rem;cursor:pointer;transition:all .4s var(--ease)}
+.rc:hover{transform:translateY(-4px);box-shadow:var(--shl);border-color:var(--bg4)}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem}
+.rc-nm{font-family:var(--serif);font-size:1.3rem}.rc-st{font-size:.65rem;color:var(--tm);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.08em}
+.ct{padding:4px 12px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.ct.deep{background:rgba(30,63,102,.08);color:var(--deep)}.ct.good{background:rgba(58,110,158,.08);color:var(--good)}.ct.light{background:rgba(122,173,204,.1);color:var(--light)}.ct.closed{background:rgba(180,40,40,.06);color:#b42828}
+.rc-data{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding-top:0.75rem;border-top:1px solid var(--bg)}
+.rm{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}.rm .rv{font-family:var(--serif);font-size:1.9rem;line-height:1;color:var(--text)}.rm .ru{font-size:.85rem;color:var(--tm)}.rm .rl{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl)}
+.rc-extra{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+.rc-tag{padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:500;background:var(--bg);color:var(--tm);letter-spacing:.04em}
+.rc-tag.open{background:rgba(52,168,83,.08);color:#2d8a4e}
+.rc-link{display:inline-flex;align-items:center;gap:4px;margin-top:.75rem;font-size:.7rem;color:var(--ac);text-decoration:none;font-weight:500;transition:gap .3s}
+.rc-link:hover{gap:8px}
+.fc{padding:8px 18px;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;border:1.5px solid var(--bg3);background:var(--sf);color:var(--t2);transition:all .3s;letter-spacing:.02em;font-family:var(--sans)}
+.fc:hover{border-color:var(--ac);color:var(--ac)}
+.fc.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.fc-fav{border-color:#c0392b!important;color:#c0392b!important;display:inline-flex;align-items:center}
+.fc-fav.on{background:#c0392b!important;color:#fff!important;border-color:#c0392b!important}
+.fc-fav.on svg{stroke:#fff}
+.fc-ikon{border-color:#f5c800!important;color:#b89400!important}
+.fc-ikon.on{background:#f5c800!important;color:#5a4800!important;border-color:#f5c800!important}
+.fc-epic{border-color:#005daa!important;color:#005daa!important}
+.fc-epic.on{background:#005daa!important;color:#fff!important;border-color:#005daa!important}
+.pass-legend{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1.5rem;font-size:.7rem;color:var(--tm)}
+.pass-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.pass-dot.ikon{background:#f5c800}
+.pass-dot.epic{background:#005daa}
+.rc-fav-btn{position:absolute;top:1.1rem;right:1.1rem;background:none;border:none;cursor:pointer;padding:4px;border-radius:50%;transition:transform .2s var(--ease);color:var(--tl);line-height:0}
+.rc-fav-btn:hover{transform:scale(1.2);color:var(--ac)}
+.rc-fav-btn.active{color:#e05a5a}
+.rc-fav-btn.active svg{fill:#e05a5a;stroke:#e05a5a}
+.rc{position:relative}
+.top-pick-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(46,90,136,.12),rgba(46,90,136,.06));color:var(--ac);border:1px solid rgba(46,90,136,.15);margin-bottom:.5rem}
+.no-favs{text-align:center;padding:3rem 1rem;color:var(--tm);font-size:.9rem;grid-column:1/-1}
+.no-favs svg{display:block;margin:0 auto 1rem;opacity:.3}
+.trend{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.04em;margin-top:.6rem}
+.trend-up{background:rgba(34,139,80,.08);color:#228b50}
+.trend-rising{background:rgba(58,130,90,.07);color:#3a7a5a}
+.trend-hold{background:rgba(120,120,110,.08);color:#6a6a62}
+.trend-fading{background:rgba(180,120,30,.08);color:#a06820}
+.trend-down{background:rgba(180,60,40,.07);color:#b03c28}
+
+
+.maplibregl-popup-content{background:rgba(255,255,255,.96)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:12px!important;padding:16px 20px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:var(--shl)!important;min-width:220px}
+.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:8px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
+.maplibregl-popup-tip{border-top-color:rgba(255,255,255,.96)!important}
+.maplibregl-popup-close-button{color:var(--tm)!important;font-size:18px!important}
+.pn{font-family:var(--serif);font-size:1.05rem;margin-bottom:1px}.pl{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pm .pv{font-family:var(--serif);font-size:1.1rem;color:var(--ac)}.pm .pk{font-size:.55rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+.ps{margin-top:8px;padding-top:8px;border-top:1px solid var(--bg);font-size:.55rem;color:var(--tl)}
+
+.lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
+.lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.lr{width:40px;height:40px;border:2px solid var(--bg3);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+.lt{margin-top:1.25rem;font-size:.75rem;color:var(--tm);letter-spacing:.1em}
+
+/* ── Feedback section ── */
+#feedback{padding:4rem 0 0;border-top:1px solid var(--bg3)}
+.feedback-wrap{padding-bottom:4rem}
+.feedback-inner{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start}
+.feedback-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.fb-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:100px;font-size:.72rem;font-weight:500;color:var(--t2);background:var(--bg);border:1px solid var(--bg3);letter-spacing:.02em;cursor:default;user-select:none}
+.feedback-form{display:flex;flex-direction:column;gap:.75rem}
+.feedback-form textarea{width:100%;min-height:110px;padding:1rem 1.1rem;background:var(--sf);border:1.5px solid var(--bg3);border-radius:var(--r);font-family:var(--sans);font-size:.9rem;color:var(--text);resize:vertical;transition:border-color .25s,box-shadow .25s;line-height:1.6;display:block}
+.feedback-form textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
+.feedback-form textarea::placeholder{color:var(--tl)}
+.feedback-success{font-size:.85rem;color:#2d8a4e;font-weight:500;padding:.6rem 0}
+.feedback-form-row{display:flex;gap:.75rem;align-items:center}
+.feedback-form-row input{flex:1;padding:.75rem 1rem;background:var(--sf);border:1.5px solid var(--bg3);border-radius:var(--rs);font-family:var(--sans);font-size:.85rem;color:var(--text);transition:border-color .25s,box-shadow .25s}
+.feedback-form-row input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
+.feedback-form-row input::placeholder{color:var(--tl)}
+.feedback-send-btn{padding:.75rem 1.5rem;background:var(--ac);color:#fff;border:none;border-radius:var(--rs);font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:background .25s,transform .2s;white-space:nowrap;flex-shrink:0}
+.feedback-send-btn:hover{background:var(--acl);transform:translateY(-1px)}
+.feedback-send-btn:disabled{opacity:.5;cursor:default;transform:none}
+.feedback-status{font-size:.78rem;color:var(--tm);min-height:1.2em}
+.feedback-status.ok{color:#2d8a4e}.feedback-status.err{color:#b42828}
+@media(max-width:900px){.feedback-inner{grid-template-columns:1fr}}
+footer{border-top:1px solid var(--bg3);padding:3rem 2rem;text-align:center;background:var(--sf)}
+.fl{font-family:var(--serif);font-size:1.3rem;margin-bottom:.5rem}.fl em{font-style:italic;color:var(--ac)}
+footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--ac);text-decoration:none}
+
+/* ── Map + card panel side-by-side ── */
+.map-and-cards{display:grid;grid-template-columns:1fr 360px;gap:0;border-radius:var(--rl) var(--rl) 0 0;overflow:hidden;box-shadow:var(--shl);border:1px solid var(--bg3);border-bottom:none;height:70vh;min-height:520px;position:relative;z-index:1}
+.map-and-cards .mc{height:100%;min-height:0;border-radius:0;box-shadow:none;border:none;overflow:hidden}
+.map-and-cards .mc:first-child{border-top-left-radius:var(--rl)}
+#map{width:100%;height:100%}
+/* Card panel */
+.card-panel{background:var(--sf);border-left:1px solid var(--bg3);display:flex;flex-direction:column;height:100%;min-height:0}
+.card-panel-hdr{padding:.7rem 1.1rem .6rem;border-bottom:1px solid var(--bg3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.card-panel-hdr span{font-size:.78rem;font-weight:600;color:var(--t2)}
+.card-panel-scroll{flex:1;overflow-y:auto;padding:0 .9rem 1rem}
+.card-panel-scroll::-webkit-scrollbar{width:4px}
+.card-panel-scroll::-webkit-scrollbar-track{background:transparent}
+.card-panel-scroll::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+/* Single-col grid inside panel */
+.rg-single{grid-template-columns:1fr!important;gap:.6rem;margin-top:.5rem}
+.rg-single .rc{padding:1.1rem 1.1rem .9rem}
+.rg-single .rc-nm{font-size:1.1rem}
+.rg-single .rc-data{gap:.6rem;padding-top:.6rem}
+.rg-single .rm .rv{font-size:1.4rem}
+/* ── Map search bar (below map+panel, overlapping slightly) ── */
+.map-search-bar-wrap{position:relative;z-index:2;margin-top:-2px}
+.map-search-bar{display:flex;align-items:center;background:#fff;border:2px solid var(--bg3);border-radius:0 0 var(--rl) var(--rl);box-shadow:0 6px 20px rgba(0,0,0,0.07);overflow:hidden;transition:border-color .25s,box-shadow .25s}
+.map-search-bar:focus-within{border-color:var(--ac);box-shadow:0 6px 20px rgba(46,90,136,0.12)}
+.map-filter-trigger{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 1.5rem;height:56px;background:none;border:none;font-family:var(--sans);font-size:.9rem;font-weight:600;color:var(--t2);cursor:pointer;transition:color .2s,background .2s;white-space:nowrap;position:relative}
+.map-filter-trigger:hover{color:var(--ac);background:var(--acs)}
+.map-filter-trigger.active{color:var(--ac);background:var(--acs)}
+.filter-count{background:var(--ac);color:#fff;border-radius:100px;font-size:.6rem;font-weight:700;padding:2px 7px;margin-left:2px}
+.map-search-divider{width:1px;height:26px;background:var(--bg3);flex-shrink:0}
+.map-search-field{flex:1;display:flex;align-items:center;gap:12px;padding:0 1.25rem}
+.map-search-field input{flex:1;border:none;outline:none;font-family:var(--sans);font-size:1rem;color:var(--text);background:transparent;padding:0;height:56px}
+.map-search-field input::placeholder{color:var(--tl)}
+.search-clear-btn{background:var(--bg3);border:none;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;color:var(--tm);flex-shrink:0;transition:background .2s}
+.search-clear-btn:hover{background:var(--bg4);color:var(--t2)}
+.map-filter-panel{background:#fff;border:2px solid var(--bg3);border-bottom:none;border-radius:var(--rl) var(--rl) 0 0;padding:1rem 1.25rem .75rem;box-shadow:0 -4px 20px rgba(0,0,0,0.06);display:none;flex-wrap:wrap;gap:8px}
+.map-filter-panel.open{display:flex}
+/* Map results header (inside card panel) */
+.map-results-clear{background:none;border:1px solid var(--bg3);border-radius:100px;padding:3px 10px;font-size:.65rem;color:var(--tm);cursor:pointer;font-family:var(--sans);transition:all .3s}
+.map-results-clear:hover{border-color:var(--ac);color:var(--ac)}
+@media(max-width:1000px){
+  .map-and-cards{grid-template-columns:1fr;height:auto;border-radius:0;border:none;box-shadow:none;border-bottom:none}
+  .map-and-cards .mc{height:55vw;min-height:320px;border-radius:0;border:none}
+  .card-panel{height:360px;border-left:none;border-top:1px solid var(--bg3)}
+  /* On mobile: search bar on top, map below — scope to map-section only */
+  #map-section .mw{display:flex;flex-direction:column;padding-left:0;padding-right:0}
+  #map-section .mw > .map-search-bar-wrap{order:-1;margin-top:0;border-radius:var(--rl) var(--rl) 0 0;border:2px solid var(--bg3);overflow:hidden}
+  #map-section .mw > .map-search-bar-wrap .map-search-bar{border-radius:0;border:none;border-top:none}
+  #map-section .mw > .map-search-bar-wrap .map-filter-panel{border-radius:0;border:none;border-bottom:1px solid var(--bg3)}
+  #map-section .mw > .map-and-cards{order:0;border-radius:0 0 var(--rl) var(--rl);overflow:hidden;border:2px solid var(--bg3);border-top:none;box-shadow:var(--shl)}
+}
+@media(max-width:600px){.map-and-cards .mc{height:60vw;min-height:260px}.card-panel{height:300px}}
+/* ── Highlights strip ── */
+#highlights{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
+.hl-wrap{max-width:1400px;margin:0 auto;padding:2.5rem 2rem;display:grid;grid-template-columns:1fr 1px 1fr;gap:2.5rem;align-items:start}
+.hl-divider{background:var(--bg3);align-self:stretch}
+.hl-hdr{margin-bottom:1.25rem}
+.hl-eyebrow{font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);display:flex;align-items:center;gap:8px;margin-bottom:.4rem}
+.hl-eyebrow::before{content:'';width:18px;height:1px;background:var(--ac)}
+.hl-title{font-family:var(--serif);font-size:1.35rem;font-weight:400;line-height:1.15}.hl-title em{font-style:italic;color:var(--ac)}
+.hl-grid{display:flex;flex-direction:column;gap:.6rem}
+/* Compact card variant — single row */
+.rc-sm{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:.85rem 1.1rem;cursor:pointer;transition:all .3s var(--ease);display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center}
+.rc-sm:hover{background:var(--sf);box-shadow:var(--sh);border-color:var(--bg4)}
+.rc-sm-rank{font-family:var(--serif);font-size:1.3rem;line-height:1;color:var(--ac);width:1.2rem;text-align:center;flex-shrink:0}
+.rc-sm-identity{min-width:0}
+.rc-sm-name{font-family:var(--serif);font-size:1.1rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-sm-state{font-size:.62rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.rc-sm-right{display:flex;align-items:center;gap:1.5rem;flex-shrink:0}
+.rc-sm-stats{display:flex;gap:1.5rem;align-items:center}
+.rc-sm-stat{text-align:center}
+.rc-sm-stat .v{font-family:var(--serif);font-size:1.35rem;line-height:1;color:var(--text)}.rc-sm-stat .u{font-size:.8rem;color:var(--tm)}.rc-sm-stat .l{font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px}
+.rc-sm-badges{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+@media(max-width:900px){.hl-wrap{grid-template-columns:1fr;gap:2rem}.hl-divider{display:none}}
+@media(max-width:600px){.hl-wrap{padding:2rem 1rem}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
+@media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}}
+</style>
+</head>
+<body>
+
+<div class="lo" id="loader"><div class="lr"></div><div class="lt">Loading snow reports…</div></div>
+<div class="source-badge"><span class="source-dot"></span><span id="srcTxt">Park-reported via OnTheSnow</span></div>
+
+<nav id="nav">
+  <a href="#" class="logo">Powder<em>Watch</em></a>
+  <div class="nav-r"><a href="#map-section">Map</a><a href="#resorts">Parks</a><a href="#map-section" class="nav-pill">Explore</a></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="ey">Live Reported Data</div>
+      <h1>Check for powder.<br>Beat <em>the crowds.</em></h1>
+      <p class="hero-desc">Track recent snowfall, lift counts, and more directly from park websites via OnTheSnow — updated twice daily.</p>
+      <div class="hero-cta">
+        <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
+        <a href="#resorts" class="btn btn-o">View Parks</a>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <div class="hero-vis-img"></div>
+      <div class="hero-vis-overlay"></div>
+      <div class="hero-vis-content">
+      <div class="hero-card" id="heroCard">
+          <div class="hc-title" id="heroName">Loading…</div>
+          <div class="hc-sub" id="heroLoc">—</div>
+          <div class="hc-stats">
+            <div class="hc-s"><div class="v" id="hero7d">—</div><div class="l">7-Day Snow</div></div>
+            <div class="hc-s"><div class="v" id="hero24h">—</div><div class="l">Fresh 24h</div></div>
+            <div class="hc-s"><div class="v" id="heroLifts">—</div><div class="l">Lifts Open</div></div>
+          </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hf hf1" id="badge1"><div class="hf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="hf-v">Updated</div><div class="hf-l">Twice Daily</div></div></div>
+<div class="hf hf2" id="badge2"><div class="hf-icon">🏔️</div><div><div class="hf-v" id="fCount">—</div><div class="hf-l">Tracked</div></div></div>
+
+<section id="highlights">
+  <div class="hl-wrap">
+    <div class="hl-col">
+      <div class="hl-hdr"><span class="hl-eyebrow">Top Picks Right Now</span><h3 class="hl-title">Best conditions <em>today</em></h3></div>
+      <div class="hl-grid" id="top-picks-grid"></div>
+    </div>
+    <div class="hl-divider"></div>
+    <div class="hl-col" id="fresh-24h-col">
+      <div class="hl-hdr"><span class="hl-eyebrow">Fresh Snow</span><h3 class="hl-title">Most snowfall <em>last 24h</em></h3></div>
+      <div class="hl-grid" id="fresh-24h-grid"></div>
+    </div>
+  </div>
+</section>
+
+<section id="map-section">
+  <div class="mw" style="padding-top:3rem;padding-bottom:0">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:2rem;margin-bottom:1rem">
+      <div class="hl-hdr" style="margin-bottom:0">
+        <span class="hl-eyebrow">Interactive Map</span>
+        <h3 class="hl-title">Resort <em>snow map</em></h3>
+      </div>
+      <p style="font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;flex-shrink:0;max-width:280px">Pin color indicates 7-day snowfall — red pins are closed.</p>
+    </div>
+  </div>
+  <div class="mw">
+    <div class="map-and-cards">
+      <!-- Map -->
+      <div class="mc">
+        <div id="map"></div>
+        <div class="map-ctrl" style="display:flex;gap:8px;">
+          <button class="mb on" id="rBtn" onclick="resetMap()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset View</button>
+        </div>
+        <div class="ml"><div class="ml-t">7-Day Snowfall</div><div class="ml-bar" style="background:linear-gradient(90deg,#c8ddf0,#8bb8e0,#4a8cc4,#1e5a94,#0d3b6e)"></div><div class="ml-lab"><span>0"</span><span>5"</span><span>10"</span><span>15"</span><span>20"+</span></div></div>
+      </div>
+      <!-- Scrollable card panel -->
+      <div class="card-panel">
+        <div class="card-panel-hdr">
+          <span id="mapResultsLabel">50 parks</span>
+          <button class="map-results-clear" id="mapResultsClear" onclick="clearSearch()" style="display:none">✕ Clear</button>
+        </div>
+        <div class="pass-legend" id="passLegend" style="display:none">
+          <span id="ikonLegend"><span class="pass-dot ikon"></span>Ikon</span>
+          <span id="epicLegend"><span class="pass-dot epic"></span>Epic</span>
+        </div>
+        <div class="card-panel-scroll">
+          <div class="rg rg-single" id="grid"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Search bar spanning full width below -->
+    <div class="map-search-bar-wrap" id="mapSearchWrap">
+      <div class="map-filter-panel" id="filterPanel">
+        <button class="fc on" data-f="all">All</button>
+        <button class="fc" data-f="CO">Colorado</button>
+        <button class="fc" data-f="UT">Utah</button>
+        <button class="fc" data-f="CA">California</button>
+        <button class="fc" data-f="west">West</button>
+        <button class="fc" data-f="east">East</button>
+        <button class="fc" data-f="open">Open Only</button>
+        <button class="fc fc-ikon" data-f="ikon">Ikon</button>
+        <button class="fc fc-epic" data-f="epic">Epic</button>
+        <button class="fc fc-fav" data-f="favorites" id="favBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>My Parks</button>
+      </div>
+      <div class="map-search-bar">
+        <button class="map-filter-trigger" id="filterToggle" onclick="toggleFilterPanel()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          <span>Filter</span>
+          <span class="filter-count" id="filterCount" style="display:none"></span>
+        </button>
+        <div class="map-search-divider"></div>
+        <div class="map-search-field">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--tl)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search" placeholder="Search by park or state…" aria-label="Search" autocomplete="off">
+          <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display:none">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="feedback">
+  <div class="mw feedback-wrap">
+    <div class="feedback-inner">
+      <div class="feedback-text">
+        <span class="hl-eyebrow">Help Us Improve</span>
+        <h3 class="hl-title" style="margin-top:.3rem">Your <em>feedback matters</em></h3>
+        <p style="font-size:.88rem;color:var(--tm);font-weight:300;margin-top:.6rem;line-height:1.7">Found a bug, spotted incorrect data, want a new park added, or have a feature idea? Send us a note.</p>
+        <div class="feedback-pills">
+          <span class="fb-pill">Bug report</span>
+          <span class="fb-pill">Incorrect data</span>
+          <span class="fb-pill">Request a park</span>
+          <span class="fb-pill">Feature suggestion</span>
+        </div>
+      </div>
+      <div class="feedback-form">
+        <div class="feedback-success" data-fs-success style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d8a4e" stroke-width="2.5" style="vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
+          Message sent — thank you!
+        </div>
+        <div data-fs-error style="font-size:.78rem;color:#b42828;min-height:1.2em"></div>
+        <form id="feedback-form">
+          <textarea name="message" placeholder="Tell us what's on your mind…" rows="5" data-fs-field required></textarea>
+          <span data-fs-error="message" style="font-size:.72rem;color:#b42828"></span>
+          <div class="feedback-form-row" style="margin-top:.75rem">
+            <input type="email" name="email" placeholder="Your email (optional)" data-fs-field>
+            <span data-fs-error="email" style="font-size:.72rem;color:#b42828"></span>
+            <button type="submit" class="feedback-send-btn" data-fs-submit-btn>Send</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="fl">Powder<em>Watch</em></div><p>Data from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> and gathered twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> &middot; Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch</p></footer>
+
+<script>
+// ━━━ EMBEDDED SNOW DATA (updated by scraper agent) ━━━
+// In production, fetch this from snow_data.json served alongside this page.
+// For now, data is embedded directly so the prototype works standalone.
+const SNOW_DATA = {"resorts":[{"name":"Vail","state":"CO","lat":39.6403,"lng":-106.3742,"base_depth":35,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":8,"lifts_total":33,"runs_open":28,"runs_total":277,"status":"Open","last_updated":"Apr 01","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/vail/skireport"},{"name":"Breckenridge","state":"CO","lat":39.4817,"lng":-106.0384,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":10,"lifts_total":35,"runs_open":72,"runs_total":187,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/breckenridge/skireport"},{"name":"Keystone","state":"CO","lat":39.6045,"lng":-105.9498,"base_depth":40,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":128,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/keystone/skireport"},{"name":"Steamboat","state":"CO","lat":40.457,"lng":-106.804,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":9,"lifts_total":18,"runs_open":85,"runs_total":169,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/steamboat/skireport"},{"name":"Beaver Creek","state":"CO","lat":39.6042,"lng":-106.5165,"base_depth":38,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":5,"snowfall_24h":0,"lifts_open":0,"lifts_total":25,"runs_open":0,"runs_total":150,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/beaver-creek/skireport"},{"name":"Winter Park","state":"CO","lat":39.8868,"lng":-105.7625,"base_depth":55,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":10,"snowfall_24h":1,"lifts_open":12,"lifts_total":25,"runs_open":90,"runs_total":166,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/winter-park-resort/skireport"},{"name":"Copper Mountain","state":"CO","lat":39.5022,"lng":-106.1497,"base_depth":46,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":8,"snowfall_24h":0,"lifts_open":8,"lifts_total":23,"runs_open":65,"runs_total":140,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/copper-mountain-resort/skireport"},{"name":"Snowmass","state":"CO","lat":39.2084,"lng":-106.949,"base_depth":42,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":6,"lifts_total":21,"runs_open":45,"runs_total":98,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/snowmass/skireport"},{"name":"Telluride","state":"CO","lat":37.9375,"lng":-107.8123,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":4,"snowfall_24h":0,"lifts_open":0,"lifts_total":18,"runs_open":0,"runs_total":148,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/telluride/skireport"},{"name":"Aspen Mountain","state":"CO","lat":39.1869,"lng":-106.8182,"base_depth":33,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":8,"runs_open":0,"runs_total":76,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-mountain/skireport"},{"name":"Aspen Highlands","state":"CO","lat":39.1822,"lng":-106.8552,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":5,"runs_open":0,"runs_total":144,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-highlands/skireport"},{"name":"Crested Butte","state":"CO","lat":38.8986,"lng":-106.965,"base_depth":41,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport"},{"name":"Arapahoe Basin","state":"CO","lat":39.6426,"lng":-105.8719,"base_depth":50,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":1,"lifts_open":5,"lifts_total":9,"runs_open":45,"runs_total":147,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport"},{"name":"Loveland","state":"CO","lat":39.68,"lng":-105.8978,"base_depth":44,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":7,"snowfall_24h":0,"lifts_open":4,"lifts_total":11,"runs_open":32,"runs_total":94,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/loveland/skireport"},{"name":"Wolf Creek","state":"CO","lat":37.4747,"lng":-106.7934,"base_depth":72,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":12,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":77,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport"},{"name":"Park City","state":"UT","lat":40.6461,"lng":-111.498,"base_depth":63,"surface_condition":"","snowfall_7d":13,"snowfall_24h":0,"lifts_open":6,"lifts_total":41,"runs_open":13,"runs_total":349,"status":"Open","last_updated":"Apr 05","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/park-city-mountain-resort/skireport"},{"name":"Snowbird","state":"UT","lat":40.583,"lng":-111.6538,"base_depth":82,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":16,"snowfall_24h":2,"lifts_open":8,"lifts_total":13,"runs_open":65,"runs_total":170,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbird-ski-summer-resort/skireport"},{"name":"Alta","state":"UT","lat":40.5884,"lng":-111.6386,"base_depth":90,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":18,"snowfall_24h":3,"lifts_open":7,"lifts_total":11,"runs_open":72,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/alta-ski-area/skireport"},{"name":"Deer Valley","state":"UT","lat":40.6374,"lng":-111.4783,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":10,"snowfall_24h":0,"lifts_open":4,"lifts_total":21,"runs_open":22,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/deer-valley-resort/skireport"},{"name":"Brighton","state":"UT","lat":40.598,"lng":-111.5832,"base_depth":68,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":13,"snowfall_24h":1,"lifts_open":4,"lifts_total":7,"runs_open":40,"runs_total":66,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/brighton-resort/skireport"},{"name":"Solitude","state":"UT","lat":40.6199,"lng":-111.5927,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":3,"lifts_total":8,"runs_open":35,"runs_total":82,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/solitude-mountain-resort/skireport"},{"name":"Snowbasin","state":"UT","lat":41.216,"lng":-111.8569,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":8,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":107,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbasin-resort/skireport"},{"name":"Mammoth Mountain","state":"CA","lat":37.6308,"lng":-119.0326,"base_depth":38,"mid_depth":48,"summit_depth":107,"surface_condition":"Powder","snowfall_7d":4,"snowfall_24h":4,"lifts_open":19,"lifts_total":25,"runs_open":121,"runs_total":180,"status":"Open","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport"},{"name":"Heavenly","state":"CA","lat":38.9353,"lng":-119.94,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":5,"snowfall_24h":0,"lifts_open":6,"lifts_total":28,"runs_open":30,"runs_total":97,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/heavenly-mountain-resort/skireport"},{"name":"Palisades Tahoe","state":"CA","lat":39.1968,"lng":-120.2354,"base_depth":58,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":12,"lifts_total":30,"runs_open":95,"runs_total":270,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/palisades-tahoe/skireport"},{"name":"Northstar","state":"CA","lat":39.2746,"lng":-120.121,"base_depth":34,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":20,"runs_open":28,"runs_total":100,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/northstar-california/skireport"},{"name":"Bear Mountain","state":"CA","lat":34.2275,"lng":-116.859,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":32,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/bear-mountain/skireport"},{"name":"Snow Summit","state":"CA","lat":34.2326,"lng":-116.8728,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":35,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/snow-summit/skireport"},{"name":"Sugar Bowl","state":"CA","lat":39.3049,"lng":-120.3344,"base_depth":60,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":0,"lifts_open":6,"lifts_total":13,"runs_open":50,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/sugar-bowl-resort/skireport"},{"name":"Jackson Hole","state":"WY","lat":43.5877,"lng":-110.828,"base_depth":56,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":50,"runs_total":133,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/jackson-hole/skireport"},{"name":"Grand Targhee","state":"WY","lat":43.7903,"lng":-110.9572,"base_depth":78,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":15,"snowfall_24h":3,"lifts_open":4,"lifts_total":7,"runs_open":55,"runs_total":79,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport"},{"name":"Big Sky","state":"MT","lat":45.2833,"lng":-111.4014,"base_depth":45,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":8,"lifts_total":39,"runs_open":75,"runs_total":317,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/big-sky-resort/skireport"},{"name":"Whitefish","state":"MT","lat":48.4816,"lng":-114.3582,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":105,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport"},{"name":"Sun Valley","state":"ID","lat":43.6977,"lng":-114.3514,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":19,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/sun-valley/skireport"},{"name":"Schweitzer","state":"ID","lat":48.3678,"lng":-116.623,"base_depth":65,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":48,"runs_total":92,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/schweitzer-mountain-resort/skireport"},{"name":"Crystal Mountain","state":"WA","lat":46.9282,"lng":-121.5045,"base_depth":80,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":14,"snowfall_24h":2,"lifts_open":7,"lifts_total":11,"runs_open":40,"runs_total":57,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/crystal-mountain/skireport"},{"name":"Stevens Pass","state":"WA","lat":47.7448,"lng":-121.089,"base_depth":74,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":35,"runs_total":52,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/stevens-pass-resort/skireport"},{"name":"Mt. Baker","state":"WA","lat":48.8566,"lng":-121.6647,"base_depth":126,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":20,"snowfall_24h":3,"lifts_open":8,"lifts_total":10,"runs_open":31,"runs_total":38,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/mt-baker/skireport"},{"name":"Mt. Bachelor","state":"OR","lat":43.9792,"lng":-121.6886,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":121,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-bachelor/skireport"},{"name":"Mt. Hood Meadows","state":"OR","lat":45.3307,"lng":-121.6649,"base_depth":70,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":1,"lifts_open":8,"lifts_total":14,"runs_open":55,"runs_total":87,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-hood-meadows/skireport"},{"name":"Alyeska","state":"AK","lat":60.9604,"lng":-149.0987,"base_depth":96,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":22,"snowfall_24h":4,"lifts_open":7,"lifts_total":9,"runs_open":55,"runs_total":76,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/alaska/alyeska-resort/skireport"},{"name":"Killington","state":"VT","lat":43.6045,"lng":-72.8201,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":22,"runs_open":25,"runs_total":155,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/killington-resort/skireport"},{"name":"Okemo","state":"VT","lat":43.4012,"lng":-72.7173,"base_depth":18,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport"},{"name":"Stowe","state":"VT","lat":44.5303,"lng":-72.7814,"base_depth":24,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":3,"snowfall_24h":0,"lifts_open":3,"lifts_total":14,"runs_open":18,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport"},{"name":"Sugarbush","state":"VT","lat":44.1359,"lng":-72.9013,"base_depth":20,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":2,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":111,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/sugarbush/skireport"},{"name":"Stratton","state":"VT","lat":43.1134,"lng":-72.9079,"base_depth":16,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":99,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stratton-mountain/skireport"},{"name":"Jay Peak","state":"VT","lat":44.9267,"lng":-72.529,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":5,"snowfall_24h":0,"lifts_open":3,"lifts_total":9,"runs_open":22,"runs_total":81,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/jay-peak/skireport"},{"name":"Sunday River","state":"ME","lat":44.4733,"lng":-70.8567,"base_depth":22,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":4,"lifts_total":18,"runs_open":28,"runs_total":135,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sunday-river/skireport"},{"name":"Sugarloaf","state":"ME","lat":45.0314,"lng":-70.3131,"base_depth":32,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":5,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":40,"runs_total":162,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sugarloaf/skireport"},{"name":"Snowshoe","state":"WV","lat":38.4073,"lng":-79.994,"base_depth":14,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":61,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport"}],"generated_at":"2026-04-06T12:00:00Z"};
+
+let data=[], map, curFilter='all';
+const WEST=['CO','UT','CA','WY','MT','ID','WA','OR','AK','NM'];
+const EAST=['VT','ME','WV','NH','NY','NC'];
+
+// Pass affiliations (as of 2025-26 season)
+const IKON_PASS = new Set(['Steamboat','Winter Park','Copper Mountain','Snowmass','Aspen Mountain','Aspen Highlands','Crested Butte','Arapahoe Basin','Mammoth Mountain','Palisades Tahoe','Northstar','Sugar Bowl','Jackson Hole','Grand Targhee','Big Sky','Whitefish','Schweitzer','Crystal Mountain','Stevens Pass','Mt. Baker','Mt. Bachelor','Mt. Hood Meadows','Killington','Sugarbush','Stratton','Sunday River','Sugarloaf','Snowshoe','Deer Valley','Solitude','Brighton']);
+const EPIC_PASS = new Set(['Vail','Breckenridge','Keystone','Beaver Creek','Park City','Heavenly','Northstar','Stowe','Okemo','Snowbasin','Afton Alps','Wilmot','Alyeska']);
+
+// ── Favorites (localStorage) ──────────────────────────────────────────────
+let favorites = new Set(JSON.parse(localStorage.getItem('pw_favorites')||'[]'));
+function saveFavorites(){ localStorage.setItem('pw_favorites', JSON.stringify([...favorites])); }
+function toggleFavorite(name){
+  if(favorites.has(name)) favorites.delete(name); else favorites.add(name);
+  saveFavorites();
+}
+
+// ── Powder score (powder chasers: fresh snow weighted heavily) ────────────
+function powderScore(r){
+  if(r.status==='Closed') return -1;
+  return (r.snowfall_24h * 5) + (r.snowfall_7d * 2) + (r.base_depth * 0.3) + (r.lifts_open > 0 ? 20 : 0);
+}
+
+function makeSmallCard(r, rank, primaryStat, primaryLabel){
+  const c = cLvl(r);
+  const trend = getTrend(r);
+  const card = document.createElement('div');
+  card.className = 'rc-sm';
+  card.style.animation = 'cardIn .4s var(--ease) both';
+  card.innerHTML = `
+    <div class="rc-sm-rank">${rank}</div>
+    <div class="rc-sm-identity">
+      <div class="rc-sm-name">${r.name}</div>
+      <div class="rc-sm-state">${r.state}</div>
+    </div>
+    <div class="rc-sm-right">
+      <div class="rc-sm-stats">
+        <div class="rc-sm-stat"><div class="v">${primaryStat}<span class="u">"</span></div><div class="l">${primaryLabel}</div></div>
+        <div class="rc-sm-stat"><div class="v">${r.base_depth}<span class="u">"</span></div><div class="l">Base</div></div>
+        <div class="rc-sm-stat"><div class="v">${r.lifts_open}<span class="u">/${r.lifts_total}</span></div><div class="l">Lifts</div></div>
+      </div>
+      <div class="rc-sm-badges">
+        <span class="ct ${c.cls}">${c.label}</span>
+        ${trend?`<span class="trend ${trend.cls}" style="margin-top:0;font-size:.55rem">${trend.arrow} ${trend.label}</span>`:''}
+      </div>
+    </div>`;
+  card.addEventListener('click',()=>{
+    if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:0,bearing:0,duration:1200});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}
+    document.getElementById('map-section').scrollIntoView({behavior:'smooth'});
+  });
+  return card;
+}
+
+function renderTopPicks(){
+  const top = [...data].filter(r=>r.status==='Open').sort((a,b)=>powderScore(b)-powderScore(a)).slice(0,3);
+  const g = document.getElementById('top-picks-grid');
+  g.innerHTML = '';
+  top.forEach((r,i)=>g.appendChild(makeSmallCard(r, i+1, r.snowfall_7d, '7-Day Snow')));
+}
+
+function renderFresh24h(){
+  const fresh = [...data].filter(r=>r.snowfall_24h>0).sort((a,b)=>b.snowfall_24h-a.snowfall_24h).slice(0,3);
+  const col = document.getElementById('fresh-24h-col');
+  const g = document.getElementById('fresh-24h-grid');
+  if(fresh.length===0){ col.style.display='none'; document.querySelector('.hl-divider').style.display='none'; return; }
+  col.style.display='';
+  g.innerHTML = '';
+  fresh.forEach((r,i)=>g.appendChild(makeSmallCard(r, i+1, r.snowfall_24h, 'Fresh 24h')));
+}
+
+async function loadData(){
+  try{
+    const res=await fetch('snow_data.json');
+    if(res.ok){const j=await res.json();if(j.resorts?.length)return j;}
+  }catch(e){}
+  return SNOW_DATA;
+}
+
+// Map markers registry for pin highlighting
+let allMarkerEls = [];
+let currentFilteredNames = null; // null = show all
+
+function applyPinStyles(){
+  allMarkerEls.forEach(({r, el})=>{
+    const show = !currentFilteredNames || currentFilteredNames.has(r.name);
+    el.style.opacity = show ? '1' : '0.15';
+    el.style.pointerEvents = show ? 'auto' : 'none';
+  });
+}
+
+function zoomToFiltered(filtered){
+  if(!map || !filtered.length) return;
+  if(filtered.length === 1){
+    map.flyTo({center:[filtered[0].lng, filtered[0].lat], zoom:8, pitch:0, bearing:0, duration:1000});
+    setTimeout(()=>showPopup(filtered[0]), 800);
+    return;
+  }
+  const lngs = filtered.map(r=>r.lng);
+  const lats = filtered.map(r=>r.lat);
+  const bounds = [
+    [Math.min(...lngs), Math.min(...lats)],
+    [Math.max(...lngs), Math.max(...lats)]
+  ];
+  map.fitBounds(bounds, {padding:80, pitch:0, bearing:0, duration:1000, maxZoom:9});
+}
+
+function applyFilter(zoomOnEnter){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  let filtered=data;
+  if(curFilter==='favorites') filtered=data.filter(r=>favorites.has(r.name));
+  else if(curFilter==='ikon') filtered=data.filter(r=>IKON_PASS.has(r.name));
+  else if(curFilter==='epic') filtered=data.filter(r=>EPIC_PASS.has(r.name));
+  else if(curFilter==='west')filtered=data.filter(r=>WEST.includes(r.state));
+  else if(curFilter==='east')filtered=data.filter(r=>EAST.includes(r.state));
+  else if(curFilter==='open')filtered=data.filter(r=>r.status==='Open');
+  else if(curFilter!=='all')filtered=data.filter(r=>r.state===curFilter);
+  if(q){
+    const STATE_NAMES={'AL':'alabama','AK':'alaska','AZ':'arizona','AR':'arkansas','CA':'california',
+      'CO':'colorado','CT':'connecticut','DE':'delaware','FL':'florida','GA':'georgia','HI':'hawaii',
+      'ID':'idaho','IL':'illinois','IN':'indiana','IA':'iowa','KS':'kansas','KY':'kentucky',
+      'LA':'louisiana','ME':'maine','MD':'maryland','MA':'massachusetts','MI':'michigan',
+      'MN':'minnesota','MS':'mississippi','MO':'missouri','MT':'montana','NE':'nebraska',
+      'NV':'nevada','NH':'new hampshire','NJ':'new jersey','NM':'new mexico','NY':'new york',
+      'NC':'north carolina','ND':'north dakota','OH':'ohio','OK':'oklahoma','OR':'oregon',
+      'PA':'pennsylvania','RI':'rhode island','SC':'south carolina','SD':'south dakota',
+      'TN':'tennessee','TX':'texas','UT':'utah','VT':'vermont','VA':'virginia',
+      'WA':'washington','WV':'west virginia','WI':'wisconsin','WY':'wyoming'};
+    filtered=filtered.filter(r=>{
+      const name=r.name.toLowerCase().replace(/\./g,'');
+      const normQ=q.replace(/\./g,'');
+      return name.includes(normQ)||
+        r.name.toLowerCase().includes(q)||
+        r.state.toLowerCase().includes(q)||
+        (STATE_NAMES[r.state]||'').includes(q);
+    });
+  }
+
+  const isFiltered = q || curFilter !== 'all';
+  currentFilteredNames = isFiltered ? new Set(filtered.map(r=>r.name)) : null;
+  applyPinStyles();
+
+  if(zoomOnEnter && isFiltered && filtered.length) zoomToFiltered(filtered);
+
+  // Update results label
+  const label = isFiltered
+    ? `${filtered.length} park${filtered.length!==1?'s':''} matched`
+    : `${filtered.length} parks`;
+  document.getElementById('mapResultsLabel').textContent = label;
+
+  // Show/hide clear button
+  const clearBtn = document.getElementById('mapResultsClear');
+  if(clearBtn) clearBtn.style.display = isFiltered ? '' : 'none';
+
+  // Show/hide search clear X
+  const searchX = document.getElementById('searchClearBtn');
+  if(searchX) searchX.style.display = q ? '' : 'none';
+
+  // Update filter count badge
+  const fc = document.getElementById('filterCount');
+  if(fc){
+    const active = curFilter !== 'all' ? 1 : 0;
+    fc.textContent = active || '';
+    fc.style.display = active ? '' : 'none';
+  }
+
+  renderCards(filtered);
+}
+
+function clearSearch(){
+  document.getElementById('search').value='';
+  curFilter='all';
+  document.querySelectorAll('.fc').forEach(x=>x.classList.toggle('on',x.dataset.f==='all'));
+  const passLegend = document.getElementById('passLegend');
+  if(passLegend) passLegend.style.display='none';
+  applyFilter();
+}
+
+function toggleFilterPanel(){
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('active', isOpen);
+  if(isOpen){
+    setTimeout(()=>{
+      document.addEventListener('click', function handler(e){
+        if(!document.getElementById('mapSearchWrap').contains(e.target)){
+          panel.classList.remove('open');
+          btn.classList.remove('active');
+          document.removeEventListener('click', handler);
+        }
+      });
+    }, 10);
+  }
+}
+
+function dCol(d){if(d>=120)return'#1e3f66';if(d>=80)return'#2e5a88';if(d>=40)return'#3a6e9e';if(d>=20)return'#7aadcc';return'#b5d4e6';}
+function dSz(d){return Math.max(16,Math.min(44,16+d/4));}
+function cLvl(r){
+  if(r.status==='Closed')return{label:'Closed',cls:'closed'};
+  if(r.base_depth>=100)return{label:'Deep',cls:'deep'};
+  if(r.base_depth>=40)return{label:'Good',cls:'good'};
+  return{label:'Light',cls:'light'};
+}
+
+function getTrend(r){
+  // No snow data at all — can't say
+  if(r.snowfall_7d===0 && r.snowfall_24h===0) return null;
+  if(r.status==='Closed') return null;
+  // Daily average over 7 days
+  const avg7 = r.snowfall_7d / 7;
+  const h24 = r.snowfall_24h;
+  // If no 7d snow but fresh today — actively snowing
+  if(r.snowfall_7d===0 && h24>0) return {cls:'trend-up',arrow:'↑',label:'Snowing now'};
+  // Ratio of today vs weekly average
+  const ratio = avg7 > 0 ? h24 / avg7 : (h24 > 0 ? 99 : 0);
+  if(ratio >= 2.0)  return {cls:'trend-up',    arrow:'↑',  label:'Picking up'};
+  if(ratio >= 1.1)  return {cls:'trend-rising', arrow:'↗', label:'Improving'};
+  if(ratio >= 0.7)  return {cls:'trend-hold',   arrow:'→', label:'Holding'};
+  if(ratio >= 0.2)  return {cls:'trend-fading', arrow:'↘', label:'Tapering'};
+  return              {cls:'trend-down',   arrow:'↓', label:'Fading'};
+}
+
+function updateStats(generatedAt){
+  const n=data.length;
+  const best=[...data].filter(r=>r.status==='Open').sort((a,b)=>b.snowfall_7d-a.snowfall_7d)[0]||[...data].sort((a,b)=>b.snowfall_7d-a.snowfall_7d)[0];
+  document.getElementById('heroName').textContent=best.name;
+  document.getElementById('heroLoc').textContent=best.state+' · Most Snow This Week';
+  document.getElementById('hero7d').textContent=best.snowfall_7d+'"';
+  document.getElementById('hero24h').textContent=best.snowfall_24h+'"';
+  document.getElementById('heroLifts').textContent=best.lifts_open+'/'+best.lifts_total;
+  document.getElementById('fCount').textContent=n+' parks';
+  // Update source timestamp — show when data was generated
+  const ts=generatedAt||SNOW_DATA.generated_at;
+  if(ts){
+    const d=new Date(ts);
+    document.getElementById('srcTxt').textContent='Data as of '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+  }
+}
+
+function renderCards(resorts){resorts=resorts||data;
+  const g=document.getElementById('grid');g.innerHTML='';
+  if(curFilter==='favorites' && resorts.length===0){
+    g.innerHTML=`<div class="no-favs"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>No saved parks yet — tap the ♥ on any card to save it here.</div>`;
+    return;
+  }
+  [...resorts].sort((a,b)=>b.snowfall_7d-a.snowfall_7d).forEach((r,i)=>{
+    const c=cLvl(r);
+    const isFav=favorites.has(r.name);
+    const trend=getTrend(r);
+    const card=document.createElement('div');
+    card.className='rc';
+    const tags=[];
+    if(r.lifts_open>0)tags.push(`<span class="rc-tag open">${r.lifts_open}/${r.lifts_total} lifts</span>`);
+    if(r.runs_open>0)tags.push(`<span class="rc-tag">${r.runs_open}/${r.runs_total} runs</span>`);
+    if(r.surface_condition)tags.push(`<span class="rc-tag">${r.surface_condition}</span>`);
+    if(r.last_updated)tags.push(`<span class="rc-tag">Updated ${r.last_updated}</span>`);
+    card.innerHTML=`
+      <div class="rc-top" style="padding-right:2rem"><div><div class="rc-nm">${r.name}</div><div class="rc-st">${r.state}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="ct ${c.cls}">${c.label}</span>${trend?`<span class="trend ${trend.cls}" style="margin-top:0">${trend.arrow} ${trend.label}</span>`:''}</div></div>
+      <div class="rc-data">
+        <div class="rm"><div class="rv">${r.snowfall_7d}<span class="ru">"</span></div><div class="rl">7-Day Snow</div></div>
+        <div class="rm"><div class="rv">${r.snowfall_24h}<span class="ru">"</span></div><div class="rl">Fresh 24h</div></div>
+        <div class="rm"><div class="rv">${r.lifts_open}<span class="ru">/${r.lifts_total}</span></div><div class="rl">Lifts Open</div></div>
+      </div>
+      ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>
+      <button class="rc-fav-btn${isFav?' active':''}" data-name="${r.name}" title="Save to My Parks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'#e05a5a':'none'}" stroke="${isFav?'#e05a5a':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>`;
+    card.querySelector('.rc-fav-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      toggleFavorite(r.name);
+      const btn=e.currentTarget;
+      const isFavNow=favorites.has(r.name);
+      btn.classList.toggle('active',isFavNow);
+      btn.querySelector('svg').setAttribute('fill',isFavNow?'#e05a5a':'none');
+      btn.querySelector('svg').setAttribute('stroke',isFavNow?'#e05a5a':'currentColor');
+      if(curFilter==='favorites') card.remove();
+    });
+    card.addEventListener('click',e=>{
+      if(e.target.tagName==='A'||e.target.closest('.rc-fav-btn')) return;
+      if(map){map.flyTo({center:[r.lng,r.lat],zoom:8,pitch:0,bearing:0,duration:1200});if(activePopup)activePopup.remove();setTimeout(()=>showPopup(r),800);}
+    });
+    g.appendChild(card);
+  });
+}
+
+function showPopup(r){
+  const c=cLvl(r);
+  activePopup = new maplibregl.Popup({offset:25,closeButton:true,maxWidth:'260px',className:'full-popup'}).setLngLat([r.lng,r.lat]).setHTML(`
+    <div class="pn">${r.name}</div><div class="pl">${r.state} · ${r.status}</div>
+    <div class="pg">
+      <div class="pm"><div class="pv">${r.base_depth}"</div><div class="pk">Base</div></div>
+      <div class="pm"><div class="pv">${r.snowfall_7d}"</div><div class="pk">7-Day</div></div>
+      <div class="pm"><div class="pv">${r.snowfall_24h}"</div><div class="pk">24h</div></div>
+      <div class="pm"><div class="pv">${r.lifts_open}/${r.lifts_total}</div><div class="pk">Lifts</div></div>
+    </div>
+    ${r.surface_condition?`<div class="ps">Surface: ${r.surface_condition}</div>`:''}
+    <div class="ps">Updated ${r.last_updated} via OnTheSnow</div>
+  `).addTo(map);
+}
+
+let activePopup=null, hoverPopup=null;
+
+// Resolve overlapping resorts by nudging coordinates
+
+function pinColor(r){
+  if(r.status==='Closed') return '#c0392b';
+  const s = r.snowfall_7d;
+  if(s>=20) return '#0d3b6e';
+  if(s>=15) return '#1e5a94';
+  if(s>=10) return '#3a7abf';
+  if(s>=5)  return '#6aaad8';
+  if(s>0)   return '#a8cce0';
+  return '#b5c9d4';
+}
+
+function makePinSVG(color){
+  return `<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="${color}" stroke="white" stroke-width="2"/>
+    <circle cx="14" cy="14" r="5" fill="white" opacity="0.9"/>
+  </svg>`;
+}
+
+async function initMap(){
+  map = new maplibregl.Map({
+    container:'map', zoom:4.2, center:[-108,43], pitch:0, bearing:0, antialias:true,
+    style:{
+      version:8,
+      sources:{
+        'carto':{type:'raster',tiles:['https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png','https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'],tileSize:256,attribution:'&copy; CARTO',maxzoom:19}
+      },
+      layers:[{id:'base',type:'raster',source:'carto'}]
+    }
+  });
+  map.addControl(new maplibregl.NavigationControl(),'top-right');
+  map.scrollZoom.disable();
+  map.getContainer().addEventListener('click', ()=> map.scrollZoom.enable());
+  map.getContainer().addEventListener('mouseleave', ()=> map.scrollZoom.disable());
+
+  map.on('load', ()=>{
+    // Reapply pin opacity on every render so map moves don't reset styles
+    map.on('render', applyPinStyles);
+
+    data.forEach(r=>{
+      const color = pinColor(r);
+      const el = document.createElement('div');
+      el.style.cssText = 'cursor:pointer;width:28px;height:36px;transition:opacity .2s;';
+      el.innerHTML = makePinSVG(color);
+
+      const marker = new maplibregl.Marker({element:el, anchor:'bottom'})
+        .setLngLat([r.lng, r.lat])
+        .addTo(map);
+
+      el.addEventListener('mouseenter', e=>{
+        if(hoverPopup) hoverPopup.remove();
+        const isClosed = r.status==='Closed';
+        hoverPopup = new maplibregl.Popup({offset:[0,-32],closeButton:false,closeOnClick:false,className:'hover-popup'})
+          .setLngLat([r.lng,r.lat])
+          .setHTML(isClosed
+            ? `<strong>${r.name}</strong><br><span style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:rgba(180,40,40,.06);color:#b42828">Closed</span>`
+            : `<strong>${r.name}</strong><br>
+               <span style="color:var(--ac);font-weight:600">${r.snowfall_7d}"</span>
+               <span style="font-size:.65rem;color:var(--tm)"> 7-day &middot; </span>
+               <span style="color:var(--ac);font-weight:600">${r.base_depth}"</span>
+               <span style="font-size:.65rem;color:var(--tm)"> base &middot; </span>
+               <span style="font-size:.65rem;color:var(--tm)">${r.lifts_open}/${r.lifts_total} lifts</span>`)
+          .addTo(map);
+      });
+      el.addEventListener('mouseleave', ()=>{
+        if(hoverPopup){hoverPopup.remove();hoverPopup=null;}
+      });
+      el.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(hoverPopup){hoverPopup.remove();hoverPopup=null;}
+        if(activePopup) activePopup.remove();
+        showPopup(r);
+      });
+      allMarkerEls.push({r, el});
+    });
+  });
+}
+
+function resetMap(){if(!map)return;map.flyTo({center:[-108,43],zoom:4.2,pitch:0,bearing:0,duration:1200,essential:true});}
+function positionBadges(){
+  const card = document.getElementById('heroCard');
+  const b1   = document.getElementById('badge1');
+  const b2   = document.getElementById('badge2');
+  if(!card||!b1||!b2) return;
+  const r = card.getBoundingClientRect();
+  const scrollY = window.scrollY;
+  // badge1 (Updated) — top-right corner
+  b1.style.left = (r.right - b1.offsetWidth / 2) + 'px';
+  b1.style.top  = (scrollY + r.top - b1.offsetHeight / 2) + 'px';
+  // badge2 (Tracked) — bottom-left corner
+  b2.style.left = (r.left - b2.offsetWidth / 2) + 'px';
+  b2.style.top  = (scrollY + r.bottom - b2.offsetHeight / 2) + 'px';
+}
+// Run after fonts/layout settle, and on resize
+window.addEventListener('load', ()=>{ setTimeout(positionBadges, 300); });
+window.addEventListener('resize', positionBadges);
+// Also re-run once data loads and card content changes size
+const _origUpdateStats = updateStats;
+updateStats = function(generatedAt){ _origUpdateStats(generatedAt); setTimeout(positionBadges, 50); };
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);},{passive:true});
+
+document.getElementById('search').addEventListener('input',()=>applyFilter(false));
+document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter') applyFilter(true);});
+document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
+  const f = c.dataset.f;
+  if((f==='ikon'||f==='epic') && curFilter===f){
+    curFilter='all';
+  } else {
+    curFilter=f;
+  }
+  document.querySelectorAll('.fc').forEach(x=>x.classList.toggle('on',x.dataset.f===curFilter));
+  const isPass = curFilter==='ikon'||curFilter==='epic';
+  document.getElementById('passLegend').style.display = isPass ? 'flex' : 'none';
+  document.getElementById('passLegend').style.marginBottom = isPass ? '1.5rem' : '0';
+  applyFilter(curFilter !== 'all');
+}));
+
+(async()=>{
+  const loaded=await loadData();
+  data=loaded.resorts;
+  updateStats(loaded.generated_at);applyFilter();renderTopPicks();renderFresh24h();
+  await initMap();
+  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),600);
+})();
+
+// Formspree Ajax SDK
+window.formspree = window.formspree || function(){ (formspree.q = formspree.q || []).push(arguments); };
+formspree('initForm', { formElement: '#feedback-form', formId: 'xjgjbdwr' });
+</script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+</body>
+</html>
