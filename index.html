@@ -88,8 +88,9 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .ml{position:absolute;bottom:1rem;left:1rem;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:14px 18px}
 .maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib{display:none!important}
 .ml-t{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-bottom:6px;font-weight:600}
-.ml-bar{width:180px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--thin),var(--light),var(--good),var(--deep));margin-bottom:4px}
-.ml-lab{display:flex;justify-content:space-between;font-size:.6rem;color:var(--tl)}
+.ml-dots{display:flex;align-items:center;gap:6px;margin-top:4px}
+.ml-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.ml-num{font-size:.72rem;color:var(--tl)}
 
 .rs{padding:0 2rem 5rem;max-width:1400px;margin:0 auto}
 .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.25rem;margin-top:2rem}
@@ -184,7 +185,6 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .mobile-popup-meta{font-size:.6rem;color:var(--tl);padding-top:.5rem;border-top:1px solid var(--bg3)}
 /* Clip map canvas corners and card panel independently */
 .map-and-cards .mc{overflow:hidden;border-radius:var(--rl) 0 0 0}
-.card-panel{overflow:hidden}
 @media(max-width:1000px){
   .rd-body{overflow-y:visible;padding:.8rem 1.1rem}
   .rd-stats{display:none}
@@ -199,6 +199,37 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--text);color:#fff;padding:8px 20px;border-radius:100px;font-size:.78rem;font-weight:500;font-family:var(--sans);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999}
 .share-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* Dot legend in card panel header — mobile only */
+.cp-legend-inline{display:none;flex-direction:column;gap:3px}
+.cp-legend-title{font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;font-weight:500}
+.cp-legend-row{display:flex;align-items:center;gap:3px}
+.cp-legend-num{font-size:.58rem;color:var(--tm);white-space:nowrap}
+.cp-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* Right side of header */
+.cp-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-left:auto}
+.cp-hdr-right #mapResultsLabel{font-size:.72rem;font-weight:600;color:var(--t2)}
+@media(max-width:1000px){
+  .cp-legend-inline{display:flex}
+  .cp-legend-title{font-size:.68rem}
+  .cp-legend-num{font-size:.68rem}
+  .cp-legend-dot{width:10px;height:10px}
+  .cp-legend-row{gap:4px}
+  .card-panel-hdr{flex-wrap:nowrap;align-items:center}
+  .maplibregl-ctrl-top-right{display:none!important}
+  .ml{display:none}
+  /* Scroll fade indicator */
+  .card-panel{--scroll-fade:1}
+  .card-panel::after{content:'';position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.96));pointer-events:none;z-index:5;border-radius:0 0 0 var(--rl);opacity:var(--scroll-fade);transition:opacity .25s}
+  /* Real scroll fade element */
+  .card-scroll-fade{position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.97));pointer-events:none;z-index:6;transition:opacity .25s}
+}
+/* Map section header layout */
+.map-section-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:2rem;margin-bottom:1rem}
+.map-section-hdr p{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;flex-shrink:0;max-width:280px}
+@media(max-width:1000px){
+  .map-section-hdr{flex-direction:column;gap:.25rem;align-items:flex-start}
+  .map-section-hdr p{text-align:left;max-width:none}
+}
 .lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .lr{width:40px;height:40px;border:2px solid var(--bg3);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
@@ -238,7 +269,6 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 /* Card panel inside map-and-cards on desktop */
 .card-panel{background:var(--sf);border-left:1px solid var(--bg3);display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
 .card-panel-hdr{padding:.7rem 1.1rem .6rem;border-bottom:1px solid var(--bg3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.card-panel-hdr span{font-size:.78rem;font-weight:600;color:var(--t2)}
 .card-panel-scroll{flex:1;overflow-y:auto;padding:0 .9rem 1rem}
 .card-panel-scroll::-webkit-scrollbar{width:4px}
 .card-panel-scroll::-webkit-scrollbar-track{background:transparent}
@@ -271,15 +301,16 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 @media(max-width:1000px){
   #map-section .hl-eyebrow{display:none}
   #map-section .mw{display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem;padding-right:1.5rem}
-  .map-search-bar-wrap{order:-1;margin-top:0;border-radius:var(--rl);border:1.5px solid var(--bg3);overflow:hidden;box-shadow:var(--sh)}
+  /* Search bar goes BELOW card panel on mobile */
+  .map-search-bar-wrap{order:2;margin-top:0;border-radius:var(--rl);border:1.5px solid var(--bg3);overflow:hidden;box-shadow:var(--sh)}
   .map-search-bar{border-radius:0;border:none;box-shadow:none}
   .map-filter-panel{border-radius:0;border:none;border-bottom:1px solid var(--bg3)}
-  /* Box 2: map+cards together, just narrowed to 1 col */
-  .map-and-cards{grid-template-columns:1fr;height:auto;border-radius:var(--rl)!important;overflow:hidden;border:1.5px solid var(--bg3)!important;border-bottom:1.5px solid var(--bg3)!important;box-shadow:var(--sh)}
+  /* Box 1: map+cards */
+  .map-and-cards{order:0;grid-template-columns:1fr;height:auto;border-radius:var(--rl)!important;overflow:hidden;border:1.5px solid var(--bg3)!important;border-bottom:1.5px solid var(--bg3)!important;box-shadow:var(--sh)}
   .map-and-cards .mc{height:60vw;min-height:300px}
   .map-and-cards .mc:first-child{border-top-left-radius:0}
-  /* Card panel becomes box 3 below map */
-  .card-panel{height:360px;border-left:none;border-top:1px solid var(--bg3);border-radius:0}
+  /* Card panel: order 1, between map and search */
+  .card-panel{order:1;height:360px;border-left:none;border-top:1px solid var(--bg3);border-radius:0}
 }
 @media(max-width:600px){.map-and-cards .mc{height:65vw;min-height:260px}.card-panel{height:300px}}
 /* ── Highlights strip ── */
@@ -392,12 +423,12 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 
 <section id="map-section">
   <div class="mw" style="padding-top:3rem;padding-bottom:0">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:2rem;margin-bottom:1rem">
+    <div class="map-section-hdr">
       <div class="hl-hdr" style="margin-bottom:0">
         <span class="hl-eyebrow">Interactive Map</span>
         <h3 class="hl-title">Resort <em>snow map</em></h3>
       </div>
-      <p style="font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;flex-shrink:0;max-width:280px">Pin color indicates past 7-day snowfall — red pins are closed.</p>
+      <p>Pin color indicates past 7-day snowfall — red pins are closed.</p>
     </div>
   </div>
   <div class="mw">
@@ -408,7 +439,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
         <div class="map-ctrl" style="display:flex;gap:8px;">
           <button class="mb on" id="rBtn" onclick="resetMap()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset View</button>
         </div>
-        <div class="ml"><div class="ml-t">Past 7-Day Snowfall</div><div class="ml-bar" style="background:linear-gradient(90deg,#c8ddf0,#8bb8e0,#4a8cc4,#1e5a94,#0d3b6e)"></div><div class="ml-lab"><span>0"</span><span>5"</span><span>10"</span><span>15"</span><span>20"+</span></div></div>
+        <div class="ml"><div class="ml-t">Past 7-Day Snowfall</div><div class="ml-dots"><span class="ml-num">0"</span><span class="ml-dot" style="background:#a8cce0"></span><span class="ml-dot" style="background:#6aaad8"></span><span class="ml-dot" style="background:#3a7abf"></span><span class="ml-dot" style="background:#1e5a94"></span><span class="ml-dot" style="background:#0d3b6e"></span><span class="ml-num">20+"</span></div></div>
       </div>
       <!-- Custom mobile popup: lives in map-and-cards (not mc), clipped by map-and-cards overflow:hidden, not by mc -->
       <div id="mobilePopup" class="mobile-popup" style="display:none">
@@ -428,16 +459,31 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
       <!-- Scrollable card panel -->
       <div class="card-panel">
         <div class="card-panel-hdr">
-          <span id="mapResultsLabel">50 parks</span>
-          <button class="map-results-clear" id="mapResultsClear" onclick="clearSearch()" style="display:none">✕ Clear</button>
+          <div class="cp-legend-inline">
+            <span class="cp-legend-title">Past 7-day snow</span>
+            <div class="cp-legend-row">
+              <span class="cp-legend-num">2"</span>
+              <span class="cp-legend-dot" style="background:#a8cce0"></span>
+              <span class="cp-legend-dot" style="background:#6aaad8"></span>
+              <span class="cp-legend-dot" style="background:#3a7abf"></span>
+              <span class="cp-legend-dot" style="background:#1e5a94"></span>
+              <span class="cp-legend-dot" style="background:#0d3b6e"></span>
+              <span class="cp-legend-num">20+"</span>
+            </div>
+          </div>
+          <div class="cp-hdr-right">
+            <span id="mapResultsLabel">50 parks</span>
+            <button class="map-results-clear" id="mapResultsClear" onclick="clearSearch()" style="display:none">✕ Clear</button>
+          </div>
         </div>
         <div class="pass-legend" id="passLegend" style="display:none">
           <span id="ikonLegend"><span class="pass-dot ikon"></span>Ikon</span>
           <span id="epicLegend"><span class="pass-dot epic"></span>Epic</span>
         </div>
-        <div class="card-panel-scroll">
+        <div class="card-panel-scroll" id="cardPanelScroll">
           <div class="rg rg-single" id="grid"></div>
         </div>
+        <div class="card-scroll-fade" id="cardScrollFade"></div>
         <!-- Resort detail overlay inside card panel -->
         <div class="resort-detail" id="resortDetail">
           <div class="rd-hdr">
@@ -1036,8 +1082,11 @@ function makePinSVG(color){
 }
 
 async function initMap(){
+  const isMobile = window.innerWidth <= 1000;
+  const initCenter = isMobile ? [-96, 38] : [-108, 43];
+  const initZoom   = isMobile ? 2.8 : 4.2;
   map = new maplibregl.Map({
-    container:'map', zoom:4.2, center:[-108,43], pitch:0, bearing:0, antialias:true,
+    container:'map', zoom:initZoom, center:initCenter, pitch:0, bearing:0, antialias:true,
     style:{
       version:8,
       sources:{
@@ -1094,7 +1143,7 @@ async function initMap(){
   });
 }
 
-function resetMap(){if(!map)return;map.flyTo({center:[-108,43],zoom:4.2,pitch:0,bearing:0,duration:1200,essential:true});}
+function resetMap(){if(!map)return;const isMobile=window.innerWidth<=1000;map.flyTo({center:isMobile?[-96,38]:[-108,43],zoom:isMobile?2.8:4.2,pitch:0,bearing:0,duration:1200,essential:true});}
 function positionBadges(){
   const card = document.getElementById('heroCard');
   const b1   = document.getElementById('badge1');
@@ -1119,6 +1168,21 @@ window.addEventListener('scroll',()=>{document.getElementById('nav').classList.t
 
 document.getElementById('search').addEventListener('input',()=>applyFilter(false));
 document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter') applyFilter(true);});
+// Scroll fade indicator for card panel
+(function(){
+  const scroll = document.getElementById('cardPanelScroll');
+  const fade = document.getElementById('cardScrollFade');
+  if(!scroll || !fade) return;
+  function updateFade(){
+    const atBottom = scroll.scrollHeight - scroll.scrollTop <= scroll.clientHeight + 4;
+    fade.style.opacity = atBottom ? '0' : '1';
+  }
+  scroll.addEventListener('scroll', updateFade, {passive:true});
+  // Also update when cards are re-rendered
+  const obs = new MutationObserver(()=>{ setTimeout(updateFade, 50); });
+  obs.observe(document.getElementById('grid'), {childList:true});
+  updateFade();
+})();
 document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
   const f = c.dataset.f;
   if((f==='ikon'||f==='epic') && curFilter===f){
