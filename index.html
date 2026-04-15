@@ -222,6 +222,9 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
   .card-panel::after{content:'';position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.96));pointer-events:none;z-index:5;border-radius:0 0 0 var(--rl);opacity:var(--scroll-fade);transition:opacity .25s}
   /* Real scroll fade element */
   .card-scroll-fade{position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.97));pointer-events:none;z-index:6;transition:opacity .25s}
+  /* Scroll chevron hint — stays until user scrolls */
+  .card-scroll-hint{display:flex;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:7;color:var(--ac);pointer-events:none;transition:opacity .3s;animation:hintBounce .8s ease-in-out 2}
+  @keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
 }
 /* Map section header layout */
 .map-section-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:2rem;margin-bottom:1rem}
@@ -487,6 +490,9 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
           <div class="rg rg-single" id="grid"></div>
         </div>
         <div class="card-scroll-fade" id="cardScrollFade"></div>
+        <div class="card-scroll-hint" id="cardScrollHint">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
         <!-- Resort detail overlay inside card panel -->
         <div class="resort-detail" id="resortDetail">
           <div class="rd-hdr">
@@ -1304,10 +1310,12 @@ document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Ent
 (function(){
   const scroll = document.getElementById('cardPanelScroll');
   const fade = document.getElementById('cardScrollFade');
+  const hint = document.getElementById('cardScrollHint');
   if(!scroll || !fade) return;
   function updateFade(){
     const atBottom = scroll.scrollHeight - scroll.scrollTop <= scroll.clientHeight + 4;
     fade.style.opacity = atBottom ? '0' : '1';
+    if(hint && scroll.scrollTop > 10){ hint.style.opacity = '0'; }
   }
   scroll.addEventListener('scroll', updateFade, {passive:true});
   // Also update when cards are re-rendered
