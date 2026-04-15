@@ -305,6 +305,9 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   .map-search-bar-wrap{order:2;margin-top:0;border-radius:var(--rl);border:1.5px solid var(--bg3);overflow:hidden;box-shadow:var(--sh)}
   .map-search-bar{border-radius:0;border:none;box-shadow:none}
   .map-filter-panel{border-radius:0;border:none;border-bottom:1px solid var(--bg3)}
+  .map-filter-trigger{padding:0 1rem;font-size:.8rem;gap:5px}
+  .map-search-field{padding:0 .9rem;gap:8px}
+  .map-search-field input{font-size:.9rem}
   /* Box 1: map+cards */
   .map-and-cards{order:0;grid-template-columns:1fr;height:auto;border-radius:var(--rl)!important;overflow:hidden;border:1.5px solid var(--bg3)!important;border-bottom:1.5px solid var(--bg3)!important;box-shadow:var(--sh)}
   .map-and-cards .mc{height:60vw;min-height:300px}
@@ -499,7 +502,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
             <div class="rd-plan">
               <div class="rd-plan-label">Plan your trip</div>
               <div class="rd-links">
-                <a href="https://www.booking.com" target="_blank" rel="noopener" class="rd-link" id="rdLodging">
+                <a href="https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&ued=https%3A%2F%2Fwww.booking.com%2Findex.html" target="_blank" rel="noopener" class="rd-link" id="rdLodging">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
                   Get Lodging
                 </a>
@@ -507,7 +510,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
                   Find Gear
                 </a>
-                <a href="https://www.google.com/flights" target="_blank" rel="noopener" class="rd-link" id="rdFlights">
+                <a href="https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&campaign=flights&ued=https%3A%2F%2Fwww.booking.com%2Fflights%2Findex.html" target="_blank" rel="noopener" class="rd-link" id="rdFlights">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
                   Search Flights
                 </a>
@@ -599,6 +602,133 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 // In production, fetch this from snow_data.json served alongside this page.
 // For now, data is embedded directly so the prototype works standalone.
 const SNOW_DATA = {"resorts":[{"name":"Vail","state":"CO","lat":39.6403,"lng":-106.3742,"base_depth":35,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":8,"lifts_total":33,"runs_open":28,"runs_total":277,"status":"Open","last_updated":"Apr 01","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/vail/skireport"},{"name":"Breckenridge","state":"CO","lat":39.4817,"lng":-106.0384,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":10,"lifts_total":35,"runs_open":72,"runs_total":187,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/breckenridge/skireport"},{"name":"Keystone","state":"CO","lat":39.6045,"lng":-105.9498,"base_depth":40,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":128,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/keystone/skireport"},{"name":"Steamboat","state":"CO","lat":40.457,"lng":-106.804,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":9,"lifts_total":18,"runs_open":85,"runs_total":169,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/steamboat/skireport"},{"name":"Beaver Creek","state":"CO","lat":39.6042,"lng":-106.5165,"base_depth":38,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":5,"snowfall_24h":0,"lifts_open":0,"lifts_total":25,"runs_open":0,"runs_total":150,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/beaver-creek/skireport"},{"name":"Winter Park","state":"CO","lat":39.8868,"lng":-105.7625,"base_depth":55,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":10,"snowfall_24h":1,"lifts_open":12,"lifts_total":25,"runs_open":90,"runs_total":166,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/winter-park-resort/skireport"},{"name":"Copper Mountain","state":"CO","lat":39.5022,"lng":-106.1497,"base_depth":46,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":8,"snowfall_24h":0,"lifts_open":8,"lifts_total":23,"runs_open":65,"runs_total":140,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/copper-mountain-resort/skireport"},{"name":"Snowmass","state":"CO","lat":39.2084,"lng":-106.949,"base_depth":42,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":6,"lifts_total":21,"runs_open":45,"runs_total":98,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/snowmass/skireport"},{"name":"Telluride","state":"CO","lat":37.9375,"lng":-107.8123,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":4,"snowfall_24h":0,"lifts_open":0,"lifts_total":18,"runs_open":0,"runs_total":148,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/telluride/skireport"},{"name":"Aspen Mountain","state":"CO","lat":39.1869,"lng":-106.8182,"base_depth":33,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":8,"runs_open":0,"runs_total":76,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-mountain/skireport"},{"name":"Aspen Highlands","state":"CO","lat":39.1822,"lng":-106.8552,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":5,"runs_open":0,"runs_total":144,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-highlands/skireport"},{"name":"Crested Butte","state":"CO","lat":38.8986,"lng":-106.965,"base_depth":41,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport"},{"name":"Arapahoe Basin","state":"CO","lat":39.6426,"lng":-105.8719,"base_depth":50,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":1,"lifts_open":5,"lifts_total":9,"runs_open":45,"runs_total":147,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport"},{"name":"Loveland","state":"CO","lat":39.68,"lng":-105.8978,"base_depth":44,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":7,"snowfall_24h":0,"lifts_open":4,"lifts_total":11,"runs_open":32,"runs_total":94,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/loveland/skireport"},{"name":"Wolf Creek","state":"CO","lat":37.4747,"lng":-106.7934,"base_depth":72,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":12,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":77,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport"},{"name":"Park City","state":"UT","lat":40.6461,"lng":-111.498,"base_depth":63,"surface_condition":"","snowfall_7d":13,"snowfall_24h":0,"lifts_open":6,"lifts_total":41,"runs_open":13,"runs_total":349,"status":"Open","last_updated":"Apr 05","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/park-city-mountain-resort/skireport"},{"name":"Snowbird","state":"UT","lat":40.583,"lng":-111.6538,"base_depth":82,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":16,"snowfall_24h":2,"lifts_open":8,"lifts_total":13,"runs_open":65,"runs_total":170,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbird-ski-summer-resort/skireport"},{"name":"Alta","state":"UT","lat":40.5884,"lng":-111.6386,"base_depth":90,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":18,"snowfall_24h":3,"lifts_open":7,"lifts_total":11,"runs_open":72,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/alta-ski-area/skireport"},{"name":"Deer Valley","state":"UT","lat":40.6374,"lng":-111.4783,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":10,"snowfall_24h":0,"lifts_open":4,"lifts_total":21,"runs_open":22,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/deer-valley-resort/skireport"},{"name":"Brighton","state":"UT","lat":40.598,"lng":-111.5832,"base_depth":68,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":13,"snowfall_24h":1,"lifts_open":4,"lifts_total":7,"runs_open":40,"runs_total":66,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/brighton-resort/skireport"},{"name":"Solitude","state":"UT","lat":40.6199,"lng":-111.5927,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":3,"lifts_total":8,"runs_open":35,"runs_total":82,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/solitude-mountain-resort/skireport"},{"name":"Snowbasin","state":"UT","lat":41.216,"lng":-111.8569,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":8,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":107,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbasin-resort/skireport"},{"name":"Mammoth Mountain","state":"CA","lat":37.6308,"lng":-119.0326,"base_depth":38,"mid_depth":48,"summit_depth":107,"surface_condition":"Powder","snowfall_7d":4,"snowfall_24h":4,"lifts_open":19,"lifts_total":25,"runs_open":121,"runs_total":180,"status":"Open","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport"},{"name":"Heavenly","state":"CA","lat":38.9353,"lng":-119.94,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":5,"snowfall_24h":0,"lifts_open":6,"lifts_total":28,"runs_open":30,"runs_total":97,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/heavenly-mountain-resort/skireport"},{"name":"Palisades Tahoe","state":"CA","lat":39.1968,"lng":-120.2354,"base_depth":58,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":12,"lifts_total":30,"runs_open":95,"runs_total":270,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/palisades-tahoe/skireport"},{"name":"Northstar","state":"CA","lat":39.2746,"lng":-120.121,"base_depth":34,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":20,"runs_open":28,"runs_total":100,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/northstar-california/skireport"},{"name":"Bear Mountain","state":"CA","lat":34.2275,"lng":-116.859,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":32,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/bear-mountain/skireport"},{"name":"Snow Summit","state":"CA","lat":34.2326,"lng":-116.8728,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":35,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/snow-summit/skireport"},{"name":"Sugar Bowl","state":"CA","lat":39.3049,"lng":-120.3344,"base_depth":60,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":0,"lifts_open":6,"lifts_total":13,"runs_open":50,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/sugar-bowl-resort/skireport"},{"name":"Jackson Hole","state":"WY","lat":43.5877,"lng":-110.828,"base_depth":56,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":50,"runs_total":133,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/jackson-hole/skireport"},{"name":"Grand Targhee","state":"WY","lat":43.7903,"lng":-110.9572,"base_depth":78,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":15,"snowfall_24h":3,"lifts_open":4,"lifts_total":7,"runs_open":55,"runs_total":79,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport"},{"name":"Big Sky","state":"MT","lat":45.2833,"lng":-111.4014,"base_depth":45,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":8,"lifts_total":39,"runs_open":75,"runs_total":317,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/big-sky-resort/skireport"},{"name":"Whitefish","state":"MT","lat":48.4816,"lng":-114.3582,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":105,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport"},{"name":"Sun Valley","state":"ID","lat":43.6977,"lng":-114.3514,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":19,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/sun-valley/skireport"},{"name":"Schweitzer","state":"ID","lat":48.3678,"lng":-116.623,"base_depth":65,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":48,"runs_total":92,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/schweitzer-mountain-resort/skireport"},{"name":"Crystal Mountain","state":"WA","lat":46.9282,"lng":-121.5045,"base_depth":80,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":14,"snowfall_24h":2,"lifts_open":7,"lifts_total":11,"runs_open":40,"runs_total":57,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/crystal-mountain/skireport"},{"name":"Stevens Pass","state":"WA","lat":47.7448,"lng":-121.089,"base_depth":74,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":35,"runs_total":52,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/stevens-pass-resort/skireport"},{"name":"Mt. Baker","state":"WA","lat":48.8566,"lng":-121.6647,"base_depth":126,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":20,"snowfall_24h":3,"lifts_open":8,"lifts_total":10,"runs_open":31,"runs_total":38,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/mt-baker/skireport"},{"name":"Mt. Bachelor","state":"OR","lat":43.9792,"lng":-121.6886,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":121,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-bachelor/skireport"},{"name":"Mt. Hood Meadows","state":"OR","lat":45.3307,"lng":-121.6649,"base_depth":70,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":1,"lifts_open":8,"lifts_total":14,"runs_open":55,"runs_total":87,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-hood-meadows/skireport"},{"name":"Alyeska","state":"AK","lat":60.9604,"lng":-149.0987,"base_depth":96,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":22,"snowfall_24h":4,"lifts_open":7,"lifts_total":9,"runs_open":55,"runs_total":76,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/alaska/alyeska-resort/skireport"},{"name":"Killington","state":"VT","lat":43.6045,"lng":-72.8201,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":22,"runs_open":25,"runs_total":155,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/killington-resort/skireport"},{"name":"Okemo","state":"VT","lat":43.4012,"lng":-72.7173,"base_depth":18,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport"},{"name":"Stowe","state":"VT","lat":44.5303,"lng":-72.7814,"base_depth":24,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":3,"snowfall_24h":0,"lifts_open":3,"lifts_total":14,"runs_open":18,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport"},{"name":"Sugarbush","state":"VT","lat":44.1359,"lng":-72.9013,"base_depth":20,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":2,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":111,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/sugarbush/skireport"},{"name":"Stratton","state":"VT","lat":43.1134,"lng":-72.9079,"base_depth":16,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":99,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stratton-mountain/skireport"},{"name":"Jay Peak","state":"VT","lat":44.9267,"lng":-72.529,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":5,"snowfall_24h":0,"lifts_open":3,"lifts_total":9,"runs_open":22,"runs_total":81,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/jay-peak/skireport"},{"name":"Sunday River","state":"ME","lat":44.4733,"lng":-70.8567,"base_depth":22,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":4,"lifts_total":18,"runs_open":28,"runs_total":135,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sunday-river/skireport"},{"name":"Sugarloaf","state":"ME","lat":45.0314,"lng":-70.3131,"base_depth":32,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":5,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":40,"runs_total":162,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sugarloaf/skireport"},{"name":"Snowshoe","state":"WV","lat":38.4073,"lng":-79.994,"base_depth":14,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":61,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport"}],"generated_at":"2026-04-06T12:00:00Z"};
+
+const NEAREST_TOWNS = {
+  'Vail':'Vail Colorado',
+  'Breckenridge':'Breckenridge Colorado',
+  'Keystone':'Keystone Colorado ski resort',
+  'Steamboat':'Steamboat Springs Colorado',
+  'Beaver Creek':'Beaver Creek Colorado ski resort',
+  'Winter Park':'Winter Park Colorado ski resort',
+  'Copper Mountain':'Copper Mountain Colorado ski resort',
+  'Snowmass':'Snowmass Village Colorado',
+  'Telluride':'Telluride Colorado',
+  'Aspen Mountain':'Aspen Colorado',
+  'Aspen Highlands':'Aspen Colorado',
+  'Crested Butte':'Crested Butte Colorado',
+  'Arapahoe Basin':'Keystone Colorado ski resort',
+  'Loveland':'Loveland Pass Colorado ski resort',
+  'Wolf Creek':'Pagosa Springs Colorado',
+  'Park City':'Park City Utah',
+  'Snowbird':'Little Cottonwood Canyon Utah',
+  'Alta':'Little Cottonwood Canyon Utah',
+  'Deer Valley':'Park City Utah',
+  'Brighton':'Big Cottonwood Canyon Utah',
+  'Solitude':'Big Cottonwood Canyon Utah',
+  'Snowbasin':'Ogden Utah',
+  'Mammoth Mountain':'Mammoth Lakes California',
+  'Heavenly':'South Lake Tahoe California',
+  'Palisades Tahoe':'Tahoe City California',
+  'Northstar':'Truckee California',
+  'Bear Mountain':'Big Bear Lake California',
+  'Snow Summit':'Big Bear Lake California',
+  'Sugar Bowl':'Truckee California',
+  'Jackson Hole':'Jackson Wyoming',
+  'Grand Targhee':'Driggs Idaho',
+  'Big Sky':'Big Sky Montana',
+  'Whitefish':'Whitefish Montana',
+  'Sun Valley':'Ketchum Idaho',
+  'Schweitzer':'Sandpoint Idaho',
+  'Crystal Mountain':'Enumclaw Washington ski resort',
+  'Stevens Pass':'Leavenworth Washington',
+  'Mt. Baker':'Bellingham Washington',
+  'Mt. Bachelor':'Bend Oregon',
+  'Mt. Hood Meadows':'Hood River Oregon',
+  'Alyeska':'Girdwood Alaska',
+  'Killington':'Killington Vermont',
+  'Okemo':'Ludlow Vermont',
+  'Stowe':'Stowe Vermont',
+  'Sugarbush':'Warren Vermont',
+  'Stratton':'Stratton Vermont ski resort',
+  'Jay Peak':'Jay Vermont ski resort',
+  'Sunday River':'Bethel Maine',
+  'Sugarloaf':'Carrabassett Valley Maine',
+  'Snowshoe':'Snowshoe West Virginia'
+};
+
+const NEAREST_AIRPORTS = {
+  // Colorado
+  'Vail':'Eagle, Colorado',
+  'Breckenridge':'Denver, Colorado',
+  'Keystone':'Denver, Colorado',
+  'Steamboat':'Hayden, Colorado',
+  'Beaver Creek':'Eagle, Colorado',
+  'Winter Park':'Denver, Colorado',
+  'Copper Mountain':'Denver, Colorado',
+  'Snowmass':'Aspen, Colorado',
+  'Telluride':'Telluride, Colorado',
+  'Aspen Mountain':'Aspen, Colorado',
+  'Aspen Highlands':'Aspen, Colorado',
+  'Crested Butte':'Gunnison, Colorado',
+  'Arapahoe Basin':'Denver, Colorado',
+  'Loveland':'Denver, Colorado',
+  'Wolf Creek':'Alamosa, Colorado',
+  // Utah
+  'Park City':'Salt Lake City, Utah',
+  'Snowbird':'Salt Lake City, Utah',
+  'Alta':'Salt Lake City, Utah',
+  'Deer Valley':'Salt Lake City, Utah',
+  'Brighton':'Salt Lake City, Utah',
+  'Solitude':'Salt Lake City, Utah',
+  'Snowbasin':'Salt Lake City, Utah',
+  // California
+  'Mammoth Mountain':'Mammoth Lakes, California',
+  'Heavenly':'Reno, Nevada',
+  'Palisades Tahoe':'Reno, Nevada',
+  'Northstar':'Reno, Nevada',
+  'Bear Mountain':'Ontario, California',
+  'Snow Summit':'Ontario, California',
+  'Sugar Bowl':'Sacramento, California',
+  // Wyoming / Montana / Idaho
+  'Jackson Hole':'Jackson, Wyoming',
+  'Grand Targhee':'Jackson, Wyoming',
+  'Big Sky':'Bozeman, Montana',
+  'Whitefish':'Kalispell, Montana',
+  'Sun Valley':'Hailey, Idaho',
+  'Schweitzer':'Spokane, Washington',
+  // Washington / Oregon
+  'Crystal Mountain':'Seattle, Washington',
+  'Stevens Pass':'Seattle, Washington',
+  'Mt. Baker':'Bellingham, Washington',
+  'Mt. Bachelor':'Redmond, Oregon',
+  'Mt. Hood Meadows':'Portland, Oregon',
+  // Alaska
+  'Alyeska':'Anchorage, Alaska',
+  // Vermont
+  'Killington':'Burlington, Vermont',
+  'Okemo':'Burlington, Vermont',
+  'Stowe':'Burlington, Vermont',
+  'Sugarbush':'Burlington, Vermont',
+  'Stratton':'Albany, New York',
+  'Jay Peak':'Burlington, Vermont',
+  // Maine
+  'Sunday River':'Portland, Maine',
+  'Sugarloaf':'Portland, Maine',
+  // West Virginia
+  'Snowshoe':'Charleston, West Virginia'
+};
+
+function getFlightsUrl(r){
+  const dest = NEAREST_AIRPORTS[r.name] || (r.name + ' airport');
+  const bookingDest = 'https://www.booking.com/flights/index.html?to=' + encodeURIComponent(dest);
+  return 'https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&campaign=flights&ued=' + encodeURIComponent(bookingDest);
+}
+
+function getLodgingUrl(r){
+  const query = NEAREST_TOWNS[r.name] || (r.name + ' ' + r.state + ' ski resort');
+  const dest = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(query);
+  return 'https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&ued=' + encodeURIComponent(dest);
+}
 
 let data=[], map, curFilter='all';
 const WEST=['CO','UT','CA','WY','MT','ID','WA','OR','AK','NM'];
@@ -739,6 +869,8 @@ function zoomToFiltered(filtered){
 
 function applyFilter(zoomOnEnter){
   const q=document.getElementById('search').value.toLowerCase().trim();
+  // If a resort is selected and user is typing, close the detail panel immediately
+  if(q && selectedResortName) closeDetail();
   let filtered=data;
   if(curFilter==='favorites') filtered=data.filter(r=>favorites.has(r.name));
   else if(curFilter==='ikon') filtered=data.filter(r=>IKON_PASS.has(r.name));
@@ -946,8 +1078,8 @@ function showDetail(r){
   // Always populate the side panel header + links
   document.getElementById('rdName').textContent = r.name;
   document.getElementById('rdSub').textContent = r.state + ' · ' + r.status;
-  document.getElementById('rdLodging').href = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(r.name)}`;
-  document.getElementById('rdFlights').href = `https://www.google.com/flights#flt=/${encodeURIComponent(r.name)}`;
+  document.getElementById('rdLodging').href = getLodgingUrl(r);
+  document.getElementById('rdFlights').href = getFlightsUrl(r);
 
   if(isMobile){
     // On mobile: hide stats/meta from panel (they go in the map popup instead)
