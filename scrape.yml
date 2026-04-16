@@ -26,8 +26,17 @@ jobs:
         run: |
           git config user.name "PowderWatch Bot"
           git config user.email "bot@powderwatch.app"
+          git config pull.rebase false
+
+          # Stage the freshly scraped files
           git add snow_data.csv snow_data.json
           git diff --cached --quiet && echo "No changes to commit" && exit 0
+
+          # Fetch latest remote state
+          git fetch origin main
+
+          # Reset to remote, then re-apply only our data files on top
+          git reset --soft origin/main
+          git add snow_data.csv snow_data.json
           git commit -m "Update snow data $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase=false --no-edit origin main
-          git push origin main
+          git push origin HEAD:main
