@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
  
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -24,10 +26,8 @@ jobs:
         run: |
           git config user.name "PowderWatch Bot"
           git config user.email "bot@powderwatch.app"
+          git pull origin main --strategy-option=theirs
           git add snow_data.csv snow_data.json
           git diff --cached --quiet || git commit -m "Update snow data $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push --force-with-lease
-          git diff --cached --quiet || git commit -m "Update snow data $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
-          git push
-
+          git push origin main
+ 
