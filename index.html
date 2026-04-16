@@ -47,6 +47,9 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .btn{padding:14px 30px;border-radius:100px;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .35s var(--ease);border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
 .btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:var(--sh)}
 .btn-o{background:transparent;color:var(--text);border:1.5px solid var(--bg4)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
+.hero-search-wrap{position:relative;flex-shrink:1}
+.hero-search-wrap input{width:220px;padding:14px 22px 14px 46px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s;box-shadow:var(--sh)}
+.hero-search-wrap input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px var(--acs)}
 
 .hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards;min-height:420px;display:flex;align-items:center;justify-content:center}
 .hero-vis-img{position:absolute;inset:0;border-radius:var(--rl);overflow:hidden;background:url('IMG_0165.jpg') center center/cover no-repeat;z-index:0}
@@ -222,18 +225,19 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
   /* Scroll fade indicator */
   .card-panel{--scroll-fade:1}
   .card-panel::after{content:'';position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.96));pointer-events:none;z-index:5;border-radius:0 0 0 var(--rl);opacity:var(--scroll-fade);transition:opacity .25s}
-  /* Real scroll fade element */
-  .card-scroll-fade{position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.97));pointer-events:none;z-index:6;transition:opacity .25s}
-  /* Scroll chevron hint — stays until user scrolls */
-  .card-scroll-hint{display:flex;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:7;color:var(--ac);pointer-events:none;transition:opacity .3s;animation:hintBounce .8s ease-in-out 2}
-  @keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
+}
+/* Scroll fade element — desktop and mobile */
+.card-scroll-fade{position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.97));pointer-events:none;z-index:6;transition:opacity .25s}
+/* Scroll chevron hint */
+.card-scroll-hint{display:flex;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:7;color:var(--ac);pointer-events:none;transition:opacity .3s;animation:hintBounce .8s ease-in-out 2}
+@keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
 }
 /* Map section header layout */
-.map-section-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:2rem;margin-bottom:1rem}
-.map-section-hdr p{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;flex-shrink:0;max-width:280px}
+.map-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:1rem}
+.map-section-desc{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;max-width:300px;line-height:1.4;flex-shrink:0}
 @media(max-width:1000px){
   .map-section-hdr{flex-direction:column;gap:.25rem;align-items:flex-start}
-  .map-section-hdr p{text-align:left;max-width:none}
+  .map-section-desc{text-align:left;max-width:none}
 }
 .lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
@@ -391,7 +395,10 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
       <p class="hero-desc">Track recent snowfall, lift counts, and more directly from park websites via OnTheSnow — updated twice daily.</p>
       <div class="hero-cta">
         <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
-        <a href="#resorts" class="btn btn-o">View Parks</a>
+        <div class="hero-search-wrap">
+          <svg style="position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--tl);pointer-events:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="heroSearch" placeholder="Search a park…" autocomplete="off">
+        </div>
       </div>
     </div>
     <div class="hero-vis">
@@ -431,12 +438,9 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 
 <section id="map-section">
   <div class="mw" style="padding-top:3rem;padding-bottom:0">
-    <div class="map-section-hdr">
-      <div class="hl-hdr" style="margin-bottom:0">
-        <span class="hl-eyebrow">Interactive Map</span>
-        <h3 class="hl-title">Resort <em>snow map</em></h3>
-      </div>
-      <p>Pin color indicates past 7-day snowfall — red pins are closed.</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:1rem">
+      <div><span class="hl-eyebrow">Interactive Map</span><h3 class="hl-title" style="margin-bottom:0">Resort <em>snow map</em></h3></div>
+      <p style="font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;width:300px;flex-shrink:0;line-height:1.4">Pin color indicates past 7-day snowfall. Red pins are closed parks. Closed parks are filtered out by default.</p>
     </div>
   </div>
   <div class="mw">
@@ -541,13 +545,13 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
     <!-- Search bar spanning full width below -->
     <div class="map-search-bar-wrap" id="mapSearchWrap">
       <div class="map-filter-panel" id="filterPanel">
-        <button class="fc on" data-f="all">All</button>
+        <button class="fc" data-f="all">All</button>
         <button class="fc" data-f="CO">Colorado</button>
         <button class="fc" data-f="UT">Utah</button>
         <button class="fc" data-f="CA">California</button>
         <button class="fc" data-f="west">West</button>
         <button class="fc" data-f="east">East</button>
-        <button class="fc" data-f="open">Open Only</button>
+        <button class="fc on" data-f="open">Open Only</button>
         <button class="fc fc-ikon" data-f="ikon">Ikon</button>
         <button class="fc fc-epic" data-f="epic">Epic</button>
         <button class="fc fc-fav" data-f="favorites" id="favBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>My Parks</button>
@@ -738,7 +742,7 @@ function getLodgingUrl(r){
   return 'https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&ued=' + encodeURIComponent(dest);
 }
 
-let data=[], map, curFilter='all';
+let data=[], map, curFilter='open';
 const WEST=['CO','UT','CA','WY','MT','ID','WA','OR','AK','NM'];
 const EAST=['VT','ME','WV','NH','NY','NC'];
 
@@ -1310,6 +1314,19 @@ window.addEventListener('scroll',()=>{document.getElementById('nav').classList.t
 
 document.getElementById('search').addEventListener('input',()=>applyFilter(false));
 document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter') applyFilter(true);});
+document.getElementById('heroSearch').addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const q = e.currentTarget.value.trim();
+  if(!q) return;
+  document.getElementById('search').value = q;
+  const isMobile = window.innerWidth <= 1000;
+  const offset = isMobile ? 0 : 80;
+  const target = document.getElementById('map-section');
+  const top = target.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({top, behavior:'smooth'});
+  // After scroll settles, apply filter with zoom+detail
+  setTimeout(()=>applyFilter(true), 600);
+});
 // Scroll fade indicator for card panel
 (function(){
   const scroll = document.getElementById('cardPanelScroll');
@@ -1329,7 +1346,7 @@ document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Ent
 })();
 document.querySelectorAll('.fc').forEach(c=>c.addEventListener('click',()=>{
   const f = c.dataset.f;
-  if((f==='ikon'||f==='epic') && curFilter===f){
+  if(curFilter===f){
     curFilter='all';
   } else {
     curFilter=f;
