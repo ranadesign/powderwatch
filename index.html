@@ -233,11 +233,13 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 @keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
 }
 /* Map section header layout */
-.map-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:1rem}
-.map-section-desc{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;max-width:300px;line-height:1.4;flex-shrink:0}
-@media(max-width:1000px){
-  .map-section-hdr{flex-direction:column;gap:.25rem;align-items:flex-start}
-  .map-section-desc{text-align:left;max-width:none}
+#map-section .map-section-hdr{display:grid;grid-template-columns:auto 1fr;gap:2.5rem;margin-bottom:1rem;width:100%;min-height:4rem}
+#map-section .map-section-hdr > :first-child{justify-self:start;grid-column:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+#map-section .map-section-desc{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;line-height:1.5;justify-self:end;align-self:end;max-width:420px;margin:0;grid-column:2}
+@media(max-width:700px){
+  #map-section .map-section-hdr{grid-template-columns:1fr;gap:.5rem;margin-bottom:.75rem}
+  #map-section .map-section-hdr > :first-child{grid-column:1}
+  #map-section .map-section-desc{text-align:left;max-width:none;justify-self:start;margin-bottom:0;grid-column:1}
 }
 .lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
@@ -327,45 +329,46 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 @media(max-width:600px){.map-and-cards .mc{height:65vw;min-height:260px}.card-panel{height:300px}}
 /* ── Highlights strip ── */
 #highlights{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
-.hl-wrap{max-width:1400px;margin:0 auto;padding:2.5rem 2rem;display:grid;grid-template-columns:1fr 1px 1fr;gap:2.5rem;align-items:start}
-.hl-divider{background:var(--bg3);align-self:stretch}
-.hl-hdr{margin-bottom:1.25rem}
+.hl-wrap{max-width:1400px;margin:0 auto;padding:1.75rem 2rem}
+.hl-hdr{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.hl-hdr-left{display:flex;flex-direction:column}
 .hl-eyebrow{font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);display:flex;align-items:center;gap:8px;margin-bottom:.4rem}
 .hl-eyebrow::before{content:'';width:18px;height:1px;background:var(--ac)}
 .hl-title{font-family:var(--serif);font-size:1.35rem;font-weight:400;line-height:1.15}.hl-title em{font-style:italic;color:var(--ac)}
-.hl-grid{display:flex;flex-direction:column;gap:.6rem}
-/* Compact card variant — single row */
-.rc-sm{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:.85rem 1.1rem;cursor:pointer;transition:all .3s var(--ease);display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center}
+/* Tab switcher */
+.hl-tabs{display:inline-flex;background:var(--bg2);border:1px solid var(--bg3);border-radius:100px;padding:4px;gap:2px}
+.hl-tab{font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--t2);background:none;border:none;padding:9px 22px;border-radius:100px;cursor:pointer;transition:all .25s var(--ease);white-space:nowrap}
+.hl-tab:hover{color:var(--ac)}
+.hl-tab.on{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(46,90,136,.25)}
+.hl-tab.on:hover{color:#fff}
+/* Horizontal 3-up grid */
+.hl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;min-height:112px}
+.hl-grid.fading{opacity:0;transition:opacity .15s ease}
+/* Compact card variant — horizontal tile */
+.rc-sm{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:1rem 1.15rem;cursor:pointer;transition:all .3s var(--ease);display:flex;flex-direction:column;gap:.7rem;min-width:0}
 .rc-sm:hover{background:var(--sf);box-shadow:var(--sh);border-color:var(--bg4)}
-.rc-sm-rank{font-family:var(--serif);font-size:1.3rem;line-height:1;color:var(--ac);width:1.2rem;text-align:center;flex-shrink:0}
-.rc-sm-identity{min-width:0}
-.rc-sm-name{font-family:var(--serif);font-size:1.1rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rc-sm-state{font-size:.62rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
-.rc-sm-right{display:flex;align-items:center;gap:1.5rem;flex-shrink:0}
-.rc-sm-stats{display:flex;gap:1.5rem;align-items:center}
-.rc-sm-stat{text-align:center}
-.rc-sm-stat .v{font-family:var(--serif);font-size:1.35rem;line-height:1;color:var(--text)}.rc-sm-stat .u{font-size:.8rem;color:var(--tm)}.rc-sm-stat .l{font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px}
-.rc-sm-badges{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-@media(max-width:900px){.hl-wrap{grid-template-columns:1fr;gap:2rem}.hl-divider{display:none}}
-/* Show-more: hidden on desktop, collapsible on mobile */
-.hl-extra{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem}
-.hl-show-more{display:none}
-@media(max-width:600px){
-  .hl-extra{display:none}
-  .hl-extra.open{display:flex}
-  .hl-show-more{display:flex;align-items:center;justify-content:center;gap:.35rem;margin-top:.5rem;padding:.5rem;border:1px solid var(--bg3);border-radius:var(--rs);background:none;font-family:var(--sans);font-size:.72rem;font-weight:500;color:var(--tm);cursor:pointer;width:100%;transition:all .2s}
-  .hl-show-more:hover{border-color:var(--ac);color:var(--ac)}
+.rc-sm-top{display:flex;align-items:center;gap:.65rem;min-width:0}
+.rc-sm-rank{font-family:var(--serif);font-size:1.5rem;line-height:1;color:var(--ac);flex-shrink:0}
+.rc-sm-divider{width:1px;height:1.4rem;background:var(--bg3);flex-shrink:0}
+.rc-sm-identity{min-width:0;display:flex;align-items:baseline;gap:.45rem;flex:1;overflow:hidden}
+.rc-sm-name{font-family:var(--serif);font-size:1.1rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rc-sm-state{font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;flex-shrink:0}
+.rc-sm-badges{display:flex;align-items:center;gap:4px;flex-shrink:0;margin-left:auto}
+.rc-sm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding-top:.55rem;border-top:1px solid var(--bg3)}
+.rc-sm-stat{text-align:center;min-width:0}
+.rc-sm-stat .v{font-family:var(--serif);font-size:1.25rem;line-height:1;color:var(--text)}.rc-sm-stat .u{font-size:.75rem;color:var(--tm)}.rc-sm-stat .l{font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl);margin-top:3px;white-space:nowrap}
+@media(max-width:900px){
+  .hl-grid{grid-template-columns:1fr;gap:.55rem}
+  .hl-hdr{margin-bottom:.9rem}
 }
 @media(max-width:600px){
-  .hl-wrap{padding:2rem 1rem}
-  /* rc-sm: hide rank, stack name above stats with divider */
-  .rc-sm{grid-template-columns:1fr;gap:0;padding:.85rem 1rem}
-  .rc-sm-rank{display:none}
-  .rc-sm-identity{padding-bottom:.55rem;border-bottom:1px solid var(--bg3)}
-  .rc-sm-name{white-space:normal}
-  .rc-sm-right{margin-top:.55rem;gap:.75rem;justify-content:space-between}
-  .rc-sm-stats{gap:1.25rem}
-  .rc-sm-badges{flex-direction:row;align-items:center;gap:4px}
+  .hl-wrap{padding:1.5rem 1rem}
+  .hl-hdr{gap:.75rem}
+  .hl-tabs{width:100%}
+  .hl-tab{flex:1;padding:9px 12px}
+  .rc-sm{padding:.9rem 1rem}
+  .rc-sm-name{font-size:1.05rem}
+  .rc-sm-stat .v{font-size:1.15rem}
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -373,8 +376,15 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
 
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
-@media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero-cta{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
+@media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}
+.hero-cta{flex-wrap:nowrap;gap:.6rem;margin-top:2rem}
+.hero-cta .btn{padding:12px 18px;font-size:.78rem;flex-shrink:0;white-space:nowrap}
+.hero-cta .btn svg{width:14px;height:14px}
+.hero-search-wrap{flex:1;min-width:0}
+.hero-search-wrap input{width:100%;padding:12px 16px 12px 40px;font-size:.82rem;box-sizing:border-box}
+.hero-search-wrap svg{left:14px!important;width:15px;height:15px}
+}
 </style>
 </head>
 <body>
@@ -397,7 +407,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
         <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
         <div class="hero-search-wrap">
           <svg style="position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--tl);pointer-events:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="heroSearch" placeholder="Search a park…" autocomplete="off">
+          <input type="text" id="heroSearch" placeholder="Search by park or state…" autocomplete="off">
         </div>
       </div>
     </div>
@@ -424,23 +434,25 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 
 <section id="highlights">
   <div class="hl-wrap">
-    <div class="hl-col">
-      <div class="hl-hdr"><span class="hl-eyebrow">Top Picks Right Now</span><h3 class="hl-title">Best conditions <em>today</em></h3></div>
-      <div class="hl-grid" id="top-picks-grid"></div>
+    <div class="hl-hdr">
+      <div class="hl-hdr-left">
+        <span class="hl-eyebrow" id="hl-eyebrow">Top Picks Right Now</span>
+        <h3 class="hl-title" id="hl-title">Best conditions <em>today</em></h3>
+      </div>
+      <div class="hl-tabs" role="tablist">
+        <button class="hl-tab on" data-tab="top" role="tab" aria-selected="true">Best Today</button>
+        <button class="hl-tab" data-tab="fresh" role="tab" aria-selected="false">Fresh 24h</button>
+      </div>
     </div>
-    <div class="hl-divider"></div>
-    <div class="hl-col" id="fresh-24h-col">
-      <div class="hl-hdr"><span class="hl-eyebrow">Fresh Snow</span><h3 class="hl-title">Most snowfall <em>last 24h</em></h3></div>
-      <div class="hl-grid" id="fresh-24h-grid"></div>
-    </div>
+    <div class="hl-grid" id="hl-grid"></div>
   </div>
 </section>
 
 <section id="map-section">
   <div class="mw" style="padding-top:3rem;padding-bottom:0">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:1rem">
+    <div class="map-section-hdr">
       <div><span class="hl-eyebrow">Interactive Map</span><h3 class="hl-title" style="margin-bottom:0">Resort <em>snow map</em></h3></div>
-      <p style="font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;width:300px;flex-shrink:0;line-height:1.4">Pin color indicates past 7-day snowfall. Red pins are closed parks. Closed parks are filtered out by default.</p>
+      <p class="map-section-desc">Pin color indicates past 7-day snowfall. Red pins are closed parks and filtered out by default. Adjust filters below.</p>
     </div>
   </div>
   <div class="mw">
@@ -771,21 +783,22 @@ function makeSmallCard(r, rank, primaryStat, primaryLabel){
   card.className = 'rc-sm';
   card.style.animation = 'cardIn .4s var(--ease) both';
   card.innerHTML = `
-    <div class="rc-sm-rank">${rank}</div>
-    <div class="rc-sm-identity">
-      <div class="rc-sm-name">${r.name}</div>
-      <div class="rc-sm-state">${r.state}</div>
-    </div>
-    <div class="rc-sm-right">
-      <div class="rc-sm-stats">
-        <div class="rc-sm-stat"><div class="v">${primaryStat}<span class="u">"</span></div><div class="l">${primaryLabel}</div></div>
-        <div class="rc-sm-stat"><div class="v">${r.base_depth}<span class="u">"</span></div><div class="l">Base</div></div>
-        <div class="rc-sm-stat"><div class="v">${r.lifts_open}<span class="u">/${r.lifts_total}</span></div><div class="l">Lifts</div></div>
+    <div class="rc-sm-top">
+      <div class="rc-sm-rank">${rank}</div>
+      <div class="rc-sm-divider"></div>
+      <div class="rc-sm-identity">
+        <div class="rc-sm-name">${r.name}</div>
+        <div class="rc-sm-state">${r.state}</div>
       </div>
       <div class="rc-sm-badges">
         <span class="ct ${c.cls}">${c.label}</span>
         ${trend?`<span class="trend ${trend.cls}" style="margin-top:0;font-size:.55rem">${trend.arrow} ${trend.label}</span>`:''}
       </div>
+    </div>
+    <div class="rc-sm-stats">
+      <div class="rc-sm-stat"><div class="v">${primaryStat}<span class="u">"</span></div><div class="l">${primaryLabel}</div></div>
+      <div class="rc-sm-stat"><div class="v">${r.base_depth}<span class="u">"</span></div><div class="l">Base</div></div>
+      <div class="rc-sm-stat"><div class="v">${r.lifts_open}<span class="u">/${r.lifts_total}</span></div><div class="l">Lifts</div></div>
     </div>`;
   card.addEventListener('click',()=>{
     if(map){flyToResort(r);setTimeout(()=>showDetail(r),800);}
@@ -794,48 +807,64 @@ function makeSmallCard(r, rank, primaryStat, primaryLabel){
   return card;
 }
 
-function renderTopPicks(){
-  const top = [...data].filter(r=>r.status==='Open').sort((a,b)=>powderScore(b)-powderScore(a)).slice(0,3);
-  const g = document.getElementById('top-picks-grid');
+function renderTopPicks(){ renderHighlights(); }
+function renderFresh24h(){ /* merged into renderHighlights */ }
+
+// Active tab state + single unified renderer
+let activeHlTab = 'top';
+function renderHighlights(){
+  const g = document.getElementById('hl-grid');
+  const eyebrow = document.getElementById('hl-eyebrow');
+  const title = document.getElementById('hl-title');
+  if(!g) return;
+
+  let items, primaryKey, primaryLabel;
+  if(activeHlTab === 'fresh'){
+    items = [...data].filter(r=>r.snowfall_24h>0).sort((a,b)=>b.snowfall_24h-a.snowfall_24h).slice(0,3);
+    primaryKey = 'snowfall_24h'; primaryLabel = 'Fresh 24h';
+    eyebrow.textContent = 'Fresh Snow';
+    title.innerHTML = 'Most snowfall <em>last 24h</em>';
+  } else {
+    items = [...data].filter(r=>r.status==='Open').sort((a,b)=>powderScore(b)-powderScore(a)).slice(0,3);
+    primaryKey = 'snowfall_7d'; primaryLabel = '7-Day Snow';
+    eyebrow.textContent = 'Top Picks Right Now';
+    title.innerHTML = 'Best conditions <em>today</em>';
+  }
+
+  // Hide/disable Fresh 24h tab if there's no fresh snow anywhere
+  const freshTab = document.querySelector('.hl-tab[data-tab="fresh"]');
+  const anyFresh = data.some(r=>r.snowfall_24h>0);
+  if(freshTab) freshTab.style.display = anyFresh ? '' : 'none';
+  if(!anyFresh && activeHlTab === 'fresh'){ activeHlTab = 'top'; return renderHighlights(); }
+
   g.innerHTML = '';
-  top.forEach((r,i)=>g.appendChild(makeSmallCard(r, i+1, r.snowfall_7d, '7-Day Snow')));
-  addShowMoreBtn(g, 'top-picks');
+  if(items.length === 0){
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--tm);font-size:.85rem">No parks match this view right now.</div>';
+    return;
+  }
+  items.forEach((r,i)=>g.appendChild(makeSmallCard(r, i+1, r[primaryKey], primaryLabel)));
 }
 
-function renderFresh24h(){
-  const fresh = [...data].filter(r=>r.snowfall_24h>0).sort((a,b)=>b.snowfall_24h-a.snowfall_24h).slice(0,3);
-  const col = document.getElementById('fresh-24h-col');
-  const g = document.getElementById('fresh-24h-grid');
-  if(fresh.length===0){ col.style.display='none'; document.querySelector('.hl-divider').style.display='none'; return; }
-  col.style.display='';
-  g.innerHTML = '';
-  fresh.forEach((r,i)=>g.appendChild(makeSmallCard(r, i+1, r.snowfall_24h, 'Fresh 24h')));
-  addShowMoreBtn(g, 'fresh-24h');
-}
-
-function addShowMoreBtn(grid, id){
-  // Only activate on mobile; on desktop the button is hidden via CSS
-  const cards = grid.querySelectorAll('.rc-sm');
-  if(cards.length <= 1) return;
-  // Wrap cards 2+ in a collapsible div
-  const extra = document.createElement('div');
-  extra.className = 'hl-extra';
-  extra.id = id + '-extra';
-  cards.forEach((c,i)=>{ if(i > 0) extra.appendChild(c); });
-  grid.appendChild(extra);
-  // Toggle button
-  const btn = document.createElement('button');
-  btn.className = 'hl-show-more';
-  btn.id = id + '-btn';
-  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg> Show 2 more`;
-  btn.addEventListener('click', ()=>{
-    const open = extra.classList.toggle('open');
-    btn.innerHTML = open
-      ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg> Show less`
-      : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg> Show 2 more`;
+function setHlTab(tab){
+  if(tab === activeHlTab) return;
+  activeHlTab = tab;
+  document.querySelectorAll('.hl-tab').forEach(b=>{
+    const on = b.dataset.tab === tab;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
-  grid.appendChild(btn);
+  const g = document.getElementById('hl-grid');
+  g.classList.add('fading');
+  setTimeout(()=>{
+    renderHighlights();
+    requestAnimationFrame(()=>g.classList.remove('fading'));
+  }, 150);
 }
+
+document.addEventListener('click', e=>{
+  const t = e.target.closest('.hl-tab');
+  if(t) setHlTab(t.dataset.tab);
+});
 
 async function loadData(){
   try{
