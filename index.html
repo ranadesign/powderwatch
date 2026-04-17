@@ -48,7 +48,7 @@ nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-sha
 .btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:var(--sh)}
 .btn-o{background:transparent;color:var(--text);border:1.5px solid var(--bg4)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
 .hero-search-wrap{position:relative;flex-shrink:1}
-.hero-search-wrap input{width:220px;padding:14px 22px 14px 46px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s;box-shadow:var(--sh)}
+.hero-search-wrap input{width:280px;padding:14px 22px 14px 46px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s;box-shadow:var(--sh)}
 .hero-search-wrap input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px var(--acs)}
 
 .hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards;min-height:420px;display:flex;align-items:center;justify-content:center}
@@ -311,7 +311,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 /* Mobile: three separate boxes */
 @media(max-width:1000px){
   #map-section .hl-eyebrow{display:none}
-  #map-section .mw{display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem;padding-right:1.5rem}
+  #map-section .mw{display:flex;flex-direction:column;gap:.5rem;padding-left:1.5rem;padding-right:1.5rem}
   /* Search bar goes BELOW card panel on mobile */
   .map-search-bar-wrap{order:2;margin-top:0;border-radius:var(--rl);border:1.5px solid var(--bg3);overflow:hidden;box-shadow:var(--sh)}
   .map-search-bar{border-radius:0;border:none;box-shadow:none}
@@ -378,12 +378,12 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 
 @media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero-cta{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
 @media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}
-.hero-cta{flex-wrap:nowrap;gap:.6rem;margin-top:2rem}
-.hero-cta .btn{padding:12px 18px;font-size:.78rem;flex-shrink:0;white-space:nowrap}
-.hero-cta .btn svg{width:14px;height:14px}
+.hero-cta{flex-wrap:nowrap;gap:.5rem;margin-top:2rem}
+.hero-cta .btn{padding:11px 14px;font-size:.72rem;flex-shrink:0;white-space:nowrap}
+.hero-cta .btn svg{width:13px;height:13px}
 .hero-search-wrap{flex:1;min-width:0}
-.hero-search-wrap input{width:100%;padding:12px 16px 12px 40px;font-size:.82rem;box-sizing:border-box}
-.hero-search-wrap svg{left:14px!important;width:15px;height:15px}
+.hero-search-wrap input{width:100%;padding:11px 14px 11px 36px;font-size:.72rem;box-sizing:border-box}
+.hero-search-wrap svg{left:12px!important;width:14px;height:14px}
 }
 </style>
 </head>
@@ -402,7 +402,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
     <div class="hero-text">
       <div class="ey">Live Reported Data</div>
       <h1>Check for powder.<br>Beat <em>the crowds.</em></h1>
-      <p class="hero-desc">Track recent snowfall, lift counts, and more directly from park websites via OnTheSnow — updated twice daily.</p>
+      <p class="hero-desc">A free tool to track recent snowfall, park conditions and lift counts. Updated twice daily.</p>
       <div class="hero-cta">
         <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
         <div class="hero-search-wrap">
@@ -430,7 +430,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 </section>
 
 <div class="hf hf1" id="badge1"><div class="hf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="hf-v">Updated</div><div class="hf-l">Twice Daily</div></div></div>
-<div class="hf hf2" id="badge2"><div class="hf-icon">🏔️</div><div><div class="hf-v" id="fCount">—</div><div class="hf-l">Tracked</div></div></div>
+<div class="hf hf2" id="badge2"><div class="hf-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L9 6l5 8 3-4 5 10z"/></svg></div><div><div class="hf-v" id="fCount">—</div><div class="hf-l">Tracked</div></div></div>
 
 <section id="highlights">
   <div class="hl-wrap">
@@ -1016,14 +1016,14 @@ function getTrend(r){
   const avg7 = r.snowfall_7d / 7;
   const h24 = r.snowfall_24h;
   // If no 7d snow but fresh today — actively snowing
-  if(r.snowfall_7d===0 && h24>0) return {cls:'trend-up',arrow:'↑',label:'Snowing now'};
+  if(r.snowfall_7d===0 && h24>0) return {cls:'trend-up',arrow:'\u2191',label:'Snowing now'};
   // Ratio of today vs weekly average
   const ratio = avg7 > 0 ? h24 / avg7 : (h24 > 0 ? 99 : 0);
-  if(ratio >= 2.0)  return {cls:'trend-up',    arrow:'↑',  label:'Picking up'};
-  if(ratio >= 1.1)  return {cls:'trend-rising', arrow:'↗', label:'Improving'};
-  if(ratio >= 0.7)  return {cls:'trend-hold',   arrow:'→', label:'Holding'};
-  if(ratio >= 0.2)  return {cls:'trend-fading', arrow:'↘', label:'Tapering'};
-  return              {cls:'trend-down',   arrow:'↓', label:'Fading'};
+  if(ratio >= 2.0)  return {cls:'trend-up',    arrow:'\u2191',  label:'Picking up'};
+  if(ratio >= 1.1)  return {cls:'trend-rising', arrow:'\u2197',  label:'Improving'};
+  if(ratio >= 0.7)  return {cls:'trend-hold',   arrow:'\u2192',  label:'Holding'};
+  if(ratio >= 0.2)  return {cls:'trend-fading', arrow:'\u2198',  label:'Tapering'};
+  return              {cls:'trend-down',   arrow:'\u2193',  label:'Fading'};
 }
 
 function updateStats(generatedAt){
@@ -1068,7 +1068,7 @@ function renderCards(resorts){resorts=resorts||data;
         <div class="rm"><div class="rv">${r.lifts_open}<span class="ru">/${r.lifts_total}</span></div><div class="rl">Lifts Open</div></div>
       </div>
       ${tags.length?`<div class="rc-extra">${tags.join('')}</div>`:''}
-      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow →</a>
+      <a href="${r.url}" target="_blank" rel="noopener" class="rc-link">Full report on OnTheSnow <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="rc-fav-btn${isFav?' active':''}" data-name="${r.name}" title="Save to My Parks">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'#e05a5a':'none'}" stroke="${isFav?'#e05a5a':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>`;
@@ -1140,7 +1140,7 @@ function showDetail(r){
     if(trend) metaParts.push(`${trend.arrow} ${trend.label}`);
     document.getElementById('rdMeta').innerHTML =
       metaParts.map(p=>`<span>${p}</span>`).join('') +
-      `<a href="${r.url}" target="_blank" rel="noopener" class="rd-ots-link">OTS Snow Report ↗</a>`;
+      `<a href="${r.url}" target="_blank" rel="noopener" class="rd-ots-link">OTS Snow Report <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`;
   }
 
   document.getElementById('resortDetail').classList.add('active');
@@ -1153,7 +1153,7 @@ function showDetail(r){
     if(r.last_updated) metaParts.push(`Updated ${r.last_updated}`);
 
     document.getElementById('mpName').textContent = r.name;
-    document.getElementById('mpSub').innerHTML = `${r.state} · ${r.status} · <a href="${r.url}" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:none;font-weight:500;text-transform:none;letter-spacing:normal;pointer-events:auto">OTS Snow Report ↗</a>`;
+    document.getElementById('mpSub').innerHTML = `${r.state} · ${r.status} · <a href="${r.url}" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:none;font-weight:500;text-transform:none;letter-spacing:normal;pointer-events:auto">OTS Report <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`;
     document.getElementById('mpStats').innerHTML = `
       <div class="mobile-popup-stat"><div class="sv">${r.base_depth}<span class="su">"</span></div><div class="sl">Base</div></div>
       <div class="mobile-popup-stat"><div class="sv">${r.snowfall_7d}<span class="su">"</span></div><div class="sl">7-Day</div></div>
@@ -1331,7 +1331,8 @@ function positionBadges(){
   b1.style.top  = (scrollY + r.top - b1.offsetHeight / 2) + 'px';
   // badge2 (Tracked) — bottom-left corner
   b2.style.left = (r.left - b2.offsetWidth / 2) + 'px';
-  b2.style.top  = (scrollY + r.bottom - b2.offsetHeight / 2) + 'px';
+  const mobileNudge = window.innerWidth <= 900 ? 10 : 0;
+  b2.style.top  = (scrollY + r.bottom - b2.offsetHeight / 2 + mobileNudge) + 'px';
 }
 // Run after fonts/layout settle, and on resize
 window.addEventListener('load', ()=>{ setTimeout(positionBadges, 300); });
