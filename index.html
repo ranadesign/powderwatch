@@ -1,371 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8LNJ1T5VW"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-H8LNJ1T5VW');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PowderWatch — Live Snow Conditions</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.1.2/maplibre-gl.css" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#f7f5f0;--bg2:#efece5;--bg3:#e8e4dc;--bg4:#ddd8ce;
---sf:#ffffff;--text:#1a1a18;--t2:#4a4a45;--tm:#8a8a82;--tl:#b0afa8;
+--bg:#f0ede6;--bg2:#e8e4db;--bg3:#d8d3c8;--bg4:#c5bfb2;
+--sf:#ffffff;--text:#1a1a18;--t2:#4a4a42;--tm:#8a8a7e;--tl:#b0afa6;
 --ac:#2e5a88;--acl:#4a7ab5;--acs:rgba(46,90,136,0.08);
+--glow:#c45a20;--glow2:#d07838;--alert:#2d8a4e;
 --deep:#1e3f66;--good:#3a6e9e;--light:#7aadcc;--thin:#b5d4e6;
---r:12px;--rs:8px;--rl:20px;
---serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans','Helvetica Neue',sans-serif;
+--r:10px;--rs:6px;--rl:16px;
+--heading:'Oswald',sans-serif;--mono:'Space Mono',monospace;--sans:'DM Sans','Helvetica Neue',sans-serif;
 --ease:cubic-bezier(0.22,1,0.36,1);
 --sh:0 4px 20px rgba(0,0,0,0.06);--shl:0 12px 40px rgba(0,0,0,0.08);
+--grain:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
 html{scroll-behavior:smooth;background:var(--bg)}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.6}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;background-image:var(--grain);background-repeat:repeat;opacity:.5}
 ::selection{background:var(--ac);color:#fff}
 :focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease)}
-nav.scrolled{background:rgba(247,245,240,.92);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--bg3)}
-.logo{font-family:var(--serif);font-size:1.5rem;color:var(--text);text-decoration:none}.logo em{font-style:italic;color:var(--ac)}
-.nav-r{display:flex;gap:2rem;align-items:center}
-.nav-r a{font-size:.8rem;font-weight:500;color:var(--t2);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .3s}
-.nav-r a:hover{color:var(--ac)}
-.nav-pill{background:var(--ac)!important;color:#fff!important;padding:8px 20px;border-radius:100px;font-size:.75rem!important}
+/* ── Snowfall canvas ── */
+#snowCanvas{position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:.35}
 
-.hero{min-height:100vh;display:flex;align-items:center;padding:6rem 2rem 4rem}
-.hero-inner{max-width:1300px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease)}
+nav.scrolled{background:rgba(240,237,230,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bg3)}
+.logo{font-family:var(--heading);font-size:1.4rem;color:var(--text);text-decoration:none;text-transform:uppercase;letter-spacing:.08em;font-weight:700}.logo em{font-style:normal;color:var(--ac);font-weight:700}
+.nav-r{display:flex;gap:2rem;align-items:center}
+.nav-r a{font-size:.7rem;font-weight:500;color:var(--t2);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .3s;font-family:var(--sans)}
+.nav-r a:hover{color:var(--ac)}
+.nav-pill{background:var(--ac)!important;color:#fff!important;padding:8px 20px;border-radius:4px;font-size:.7rem!important;font-weight:600!important;font-family:var(--heading)!important;letter-spacing:.1em!important;transition:all .3s!important}
+.nav-pill:hover{background:var(--acl)!important;transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,90,136,.2)}
+
+/* ── Hero ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-bg-img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(85%,1200px);height:75vh;border-radius:24px;overflow:hidden;z-index:0}
+.hero-bg-img img{width:100%;height:100%;object-fit:cover}
+.hero-bg-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(15,25,40,.55) 0%,rgba(15,25,40,.3) 40%,rgba(15,25,40,.05) 70%,transparent 100%)}
+@media(max-width:900px){.hero-bg-img{width:92%;height:60vh;border-radius:16px}}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(46,90,136,0.04) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 20% 80%,rgba(196,90,32,0.03) 0%,transparent 60%);pointer-events:none}
+.hero-inner{max-width:1300px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:2}
 .hero-text{opacity:0;animation:fadeUp 1s var(--ease) .2s forwards}
-.ey{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
-.ey::before{content:'';width:24px;height:1px;background:var(--ac)}
-.hero h1{font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
-.hero h1 em{font-style:italic;color:var(--ac)}
-.hero-desc{font-size:1.05rem;color:var(--t2);font-weight:300;margin-top:1.5rem;max-width:440px;line-height:1.7}
+.ey{font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--glow);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;font-family:var(--mono)}
+.ey::before{content:'';width:28px;height:2px;background:var(--glow)}
+.hero h1{font-family:var(--heading);font-size:clamp(3rem,6vw,5rem);font-weight:700;line-height:1;letter-spacing:-.01em;text-transform:uppercase}
+.hero h1 .h1-outline{color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.3),0 1px 3px rgba(0,0,0,0.2)}
+.hero h1 em{font-style:normal;color:#fff;position:relative;text-shadow:0 2px 16px rgba(0,0,0,0.4),0 1px 4px rgba(0,0,0,0.3)}
+.hero h1 em::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:3px;background:#fff;opacity:.4;border-radius:2px}
+.hero-desc{font-size:1rem;color:#fff;font-weight:400;margin-top:0;margin-bottom:1rem;max-width:440px;line-height:1.7;text-shadow:0 1px 10px rgba(0,0,0,0.5),0 1px 3px rgba(0,0,0,0.3)}
+.hero-ey{color:#fff!important;text-shadow:0 1px 10px rgba(0,0,0,0.5),0 1px 3px rgba(0,0,0,0.3);margin-bottom:.75rem}
+.hero-ey::before{background:#fff!important}
 .hero-cta{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
-.btn{padding:14px 30px;border-radius:100px;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .35s var(--ease);border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:var(--sh)}
+/* Desktop/mobile show-hide for eyebrow+desc */
+.hero-sub-mobile{display:none}
+.hero-sub-desktop{display:block}
+/* Tracked text on hero card */
+.btn{padding:14px 28px;border-radius:4px;font-family:var(--heading);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .35s var(--ease);border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.08em}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--acl);transform:translateY(-2px);box-shadow:0 6px 20px rgba(46,90,136,.2)}
 .btn-o{background:transparent;color:var(--text);border:1.5px solid var(--bg4)}.btn-o:hover{border-color:var(--ac);color:var(--ac)}
 .hero-search-wrap{position:relative;flex-shrink:1}
-.hero-search-wrap input{width:280px;padding:14px 22px 14px 46px;background:var(--sf);border:1.5px solid var(--bg3);border-radius:100px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .3s;box-shadow:var(--sh)}
+.hero-search-wrap input{width:280px;padding:13px 22px 13px 44px;background:#fff;border:1.5px solid var(--bg3);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:.85rem;transition:all .3s}
 .hero-search-wrap input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px var(--acs)}
+.hero-search-wrap input::placeholder{color:var(--tm)}
 
-.hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards;min-height:420px;display:flex;align-items:center;justify-content:center}
-.hero-vis-img{position:absolute;inset:0;border-radius:var(--rl);overflow:hidden;background:url('IMG_0165.jpg') center center/cover no-repeat;z-index:0}
+/* ── Hero visual card ── */
+.hero-vis{position:relative;opacity:0;animation:fadeUp 1s var(--ease) .5s forwards;min-height:320px;display:flex;align-items:flex-end;justify-content:center}
+.hero-vis-img{display:none}
+.hero-vis-img::after{display:none}
 .hero-vis-overlay{display:none}
-.hero-vis-content{position:relative;z-index:2;width:100%;padding:2.5rem;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:420px;padding-bottom:3.5rem}
-.hero-card{background:#fff;border:none;border-radius:var(--r);padding:.75rem;box-shadow:var(--shl);position:relative;overflow:hidden;width:100%}
-.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.7)}
-.hc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:.2rem;color:var(--text)}
-.hc-sub{font-size:.68rem;color:var(--tm);margin-bottom:.75rem}
+.hero-vis-content{position:relative;z-index:2;width:100%;padding:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end}
+.hero-card{background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border:1px solid var(--bg3);border-radius:var(--r);padding:.85rem;position:relative;overflow:hidden;width:100%}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--glow))}
+.hc-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.75rem}
+.hc-title{font-family:var(--heading);font-size:1.1rem;margin-bottom:0;color:var(--text);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.hc-sub{font-size:.85rem;color:var(--ac);margin-bottom:0;font-family:var(--heading);letter-spacing:.04em;text-transform:uppercase;font-weight:700;text-align:right}
 .hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
-.hc-s{text-align:center;padding:.5rem .4rem;background:var(--bg);border-radius:var(--rs)}
-.hc-s .v{font-family:var(--serif);font-size:1.9rem;line-height:1;color:var(--ac)}.hc-s .l{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tm);margin-top:4px}
-.hf{position:absolute;background:#fff;border-radius:var(--rs);padding:7px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.12);display:flex;align-items:center;gap:7px;animation:float 6s ease-in-out infinite;z-index:50;pointer-events:none}
+.hc-s{text-align:center;padding:.55rem .4rem;background:var(--bg);border-radius:var(--rs);border:1px solid var(--bg3)}
+.hc-s .v{font-family:var(--heading);font-size:2rem;line-height:1;color:var(--ac);font-weight:700}.hc-s .l{font-size:.5rem;text-transform:uppercase;letter-spacing:.14em;color:var(--tm);margin-top:4px;font-family:var(--mono)}
+/* Floating badges */
+.hf{position:absolute;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:8px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.4);display:flex;align-items:center;gap:8px;animation:float 6s ease-in-out infinite;z-index:50;pointer-events:none}
 .hf1{}.hf2{animation-delay:2s}
 .hf-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem}
-.hf-v{font-weight:600;font-size:.9rem;color:var(--text)}.hf-l{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em}
+.hf-v{font-weight:600;font-size:.85rem;color:var(--text);font-family:var(--heading);text-transform:uppercase;letter-spacing:.04em}.hf-l{font-size:.55rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
 
-.source-badge{position:fixed;bottom:1rem;right:1rem;z-index:90;background:var(--sf);border:1px solid var(--bg3);border-radius:100px;padding:6px 14px;font-size:.6rem;color:var(--tm);box-shadow:var(--sh);display:flex;align-items:center;gap:6px}
-.source-dot{width:6px;height:6px;border-radius:50%;background:#34a853;animation:pulse 2s ease infinite}
+/* ── Source badge ── */
+.source-badge{position:fixed;bottom:1rem;right:1rem;z-index:90;background:var(--bg2);border:1px solid var(--bg3);border-radius:4px;padding:6px 14px;font-size:.58rem;color:var(--tm);box-shadow:var(--sh);display:flex;align-items:center;gap:6px;font-family:var(--mono);letter-spacing:.02em}
+.source-dot{width:6px;height:6px;border-radius:50%;background:var(--alert);animation:pulse 2s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.stats{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-.st{padding:2rem;text-align:center;position:relative;transition:background .3s}.st:hover{background:#fafaf7}
+/* ── Stats strip ── */
+.stats{background:var(--bg2);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.st{padding:2rem;text-align:center;position:relative;transition:background .3s}.st:hover{background:var(--bg3)}
 .st:not(:last-child)::after{content:'';position:absolute;right:0;top:25%;height:50%;width:1px;background:var(--bg3)}
-.st-v{font-family:var(--serif);font-size:2rem}.st-l{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-top:.25rem}
+.st-v{font-family:var(--heading);font-size:2.2rem;font-weight:700;color:var(--text)}.st-l{font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--tm);margin-top:.25rem;font-family:var(--mono)}
 
+/* ── Section headers ── */
 .sh{text-align:center;padding:5rem 2rem 2.5rem}
-.sh .ey2{font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:.75rem}
-.sh h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400}.sh h2 em{font-style:italic}
-.sh p{color:var(--tm);margin-top:.5rem;font-size:.95rem;font-weight:300}
+.sh .ey2{font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--glow);margin-bottom:.75rem;font-family:var(--mono)}
+.sh h2{font-family:var(--heading);font-size:clamp(2rem,4vw,3rem);font-weight:700;text-transform:uppercase;letter-spacing:-.01em}.sh h2 em{font-style:normal;color:var(--ac)}
+.sh p{color:var(--tm);margin-top:.5rem;font-size:.9rem;font-weight:300}
 
+/* ── Map wrapper ── */
 .mw{padding:0 2rem 2rem;max-width:1400px;margin:0 auto}
 .mc{position:relative;border-radius:var(--rl);overflow:hidden;box-shadow:var(--shl);border:1px solid var(--bg3);height:70vh;min-height:520px}
 #map{width:100%;height:100%}
 .map-ctrl{position:absolute;top:1rem;left:1rem;z-index:10}
-.mb{background:var(--acs);backdrop-filter:blur(12px);border:1px solid var(--ac);border-radius:var(--rs);padding:10px 16px;font-family:var(--sans);font-size:.7rem;font-weight:500;color:var(--ac);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:7px}
-.mb:hover{background:#fff;border-color:var(--ac);color:var(--ac)}
-.mb.on{background:#fff;border-color:var(--bg3);color:var(--t2)}
+.mb{background:#fff;backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:10px 16px;font-family:var(--heading);font-size:.65rem;font-weight:600;color:var(--ac);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.06em}
+.mb:hover{background:#fff;border-color:var(--ac)}
+.mb.on{background:#fff;border-color:var(--bg4);color:var(--t2)}
 .ml{position:absolute;bottom:1rem;left:1rem;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--bg3);border-radius:var(--rs);padding:14px 18px}
 .maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib{display:none!important}
-.ml-t{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-bottom:6px;font-weight:600}
+.ml-t{font-size:.55rem;text-transform:uppercase;letter-spacing:.18em;color:var(--tm);margin-bottom:6px;font-weight:600;font-family:var(--mono)}
 .ml-dots{display:flex;align-items:center;gap:6px;margin-top:4px}
-.ml-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.ml-num{font-size:.72rem;color:var(--tl)}
+.ml-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.ml-num{font-size:.68rem;color:var(--tm);font-family:var(--mono)}
 
+/* ── Resort cards ── */
 .rs{padding:0 2rem 5rem;max-width:1400px;margin:0 auto}
-.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.25rem;margin-top:2rem}
-.rc{background:var(--sf);border:1px solid var(--bg3);border-radius:var(--r);padding:1.75rem;cursor:pointer;transition:all .4s var(--ease)}
-.rc:hover{transform:translateY(-4px);box-shadow:var(--shl);border-color:var(--bg4)}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1rem;margin-top:2rem}
+.rc{background:var(--ac);border:1px solid rgba(255,255,255,0.1);border-left:3px solid rgba(255,255,255,0.3);border-radius:var(--r);padding:1.5rem;cursor:pointer;transition:all .4s var(--ease);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.rc::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .4s;background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);pointer-events:none}
+.rc:hover{transform:translateY(-3px) rotateX(1deg);box-shadow:0 12px 40px rgba(0,0,0,0.15);border-color:rgba(255,255,255,0.2)}
+.rc:hover::before{opacity:1}
 .rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem}
-.rc-nm{font-family:var(--serif);font-size:1.3rem}.rc-st{font-size:.65rem;color:var(--tm);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.08em}
-.ct{padding:4px 12px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.ct.deep{background:rgba(30,63,102,.08);color:var(--deep)}.ct.good{background:rgba(58,110,158,.08);color:var(--good)}.ct.light{background:rgba(122,173,204,.1);color:var(--light)}.ct.closed{background:rgba(180,40,40,.06);color:#b42828}
-.rc-data{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding-top:0.75rem;border-top:1px solid var(--bg)}
-.rm{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}.rm .rv{font-family:var(--serif);font-size:1.9rem;line-height:1;color:var(--text)}.rm .ru{font-size:.85rem;color:var(--tm)}.rm .rl{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl)}
-.rc-extra{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
-.rc-tag{padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:500;background:var(--bg);color:var(--tm);letter-spacing:.04em}
-.rc-tag.open{background:rgba(52,168,83,.08);color:#2d8a4e}
-.rc-link{display:inline-flex;align-items:center;gap:4px;margin-top:.75rem;font-size:.7rem;color:var(--ac);text-decoration:none;font-weight:500;transition:gap .3s}
-.rc-link:hover{gap:8px}
-.fc{padding:8px 18px;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;border:1.5px solid var(--bg3);background:var(--sf);color:var(--t2);transition:all .3s;letter-spacing:.02em;font-family:var(--sans)}
+.rc-nm{font-family:var(--heading);font-size:1.25rem;text-transform:uppercase;letter-spacing:.02em;font-weight:600;color:#fff}.rc-st{font-size:.6rem;color:rgba(255,255,255,0.6);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
+.ct{padding:4px 12px;border-radius:3px;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;font-family:var(--heading)}
+.ct.deep{background:var(--ac);color:#fff}.ct.good{background:var(--acl);color:#fff}.ct.light{background:var(--tm);color:#fff}.ct.closed{background:var(--glow);color:#fff}
+.rc-data{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;padding-top:0.75rem;border-top:1px solid rgba(255,255,255,0.15)}
+.rm{text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}.rm .rv{font-family:var(--heading);font-size:1.8rem;line-height:1;color:#fff;font-weight:700}.rm .ru{font-size:.8rem;color:rgba(255,255,255,0.5)}.rm .rl{font-size:.48rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,0.5);font-family:var(--mono)}
+.rc-extra{display:flex;gap:.4rem;margin-top:.65rem;flex-wrap:wrap}
+.rc-tag{padding:3px 10px;border-radius:3px;font-size:.52rem;font-weight:500;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.8);letter-spacing:.04em;font-family:var(--mono)}
+.rc-tag.open{background:transparent;border-color:rgba(255,255,255,0.4);color:#fff}
+.rc-link{display:inline-flex;align-items:center;gap:4px;margin-top:.65rem;font-size:.68rem;color:rgba(255,255,255,0.8);text-decoration:none;font-weight:500;transition:gap .3s,color .3s;font-family:var(--sans)}
+.rc-link:hover{gap:8px;color:#fff}
+
+/* ── Filter chips ── */
+.fc{padding:8px 18px;border-radius:3px;font-size:.68rem;font-weight:600;cursor:pointer;border:1.5px solid var(--bg3);background:var(--bg2);color:var(--t2);transition:all .3s;letter-spacing:.04em;font-family:var(--heading);text-transform:uppercase}
 .fc:hover{border-color:var(--ac);color:var(--ac)}
 .fc.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.fc-fav{border-color:#c0392b!important;color:#c0392b!important;display:inline-flex;align-items:center}
-.fc-fav.on{background:#c0392b!important;color:#fff!important;border-color:#c0392b!important}
+.fc-fav{border-color:#e05a5a!important;color:#e05a5a!important;display:inline-flex;align-items:center}
+.fc-fav.on{background:#e05a5a!important;color:#fff!important;border-color:#e05a5a!important}
 .fc-fav.on svg{stroke:#fff}
-.fc-ikon{border-color:#f5c800!important;color:#b89400!important}
-.fc-ikon.on{background:#f5c800!important;color:#5a4800!important;border-color:#f5c800!important}
+.fc-ikon{border-color:#c9a000!important;color:#8a6d00!important}
+.fc-ikon.on{background:#e6b800!important;color:#3d2e00!important;border-color:#e6b800!important}
 .fc-epic{border-color:#005daa!important;color:#005daa!important}
 .fc-epic.on{background:#005daa!important;color:#fff!important;border-color:#005daa!important}
-.pass-legend{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1.5rem;font-size:.7rem;color:var(--tm)}
+.pass-legend{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1.5rem;font-size:.65rem;color:var(--tm);font-family:var(--mono)}
 .pass-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
-.pass-dot.ikon{background:#f5c800}
+.pass-dot.ikon{background:#c9a000}
 .pass-dot.epic{background:#005daa}
-.rc-fav-btn{position:absolute;top:1.1rem;right:1.1rem;background:none;border:none;cursor:pointer;padding:4px;border-radius:50%;transition:transform .2s var(--ease);color:var(--tl);line-height:0}
-.rc-fav-btn:hover{transform:scale(1.2);color:var(--ac)}
+
+/* ── Fav button on cards ── */
+.rc-fav-btn{position:absolute;top:1.1rem;right:1.1rem;background:none;border:none;cursor:pointer;padding:4px;border-radius:50%;transition:transform .2s var(--ease);color:rgba(255,255,255,0.4);line-height:0}
+.rc-fav-btn:hover{transform:scale(1.2);color:#fff}
 .rc-fav-btn.active{color:#e05a5a}
 .rc-fav-btn.active svg{fill:#e05a5a;stroke:#e05a5a}
-.rc{position:relative}
-.top-pick-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(46,90,136,.12),rgba(46,90,136,.06));color:var(--ac);border:1px solid rgba(46,90,136,.15);margin-bottom:.5rem}
-.no-favs{text-align:center;padding:3rem 1rem;color:var(--tm);font-size:.9rem;grid-column:1/-1}
+
+.top-pick-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:3px;font-size:.5rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(61,212,240,.1);color:var(--ac);border:1px solid rgba(61,212,240,.2);margin-bottom:.5rem;font-family:var(--heading)}
+.no-favs{text-align:center;padding:3rem 1rem;color:var(--tm);font-size:.85rem;grid-column:1/-1}
 .no-favs svg{display:block;margin:0 auto 1rem;opacity:.3}
-.trend{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.04em;margin-top:.6rem}
-.trend-up{background:rgba(34,139,80,.08);color:#228b50}
-.trend-rising{background:rgba(58,130,90,.07);color:#3a7a5a}
-.trend-hold{background:rgba(120,120,110,.08);color:#6a6a62}
-.trend-fading{background:rgba(180,120,30,.08);color:#a06820}
-.trend-down{background:rgba(180,60,40,.07);color:#b03c28}
 
+/* ── Trend badges ── */
+.trend{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:3px;font-size:.6rem;font-weight:600;letter-spacing:.06em;margin-top:.6rem;font-family:var(--heading);text-transform:uppercase}
+.trend-up{background:#2d8a4e;color:#fff}
+.trend-rising{background:#3a8a5a;color:#fff}
+.trend-hold{background:var(--ac);color:#fff}
+.trend-fading{background:#c47a30;color:#fff}
+.trend-down{background:var(--glow);color:#fff}
 
-/* hover tooltip only */
-.maplibregl-popup-content{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:12px!important;padding:14px 16px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:0 8px 32px rgba(0,0,0,0.12)!important;min-width:220px}
-.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:8px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
+/* ── Popups ── */
+.maplibregl-popup-content{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:10px!important;padding:14px 16px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:0 8px 32px rgba(0,0,0,0.1)!important;min-width:220px}
+.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:6px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
 .resort-popup .maplibregl-popup-content{padding:14px 16px!important;min-width:260px}
 .maplibregl-popup{z-index:20!important}
 .maplibregl-popup-close-button{display:none!important}
-/* Tip for anchor:bottom (points down) — only top border colored, rest transparent */
 .maplibregl-popup-tip{border-top-color:rgba(255,255,255,.97)!important;border-left-color:transparent!important;border-right-color:transparent!important;border-bottom-color:transparent!important}
-/* Resort detail panel (inside card-panel) */
+
+/* ── Resort detail panel ── */
 .resort-detail{display:flex;flex-direction:column;position:absolute;inset:0;background:var(--sf);z-index:10;border-radius:inherit;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s}
 .resort-detail.active{opacity:1;visibility:visible;transform:translateY(0)}
 .rd-hdr{padding:.85rem 1.1rem .7rem;border-bottom:1px solid var(--bg3);display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;flex-shrink:0}
-.rd-name{font-family:var(--serif);font-size:1.15rem;line-height:1.15;color:var(--text)}
-.rd-sub{font-size:.6rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
-.rd-close{background:none;border:none;cursor:pointer;color:var(--tl);font-size:1.1rem;line-height:1;padding:2px;flex-shrink:0;transition:color .2s}
+.rd-name{font-family:var(--heading);font-size:1.1rem;line-height:1.15;color:var(--text);text-transform:uppercase;letter-spacing:.02em;font-weight:600}
+.rd-sub{font-size:.55rem;color:var(--tm);text-transform:uppercase;letter-spacing:.12em;margin-top:3px;font-family:var(--mono)}
+.rd-close{background:none;border:none;cursor:pointer;color:var(--tm);font-size:1.1rem;line-height:1;padding:2px;flex-shrink:0;transition:color .2s}
 .rd-close:hover{color:var(--text)}
 .rd-body{flex:1;overflow-y:auto;padding:.9rem 1.1rem}
 .rd-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1rem}
-.rd-stat{background:var(--bg);border-radius:var(--rs);padding:.6rem .75rem}
-.rd-stat .v{font-family:var(--serif);font-size:1.5rem;line-height:1;color:var(--ac)}
+.rd-stat{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:.6rem .75rem}
+.rd-stat .v{font-family:var(--heading);font-size:1.5rem;line-height:1;color:var(--ac);font-weight:700}
 .rd-stat .u{font-size:.8rem;color:var(--tm)}
-.rd-stat .l{font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl);margin-top:3px}
-.rd-meta{font-size:.7rem;color:var(--tl);margin-bottom:.25rem;padding-bottom:0;border-bottom:none}
+.rd-stat .l{font-size:.45rem;text-transform:uppercase;letter-spacing:.14em;color:var(--tm);margin-top:3px;font-family:var(--mono)}
+.rd-meta{font-size:.65rem;color:var(--tm);margin-bottom:.25rem;padding-bottom:0;border-bottom:none;font-family:var(--mono)}
 .rd-meta span{display:inline-block;margin-right:.75rem}
-.rd-ots-link{display:block;margin-top:.5rem;font-size:.7rem;color:var(--ac);text-decoration:none;font-weight:500;transition:opacity .2s}
+.rd-ots-link{display:block;margin-top:.5rem;font-size:.68rem;color:var(--ac);text-decoration:none;font-weight:500;transition:opacity .2s}
 .rd-ots-link:hover{opacity:.7}
 .rd-plan{margin-top:auto;padding-top:.75rem;border-top:1px solid var(--bg3)}
-.rd-plan-label{font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--tm);margin-bottom:.5rem}
+.rd-plan-label{font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--tm);margin-bottom:.5rem;font-family:var(--heading)}
 .rd-links{display:flex;flex-direction:column;gap:.35rem}
-.rd-link{display:flex;align-items:center;gap:.5rem;padding:.5rem .65rem;border-radius:var(--rs);border:1px solid var(--bg3);text-decoration:none;color:var(--t2);font-size:.75rem;font-weight:500;transition:all .25s var(--ease)}
+.rd-link{display:flex;align-items:center;gap:.5rem;padding:.5rem .65rem;border-radius:var(--rs);border:1px solid var(--bg3);text-decoration:none;color:var(--t2);font-size:.72rem;font-weight:500;transition:all .25s var(--ease)}
 .rd-link:hover{border-color:var(--ac);color:var(--ac);background:var(--acs)}
-.rd-link svg{flex-shrink:0;color:var(--tl)}
+.rd-link svg{flex-shrink:0;color:var(--tm)}
 .rd-link:hover svg{color:var(--ac)}
-/* Custom mobile popup (inside map-and-cards, clipped there, not by mc) */
+
+/* ── Mobile popup ── */
 .mobile-popup{position:absolute;z-index:10;display:flex;align-items:center;gap:0;pointer-events:none;top:0;left:0}
 .mobile-popup.visible{pointer-events:auto}
-.mobile-popup-arrow{width:0;height:0;border-top:9px solid transparent;border-bottom:9px solid transparent;border-right:11px solid #fff;filter:drop-shadow(-2px 0 2px rgba(0,0,0,0.10));flex-shrink:0}
-.mobile-popup-card{background:#fff;border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:.85rem 1rem;min-width:200px;max-width:240px;pointer-events:auto}
+.mobile-popup-arrow{width:0;height:0;border-top:9px solid transparent;border-bottom:9px solid transparent;border-right:11px solid var(--sf);filter:drop-shadow(-2px 0 2px rgba(0,0,0,0.08));flex-shrink:0}
+.mobile-popup-card{background:var(--sf);border:1px solid var(--bg3);border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,0.1);padding:.85rem 1rem;min-width:200px;max-width:240px;pointer-events:auto}
 .mobile-popup-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.65rem}
-.mobile-popup-name{font-family:var(--serif);font-size:1.05rem;line-height:1.15;color:var(--text)}
-.mobile-popup-sub{font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;pointer-events:auto}
+.mobile-popup-name{font-family:var(--heading);font-size:1.05rem;line-height:1.15;color:var(--text);text-transform:uppercase;font-weight:600}
+.mobile-popup-sub{font-size:.55rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;pointer-events:auto;font-family:var(--mono)}
 .mobile-popup-close{background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--tm);line-height:1;padding:0;flex-shrink:0}
 .mobile-popup-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:.6rem}
-.mobile-popup-stat{text-align:center;background:var(--bg);border-radius:5px;padding:5px 3px}
-.mobile-popup-stat .sv{font-family:var(--serif);font-size:1.05rem;line-height:1;color:var(--ac)}
-.mobile-popup-stat .su{font-size:.68rem;color:var(--tm)}
-.mobile-popup-stat .sl{font-size:.45rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px}
-.mobile-popup-meta{font-size:.6rem;color:var(--tl);padding-top:.5rem;border-top:1px solid var(--bg3);pointer-events:auto}
-/* Clip map canvas corners and card panel independently */
+.mobile-popup-stat{text-align:center;background:var(--bg);border:1px solid var(--bg3);border-radius:4px;padding:5px 3px}
+.mobile-popup-stat .sv{font-family:var(--heading);font-size:1.05rem;line-height:1;color:var(--ac);font-weight:700}
+.mobile-popup-stat .su{font-size:.65rem;color:var(--tm)}
+.mobile-popup-stat .sl{font-size:.42rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tm);margin-top:2px;font-family:var(--mono)}
+.mobile-popup-meta{font-size:.58rem;color:var(--tm);padding-top:.5rem;border-top:1px solid var(--bg3);pointer-events:auto;font-family:var(--mono)}
+
+/* ── Map layout ── */
 .map-and-cards .mc{overflow:hidden;border-radius:var(--rl) 0 0 0}
 @media(max-width:1000px){
-  .rd-body{overflow-y:visible;padding:.8rem 1.1rem}
-  .rd-stats{display:none}
-  .rd-meta{display:none}
-  .rd-plan{margin-top:0;border-top:none;padding-top:0}
+  .rd-body{overflow-y:auto;padding:.8rem 1.1rem}
+  .rd-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;margin-bottom:.75rem}
+  .rd-stat{padding:.5rem .6rem}
+  .rd-stat .v{font-size:1.25rem}
+  .rd-meta{display:block;font-size:.6rem;margin-bottom:.5rem}
+  .rd-plan{margin-top:.5rem;border-top:1px solid var(--bg3);padding-top:.6rem}
+  .rd-plan-label{display:none}
+  .rd-links{flex-direction:row;flex-wrap:wrap;gap:.4rem}
+  .rd-link{padding:.4rem .7rem;font-size:.62rem;gap:.35rem;border-radius:100px;flex:0 0 auto}
+  .rd-link svg{width:11px;height:11px}
+  .rd-share-row{gap:.4rem;margin-top:.5rem;padding-top:.5rem}
+  .rd-share-btn{padding:.4rem .6rem;font-size:.6rem;border-radius:100px}
 }
 .rd-share-row{display:flex;gap:.5rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--bg3)}
-.rd-share-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.5rem .5rem;border-radius:var(--rs);border:1px solid var(--bg3);background:var(--bg);color:var(--t2);font-size:.72rem;font-weight:500;font-family:var(--sans);cursor:pointer;transition:all .25s var(--ease)}
+.rd-share-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.5rem .5rem;border-radius:var(--rs);border:1px solid var(--bg3);background:var(--bg);color:var(--t2);font-size:.68rem;font-weight:500;font-family:var(--heading);cursor:pointer;transition:all .25s var(--ease);text-transform:uppercase;letter-spacing:.04em}
 .rd-share-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--acs)}
-/* Card panel top-right corner matches map top-left */
 .card-panel{border-radius:0 var(--rl) 0 0}
-.share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--text);color:#fff;padding:8px 20px;border-radius:100px;font-size:.78rem;font-weight:500;font-family:var(--sans);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999}
+.share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ac);color:#fff;padding:8px 20px;border-radius:4px;font-size:.75rem;font-weight:600;font-family:var(--heading);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;text-transform:uppercase;letter-spacing:.06em}
 .share-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Dot legend in card panel header — mobile only */
+/* Dot legend in card panel header */
 .cp-legend-inline{display:none;flex-direction:column;gap:3px}
-.cp-legend-title{font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;font-weight:500}
+.cp-legend-title{font-size:.52rem;color:var(--tm);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap;font-weight:600;font-family:var(--mono)}
 .cp-legend-row{display:flex;align-items:center;gap:3px}
-.cp-legend-num{font-size:.58rem;color:var(--tm);white-space:nowrap}
-.cp-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* Right side of header */
+.cp-legend-num{font-size:.55rem;color:var(--tm);white-space:nowrap;font-family:var(--mono)}
+.cp-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .cp-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-left:auto}
-.cp-hdr-right #mapResultsLabel{font-size:.72rem;font-weight:600;color:var(--t2)}
+.cp-hdr-right #mapResultsLabel{font-size:.68rem;font-weight:600;color:var(--t2);font-family:var(--heading);text-transform:uppercase;letter-spacing:.04em}
 @media(max-width:1000px){
   .cp-legend-inline{display:flex}
-  .cp-legend-title{font-size:.68rem}
-  .cp-legend-num{font-size:.68rem}
+  .cp-legend-title{font-size:.62rem}
+  .cp-legend-num{font-size:.62rem}
   .cp-legend-dot{width:10px;height:10px}
   .cp-legend-row{gap:4px}
   .card-panel-hdr{flex-wrap:nowrap;align-items:center}
   .maplibregl-ctrl-top-right{display:none!important}
   .ml{display:none}
-  /* Scroll fade indicator */
   .card-panel{--scroll-fade:1}
   .card-panel::after{content:'';position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.96));pointer-events:none;z-index:5;border-radius:0 0 0 var(--rl);opacity:var(--scroll-fade);transition:opacity .25s}
 }
-/* Scroll fade element — desktop and mobile */
 .card-scroll-fade{position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.97));pointer-events:none;z-index:6;transition:opacity .25s}
-/* Scroll chevron hint */
 .card-scroll-hint{display:flex;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:7;color:var(--ac);pointer-events:none;transition:opacity .3s;animation:hintBounce .8s ease-in-out 2}
 @keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
-}
-/* Map section header layout */
+
+/* ── Map section header ── */
 #map-section .map-section-hdr{display:grid;grid-template-columns:auto 1fr;gap:2.5rem;margin-bottom:1rem;width:100%;min-height:4rem}
 #map-section .map-section-hdr > :first-child{justify-self:start;grid-column:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
-#map-section .map-section-desc{font-size:.82rem;color:var(--tm);font-weight:300;text-align:right;line-height:1.5;justify-self:end;align-self:end;max-width:420px;margin:0;grid-column:2}
+#map-section .map-section-desc{font-size:.78rem;color:var(--tm);font-weight:300;text-align:right;line-height:1.5;justify-self:end;align-self:end;max-width:420px;margin:0;grid-column:2}
 @media(max-width:700px){
   #map-section .map-section-hdr{grid-template-columns:1fr;gap:.5rem;margin-bottom:.75rem}
   #map-section .map-section-hdr > :first-child{grid-column:1}
   #map-section .map-section-desc{text-align:left;max-width:none;justify-self:start;margin-bottom:0;grid-column:1}
 }
+
+/* ── Loader ── */
 .lo{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .lo.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .lr{width:40px;height:40px;border:2px solid var(--bg3);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
-.lt{margin-top:1.25rem;font-size:.75rem;color:var(--tm);letter-spacing:.1em}
+.lt{margin-top:1.25rem;font-size:.7rem;color:var(--tm);letter-spacing:.14em;font-family:var(--heading);text-transform:uppercase}
 
-/* ── Feedback section ── */
-#feedback{padding:4rem 0 0;border-top:1px solid var(--bg3)}
-.feedback-wrap{padding-bottom:4rem}
-.feedback-inner{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start}
-.feedback-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
-.fb-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:100px;font-size:.72rem;font-weight:500;color:var(--t2);background:var(--bg);border:1px solid var(--bg3);letter-spacing:.02em;cursor:default;user-select:none}
-.feedback-form{display:flex;flex-direction:column;gap:.75rem}
-.feedback-form textarea{width:100%;min-height:110px;padding:1rem 1.1rem;background:var(--sf);border:1.5px solid var(--bg3);border-radius:var(--r);font-family:var(--sans);font-size:.9rem;color:var(--text);resize:vertical;transition:border-color .25s,box-shadow .25s;line-height:1.6;display:block}
-.feedback-form textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
-.feedback-form textarea::placeholder{color:var(--tl)}
-.feedback-success{font-size:.85rem;color:#2d8a4e;font-weight:500;padding:.6rem 0}
-.feedback-form-row{display:flex;gap:.75rem;align-items:center}
-.feedback-form-row input{flex:1;padding:.75rem 1rem;background:var(--sf);border:1.5px solid var(--bg3);border-radius:var(--rs);font-family:var(--sans);font-size:.85rem;color:var(--text);transition:border-color .25s,box-shadow .25s}
-.feedback-form-row input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
-.feedback-form-row input::placeholder{color:var(--tl)}
-.feedback-send-btn{padding:.75rem 1.5rem;background:var(--ac);color:#fff;border:none;border-radius:var(--rs);font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;transition:background .25s,transform .2s;white-space:nowrap;flex-shrink:0}
-.feedback-send-btn:hover{background:var(--acl);transform:translateY(-1px)}
-.feedback-send-btn:disabled{opacity:.5;cursor:default;transform:none}
-.feedback-status{font-size:.78rem;color:var(--tm);min-height:1.2em}
-.feedback-status.ok{color:#2d8a4e}.feedback-status.err{color:#b42828}
-@media(max-width:900px){.feedback-inner{grid-template-columns:1fr}}
-footer{border-top:1px solid var(--bg3);padding:3rem 2rem;text-align:center;background:var(--sf)}
-.fl{font-family:var(--serif);font-size:1.3rem;margin-bottom:.5rem}.fl em{font-style:italic;color:var(--ac)}
-footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--ac);text-decoration:none}
-
-/* ── Map layout ── */
-/* Desktop: map-and-cards is the combined container (map left, card panel right) */
+/* ── Map-and-cards container ── */
 .map-and-cards{display:grid;grid-template-columns:1fr 360px;gap:0;border-radius:var(--rl) var(--rl) 0 0;overflow:visible;box-shadow:var(--shl);border:1px solid var(--bg3);border-bottom:none;height:70vh;min-height:520px;position:relative;z-index:1}
 .map-and-cards .mc{height:100%;min-height:0;box-shadow:none;border:none}
 .map-and-cards .mc:first-child{border-top-left-radius:var(--rl)}
-#map{width:100%;height:100%}
-/* Card panel inside map-and-cards on desktop */
 .card-panel{background:var(--sf);border-left:1px solid var(--bg3);display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
 .card-panel-hdr{padding:.7rem 1.1rem .6rem;border-bottom:1px solid var(--bg3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .card-panel-scroll{flex:1;overflow-y:auto;padding:0 .9rem 1rem}
 .card-panel-scroll::-webkit-scrollbar{width:4px}
 .card-panel-scroll::-webkit-scrollbar-track{background:transparent}
-.card-panel-scroll::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
-/* Single-col grid inside panel */
-.rg-single{grid-template-columns:1fr!important;gap:.6rem;margin-top:.5rem}
-.rg-single .rc{padding:1.1rem 1.1rem .9rem}
-.rg-single .rc-nm{font-size:1.1rem}
-.rg-single .rc-data{gap:.6rem;padding-top:.6rem}
-.rg-single .rm .rv{font-size:1.4rem}
-/* Search bar: sits directly below map-and-cards */
+.card-panel-scroll::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+.rg-single{grid-template-columns:1fr!important;gap:.5rem;margin-top:.5rem}
+.rg-single .rc{padding:1rem 1.1rem .9rem}
+.rg-single .rc-nm{font-size:1rem}
+.rg-single .rc-data{gap:.5rem;padding-top:.6rem}
+.rg-single .rm .rv{font-size:1.35rem}
+
+/* ── Search bar ── */
 .map-search-bar-wrap{position:relative;z-index:2;margin-top:-2px}
-.map-search-bar{display:flex;align-items:center;background:#fff;border:2px solid var(--bg3);border-radius:0 0 var(--rl) var(--rl);box-shadow:0 6px 20px rgba(0,0,0,0.07);overflow:hidden;transition:border-color .25s,box-shadow .25s}
-.map-search-bar:focus-within{border-color:var(--ac);box-shadow:0 6px 20px rgba(46,90,136,0.12)}
-.map-filter-trigger{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 1.5rem;height:56px;background:none;border:none;font-family:var(--sans);font-size:.9rem;font-weight:600;color:var(--t2);cursor:pointer;transition:color .2s,background .2s;white-space:nowrap}
+.map-search-bar{display:flex;align-items:center;background:#fff;border:2px solid var(--bg3);border-radius:0 0 var(--rl) var(--rl);box-shadow:0 6px 20px rgba(0,0,0,0.06);overflow:hidden;transition:border-color .25s,box-shadow .25s}
+.map-search-bar:focus-within{border-color:var(--ac);box-shadow:0 6px 20px rgba(61,212,240,0.12)}
+.map-filter-trigger{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 1.5rem;height:56px;background:none;border:none;font-family:var(--heading);font-size:.78rem;font-weight:600;color:var(--t2);cursor:pointer;transition:color .2s,background .2s;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
 .map-filter-trigger:hover{color:var(--ac);background:var(--acs)}
 .map-filter-trigger.active{color:var(--ac);background:var(--acs)}
-.filter-count{background:var(--ac);color:#fff;border-radius:100px;font-size:.6rem;font-weight:700;padding:2px 7px;margin-left:2px}
-.map-search-divider{width:1px;height:26px;background:var(--bg3);flex-shrink:0}
+.filter-count{background:var(--ac);color:#fff;border-radius:3px;font-size:.55rem;font-weight:700;padding:2px 7px;margin-left:2px}
+.map-search-divider{width:1px;height:26px;background:var(--bg4);flex-shrink:0}
 .map-search-field{flex:1;display:flex;align-items:center;gap:12px;padding:0 1.25rem}
-.map-search-field input{flex:1;border:none;outline:none;font-family:var(--sans);font-size:1rem;color:var(--text);background:transparent;padding:0;height:56px}
-.map-search-field input::placeholder{color:var(--tl)}
-.search-clear-btn{background:var(--bg3);border:none;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;color:var(--tm);flex-shrink:0;transition:background .2s}
-.search-clear-btn:hover{background:var(--bg4);color:var(--t2)}
+.map-search-field input{flex:1;border:none;outline:none;font-family:var(--sans);font-size:.95rem;color:var(--text);background:transparent;padding:0;height:56px}
+.map-search-field input::placeholder{color:var(--tm)}
+.search-clear-btn{background:var(--bg4);border:none;border-radius:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;color:var(--tm);flex-shrink:0;transition:background .2s}
+.search-clear-btn:hover{background:var(--ac);color:#fff}
 .map-filter-panel{background:#fff;border:2px solid var(--bg3);border-bottom:none;border-radius:var(--rl) var(--rl) 0 0;padding:1rem 1.25rem .75rem;box-shadow:0 -4px 20px rgba(0,0,0,0.06);display:none;flex-wrap:wrap;gap:8px}
 .map-filter-panel.open{display:flex}
-.map-results-clear{background:none;border:1px solid var(--bg3);border-radius:100px;padding:3px 10px;font-size:.65rem;color:var(--tm);cursor:pointer;font-family:var(--sans);transition:all .3s}
+.map-results-clear{background:none;border:1px solid var(--bg3);border-radius:3px;padding:3px 10px;font-size:.6rem;color:var(--tm);cursor:pointer;font-family:var(--heading);transition:all .3s;text-transform:uppercase;letter-spacing:.04em}
 .map-results-clear:hover{border-color:var(--ac);color:var(--ac)}
-/* Mobile: three separate boxes */
+
+/* ── Mobile map layout ── */
 @media(max-width:1000px){
   #map-section .hl-eyebrow{display:none}
   #map-section .mw{display:flex;flex-direction:column;gap:.5rem;padding-left:1.5rem;padding-right:1.5rem}
-  /* Search bar goes BELOW card panel on mobile */
   .map-search-bar-wrap{order:2;margin-top:0;border-radius:var(--rl);border:1.5px solid var(--bg3);overflow:hidden;box-shadow:var(--sh)}
   .map-search-bar{border-radius:0;border:none;box-shadow:none}
   .map-filter-panel{border-radius:0;border:none;border-bottom:1px solid var(--bg3)}
-  .map-filter-trigger{padding:0 1rem;font-size:.8rem;gap:5px}
+  .map-filter-trigger{padding:0 1rem;font-size:.75rem;gap:5px}
   .map-search-field{padding:0 .9rem;gap:8px}
-  .map-search-field input{font-size:.9rem}
-  /* Box 1: map+cards */
+  .map-search-field input{font-size:.85rem}
   .map-and-cards{order:0;grid-template-columns:1fr;height:auto;border-radius:var(--rl)!important;overflow:hidden;border:1.5px solid var(--bg3)!important;border-bottom:1.5px solid var(--bg3)!important;box-shadow:var(--sh)}
   .map-and-cards .mc{height:60vw;min-height:300px}
   .map-and-cards .mc:first-child{border-top-left-radius:0}
-  /* Card panel: order 1, between map and search */
   .card-panel{order:1;height:360px;border-left:none;border-top:1px solid var(--bg3);border-radius:0}
 }
 @media(max-width:600px){.map-and-cards .mc{height:65vw;min-height:260px}.card-panel{height:300px}}
+
 /* ── Highlights strip ── */
-#highlights{background:var(--sf);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
+#highlights{background:var(--bg2);border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
 .hl-wrap{max-width:1400px;margin:0 auto;padding:1.75rem 2rem}
 .hl-hdr{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin-bottom:1.1rem;flex-wrap:wrap}
 .hl-hdr-left{display:flex;flex-direction:column}
-.hl-eyebrow{font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);display:flex;align-items:center;gap:8px;margin-bottom:.4rem}
-.hl-eyebrow::before{content:'';width:18px;height:1px;background:var(--ac)}
-.hl-title{font-family:var(--serif);font-size:1.35rem;font-weight:400;line-height:1.15}.hl-title em{font-style:italic;color:var(--ac)}
-/* Tab switcher */
-.hl-tabs{display:inline-flex;background:var(--bg2);border:1px solid var(--bg3);border-radius:100px;padding:4px;gap:2px}
-.hl-tab{font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--t2);background:none;border:none;padding:9px 22px;border-radius:100px;cursor:pointer;transition:all .25s var(--ease);white-space:nowrap}
+.hl-eyebrow{font-size:.55rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--glow);display:flex;align-items:center;gap:8px;margin-bottom:.4rem;font-family:var(--mono)}
+.hl-eyebrow::before{content:'';width:18px;height:2px;background:var(--glow)}
+.hl-title{font-family:var(--heading);font-size:1.35rem;font-weight:700;line-height:1.15;text-transform:uppercase;letter-spacing:.02em}.hl-title em{font-style:normal;color:var(--ac)}
+.hl-tabs{display:inline-flex;background:var(--bg);border:1px solid var(--bg3);border-radius:4px;padding:4px;gap:2px}
+.hl-tab{font-family:var(--heading);font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--t2);background:none;border:none;padding:9px 22px;border-radius:3px;cursor:pointer;transition:all .25s var(--ease);white-space:nowrap;text-transform:uppercase}
 .hl-tab:hover{color:var(--ac)}
-.hl-tab.on{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(46,90,136,.25)}
+.hl-tab.on{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(46,90,136,.2)}
 .hl-tab.on:hover{color:#fff}
-/* Horizontal 3-up grid */
 .hl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;min-height:112px}
 .hl-grid.fading{opacity:0;transition:opacity .15s ease}
-/* Compact card variant — horizontal tile */
-.rc-sm{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:1rem 1.15rem;cursor:pointer;transition:all .3s var(--ease);display:flex;flex-direction:column;gap:.7rem;min-width:0}
+
+/* ── Compact highlight cards ── */
+.rc-sm{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--rs);padding:1rem 1.15rem;cursor:pointer;transition:all .3s var(--ease);display:flex;flex-direction:column;gap:.7rem;min-width:0;position:relative;overflow:hidden}
+.rc-sm::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),transparent);opacity:0;transition:opacity .3s}
 .rc-sm:hover{background:var(--sf);box-shadow:var(--sh);border-color:var(--bg4)}
+.rc-sm:hover::before{opacity:1}
 .rc-sm-top{display:flex;align-items:center;gap:.65rem;min-width:0}
-.rc-sm-rank{font-family:var(--serif);font-size:1.5rem;line-height:1;color:var(--ac);flex-shrink:0}
-.rc-sm-divider{width:1px;height:1.4rem;background:var(--bg3);flex-shrink:0}
+.rc-sm-rank{font-family:var(--heading);font-size:1.5rem;line-height:1;color:var(--ac);flex-shrink:0;font-weight:700}
+.rc-sm-divider{width:1px;height:1.4rem;background:var(--bg4);flex-shrink:0}
 .rc-sm-identity{min-width:0;display:flex;align-items:baseline;gap:.45rem;flex:1;overflow:hidden}
-.rc-sm-name{font-family:var(--serif);font-size:1.1rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.rc-sm-state{font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;flex-shrink:0}
+.rc-sm-name{font-family:var(--heading);font-size:1.05rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;text-transform:uppercase;font-weight:600;letter-spacing:.02em}
+.rc-sm-state{font-size:.52rem;color:var(--tm);text-transform:uppercase;letter-spacing:.1em;flex-shrink:0;font-family:var(--mono)}
 .rc-sm-badges{display:flex;align-items:center;gap:4px;flex-shrink:0;margin-left:auto}
 .rc-sm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding-top:.55rem;border-top:1px solid var(--bg3)}
 .rc-sm-stat{text-align:center;min-width:0}
-.rc-sm-stat .v{font-family:var(--serif);font-size:1.25rem;line-height:1;color:var(--text)}.rc-sm-stat .u{font-size:.75rem;color:var(--tm)}.rc-sm-stat .l{font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tl);margin-top:3px;white-space:nowrap}
+.rc-sm-stat .v{font-family:var(--heading);font-size:1.25rem;line-height:1;color:var(--text);font-weight:700}.rc-sm-stat .u{font-size:.72rem;color:var(--tm)}.rc-sm-stat .l{font-size:.45rem;text-transform:uppercase;letter-spacing:.14em;color:var(--tm);margin-top:3px;white-space:nowrap;font-family:var(--mono)}
 @media(max-width:900px){
   .hl-grid{grid-template-columns:1fr;gap:.55rem}
   .hl-hdr{margin-bottom:.9rem}
@@ -376,29 +385,99 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   .hl-tabs{width:100%}
   .hl-tab{flex:1;padding:9px 12px}
   .rc-sm{padding:.9rem 1rem}
-  .rc-sm-name{font-size:1.05rem}
+  .rc-sm-name{font-size:1rem}
   .rc-sm-stat .v{font-size:1.15rem}
 }
+
+/* ── Feedback section ── */
+#feedback{padding:4rem 0 0;border-top:1px solid var(--bg3)}
+.feedback-wrap{padding-bottom:4rem}
+.feedback-inner{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start}
+.feedback-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.fb-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:3px;font-size:.68rem;font-weight:500;color:var(--t2);background:var(--bg3);border:1px solid var(--bg4);letter-spacing:.04em;cursor:default;user-select:none;font-family:var(--heading);text-transform:uppercase}
+.feedback-form{display:flex;flex-direction:column;gap:.75rem}
+.feedback-form textarea{width:100%;min-height:110px;padding:1rem 1.1rem;background:var(--bg);border:1.5px solid var(--bg3);border-radius:var(--r);font-family:var(--sans);font-size:.88rem;color:var(--text);resize:vertical;transition:border-color .25s,box-shadow .25s;line-height:1.6;display:block}
+.feedback-form textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
+.feedback-form textarea::placeholder{color:var(--tm)}
+.feedback-success{font-size:.82rem;color:var(--alert);font-weight:500;padding:.6rem 0}
+.feedback-form-row{display:flex;gap:.75rem;align-items:center}
+.feedback-form-row input{flex:1;padding:.75rem 1rem;background:var(--bg);border:1.5px solid var(--bg3);border-radius:var(--rs);font-family:var(--sans);font-size:.82rem;color:var(--text);transition:border-color .25s,box-shadow .25s}
+.feedback-form-row input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
+.feedback-form-row input::placeholder{color:var(--tm)}
+.feedback-send-btn{padding:.75rem 1.5rem;background:var(--ac);color:#fff;border:none;border-radius:var(--rs);font-family:var(--heading);font-size:.8rem;font-weight:600;cursor:pointer;transition:background .25s,transform .2s;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:.06em}
+.feedback-send-btn:hover{background:var(--acl);transform:translateY(-1px)}
+.feedback-send-btn:disabled{opacity:.5;cursor:default;transform:none}
+.feedback-status{font-size:.75rem;color:var(--tm);min-height:1.2em}
+.feedback-status.ok{color:var(--alert)}.feedback-status.err{color:var(--glow)}
+@media(max-width:900px){.feedback-inner{grid-template-columns:1fr}}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--bg3);padding:3rem 2rem;text-align:center;background:var(--bg2)}
+.fl{font-family:var(--heading);font-size:1.3rem;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}.fl em{font-style:normal;color:var(--ac)}
+footer p{font-size:.68rem;color:var(--tm);line-height:1.8;font-family:var(--mono)}footer a{color:var(--ac);text-decoration:none}
+
+/* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
 
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2rem}.hero-vis{max-width:420px}.hero-cta{max-width:420px}.hero{padding:7rem 1.5rem 3rem}nav{padding:1rem 1.5rem}.nav-r a:not(.nav-pill){display:none}}
+/* ── Responsive ── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:1.5rem}
+  .hero-vis{max-width:none;min-height:auto}
+  .hero-cta{max-width:none}
+  .hero{padding:6rem 1.5rem 2.5rem;min-height:auto}
+  nav{padding:1rem 1.5rem}
+  .nav-r a:not(.nav-pill){display:none}
+  /* Image fills viewport on mobile */
+  .hero-bg-img{width:100%;height:100%;border-radius:0;top:0;left:0;transform:none}
+  .hero-bg-img::after{background:linear-gradient(to bottom,rgba(15,25,40,.5) 0%,rgba(15,25,40,.25) 40%,rgba(15,25,40,.15) 60%,rgba(15,25,40,.4) 100%)}
+  /* Left-align everything */
+  .hero-text{text-align:left}
+  .hero-cta{justify-content:flex-start}
+  /* Show mobile eyebrow/desc under h1, hide desktop ones */
+  .hero-sub-mobile{display:block;margin-top:1rem}
+  .hero-sub-mobile .hero-ey{justify-content:flex-start}
+  .hero-sub-mobile .hero-desc{text-align:left;max-width:none;margin-bottom:0}
+  .hero-sub-desktop{display:none}
+  /* Card full width */
+  .hero-vis-content{align-items:stretch}
+  .hero-card{width:100%}
+  .hc-top{flex-direction:column;gap:.3rem;align-items:flex-start}
+  .hc-sub{text-align:left}
+  /* Show floating badge on mobile, over card top-right */
+  .hf{display:flex}
+}
 @media(max-width:600px){.mc{height:55vh;min-height:380px}.mw,.rs{padding-left:1rem;padding-right:1rem}.rg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.st:not(:last-child)::after{display:none}
-.hero-cta{flex-wrap:nowrap;gap:.5rem;margin-top:2rem}
-.hero-cta .btn{padding:11px 14px;font-size:.72rem;flex-shrink:0;white-space:nowrap}
+.hero{padding:5rem 1rem 2rem}
+.hero-inner{gap:1rem}
+.hero-desc{font-size:.85rem;line-height:1.6}
+.hero-card{padding:.7rem}
+.hc-stats{gap:.35rem}
+.hc-s{padding:.45rem .3rem}
+.hc-s .v{font-size:1.6rem}
+.hero-cta{flex-wrap:nowrap;gap:.5rem;margin-top:1.5rem}
+.hero-cta .btn{padding:11px 14px;font-size:.68rem;flex-shrink:0;white-space:nowrap}
 .hero-cta .btn svg{width:13px;height:13px}
 .hero-search-wrap{flex:1;min-width:0}
 .hero-search-wrap input{width:100%;padding:11px 14px 11px 36px;font-size:.72rem;box-sizing:border-box}
 .hero-search-wrap svg{left:12px!important;width:14px;height:14px}
 }
+
+/* ── Odometer animation for snow numbers ── */
+.odo-wrap{display:inline-block;overflow:hidden;height:1em;vertical-align:bottom}
+.odo-digit{display:inline-block;animation:odoRoll .8s var(--ease) both}
+@keyframes odoRoll{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
 </head>
 <body>
 
-<div class="lo" id="loader"><div class="lr"></div><div class="lt">Loading snow reports…</div></div>
+<!-- Snowfall canvas -->
+<canvas id="snowCanvas"></canvas>
+
+<div class="lo" id="loader"><div class="lr"></div><div class="lt">Checking the stoke…</div></div>
 <div class="source-badge"><span class="source-dot"></span><span id="srcTxt">Park-reported via OnTheSnow</span></div>
 
 <nav id="nav">
@@ -407,15 +486,18 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 </nav>
 
 <section class="hero">
+  <div class="hero-bg-img"><img src="hero.png" alt="Mountain summit with skis"></div>
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="ey">Live Reported Data</div>
-      <h1>Check for powder.<br>Beat <em>the crowds.</em></h1>
-      <p class="hero-desc">A free tool to track recent snowfall, park conditions and lift counts. Updated twice daily.</p>
+      <h1><span class="h1-outline">Check for powder.<br>Beat</span> <em>the crowds.</em></h1>
+      <div class="hero-sub-mobile">
+        <div class="ey hero-ey">// Live Reported Data</div>
+        <p class="hero-desc">A free tool to track recent snowfall, park conditions and lift counts. Updated twice daily. Built by riders, for riders.</p>
+      </div>
       <div class="hero-cta">
         <a href="#map-section" class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>Explore the Map</a>
         <div class="hero-search-wrap">
-          <svg style="position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--tl);pointer-events:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg style="position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--tm);pointer-events:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="heroSearch" placeholder="Search by park or state…" autocomplete="off">
         </div>
       </div>
@@ -424,9 +506,15 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
       <div class="hero-vis-img"></div>
       <div class="hero-vis-overlay"></div>
       <div class="hero-vis-content">
+      <div class="hero-sub-desktop">
+        <div class="ey hero-ey">// Live Reported Data</div>
+        <p class="hero-desc">A free tool to track recent snowfall, park conditions and lift counts. Updated twice daily. Built by riders, for riders.</p>
+      </div>
       <div class="hero-card" id="heroCard">
-          <div class="hc-title" id="heroName">Loading…</div>
-          <div class="hc-sub" id="heroLoc">—</div>
+          <div class="hc-top">
+            <div class="hc-title" id="heroName">Loading…</div>
+            <div class="hc-sub" id="heroLoc">—</div>
+          </div>
           <div class="hc-stats">
             <div class="hc-s"><div class="v" id="hero7d">—</div><div class="l">7-Day Snow</div></div>
             <div class="hc-s"><div class="v" id="hero24h">—</div><div class="l">Fresh 24h</div></div>
@@ -438,14 +526,13 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   </div>
 </section>
 
-<div class="hf hf1" id="badge1"><div class="hf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="hf-v">Updated</div><div class="hf-l">Twice Daily</div></div></div>
 <div class="hf hf2" id="badge2"><div class="hf-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L9 6l5 8 3-4 5 10z"/></svg></div><div><div class="hf-v" id="fCount">—</div><div class="hf-l">Tracked</div></div></div>
 
 <section id="highlights">
   <div class="hl-wrap">
     <div class="hl-hdr">
       <div class="hl-hdr-left">
-        <span class="hl-eyebrow" id="hl-eyebrow">Top Picks Right Now</span>
+        <span class="hl-eyebrow" id="hl-eyebrow">// Top Picks Right Now</span>
         <h3 class="hl-title" id="hl-title">Best conditions <em>today</em></h3>
       </div>
       <div class="hl-tabs" role="tablist">
@@ -460,21 +547,19 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
 <section id="map-section">
   <div class="mw" style="padding-top:3rem;padding-bottom:0">
     <div class="map-section-hdr">
-      <div><span class="hl-eyebrow">Interactive Map</span><h3 class="hl-title" style="margin-bottom:0">Resort <em>snow map</em></h3></div>
-      <p class="map-section-desc">Pin color indicates past 7-day snowfall. Red pins are closed parks and filtered out by default. Adjust filters below.</p>
+      <div><span class="hl-eyebrow">// Interactive Map</span><h3 class="hl-title" style="margin-bottom:0">Resort <em>snow map</em></h3></div>
+      <p class="map-section-desc">Pin color = past 7-day snowfall. Red pins = closed & filtered out by default. Adjust below.</p>
     </div>
   </div>
   <div class="mw">
     <div class="map-and-cards">
-      <!-- Map -->
       <div class="mc">
         <div id="map"></div>
         <div class="map-ctrl" style="display:flex;gap:8px;">
           <button class="mb on" id="rBtn" onclick="resetMap()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset View</button>
         </div>
-        <div class="ml"><div class="ml-t">Past 7-Day Snowfall</div><div class="ml-dots"><span class="ml-num">0"</span><span class="ml-dot" style="background:#a8cce0"></span><span class="ml-dot" style="background:#6aaad8"></span><span class="ml-dot" style="background:#3a7abf"></span><span class="ml-dot" style="background:#1e5a94"></span><span class="ml-dot" style="background:#0d3b6e"></span><span class="ml-num">20+"</span></div></div>
+        <div class="ml"><div class="ml-t">Past 7-Day Snowfall</div><div class="ml-dots"><span class="ml-num">0"</span><span class="ml-dot" style="background:#b5d4e6"></span><span class="ml-dot" style="background:#7aadcc"></span><span class="ml-dot" style="background:#3a6e9e"></span><span class="ml-dot" style="background:#2e5a88"></span><span class="ml-dot" style="background:#1e3f66"></span><span class="ml-num">20+"</span></div></div>
       </div>
-      <!-- Custom mobile popup: lives in map-and-cards (not mc), clipped by map-and-cards overflow:hidden, not by mc -->
       <div id="mobilePopup" class="mobile-popup" style="display:none">
         <div class="mobile-popup-arrow"></div>
         <div class="mobile-popup-card">
@@ -489,18 +574,17 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
           <div class="mobile-popup-meta" id="mpMeta"></div>
         </div>
       </div>
-      <!-- Scrollable card panel -->
       <div class="card-panel">
         <div class="card-panel-hdr">
           <div class="cp-legend-inline">
             <span class="cp-legend-title">Past 7-day snow</span>
             <div class="cp-legend-row">
               <span class="cp-legend-num">2"</span>
-              <span class="cp-legend-dot" style="background:#a8cce0"></span>
-              <span class="cp-legend-dot" style="background:#6aaad8"></span>
-              <span class="cp-legend-dot" style="background:#3a7abf"></span>
-              <span class="cp-legend-dot" style="background:#1e5a94"></span>
-              <span class="cp-legend-dot" style="background:#0d3b6e"></span>
+              <span class="cp-legend-dot" style="background:#b5d4e6"></span>
+              <span class="cp-legend-dot" style="background:#7aadcc"></span>
+              <span class="cp-legend-dot" style="background:#3a6e9e"></span>
+              <span class="cp-legend-dot" style="background:#2e5a88"></span>
+              <span class="cp-legend-dot" style="background:#1e3f66"></span>
               <span class="cp-legend-num">20+"</span>
             </div>
           </div>
@@ -520,7 +604,6 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
         <div class="card-scroll-hint" id="cardScrollHint">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <!-- Resort detail overlay inside card panel -->
         <div class="resort-detail" id="resortDetail">
           <div class="rd-hdr">
             <div>
@@ -533,15 +616,15 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
             <div class="rd-stats" id="rdStats"></div>
             <div class="rd-meta" id="rdMeta"></div>
             <div class="rd-plan">
-              <div class="rd-plan-label">Plan your trip</div>
+              <div class="rd-plan-label">Plan Your Trip</div>
               <div class="rd-links">
                 <a href="https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&ued=https%3A%2F%2Fwww.booking.com%2Findex.html" target="_blank" rel="noopener" class="rd-link" id="rdLodging">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-                  Get Lodging
+                  Find Local Lodging
                 </a>
-                <a href="https://www.rei.com" target="_blank" rel="noopener" class="rd-link">
+                <a href="https://www.google.com/maps/search/ski+snowboard+rental" target="_blank" rel="noopener" class="rd-link" id="rdRentals">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                  Find Gear
+                  Find Local Rentals
                 </a>
                 <a href="https://www.awin1.com/cread.php?awinmid=6776&awinaffid=2847008&campaign=flights&ued=https%3A%2F%2Fwww.booking.com%2Fflights%2Findex.html" target="_blank" rel="noopener" class="rd-link" id="rdFlights">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
@@ -563,7 +646,6 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
         </div>
       </div>
     </div>
-    <!-- Search bar spanning full width below -->
     <div class="map-search-bar-wrap" id="mapSearchWrap">
       <div class="map-filter-panel" id="filterPanel">
         <button class="fc" data-f="all">All</button>
@@ -585,7 +667,7 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
         </button>
         <div class="map-search-divider"></div>
         <div class="map-search-field">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--tl)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--tm)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="search" placeholder="Search by park or state…" aria-label="Search" autocomplete="off">
           <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display:none">✕</button>
         </div>
@@ -598,29 +680,29 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   <div class="mw feedback-wrap">
     <div class="feedback-inner">
       <div class="feedback-text">
-        <span class="hl-eyebrow">Help Us Improve</span>
+        <span class="hl-eyebrow">// Help Us Improve</span>
         <h3 class="hl-title" style="margin-top:.3rem">Your <em>feedback matters</em></h3>
-        <p style="font-size:.88rem;color:var(--tm);font-weight:300;margin-top:.6rem;line-height:1.7">Found a bug, spotted incorrect data, want a new park added, or have a feature idea? Send us a note.</p>
+        <p style="font-size:.85rem;color:var(--tm);font-weight:300;margin-top:.6rem;line-height:1.7">Found a bug, spotted bad data, want a new park, or have a feature idea? Send us a note.</p>
         <div class="feedback-pills">
           <span class="fb-pill">Bug report</span>
-          <span class="fb-pill">Incorrect data</span>
+          <span class="fb-pill">Bad data</span>
           <span class="fb-pill">Request a park</span>
-          <span class="fb-pill">Feature suggestion</span>
+          <span class="fb-pill">Feature idea</span>
         </div>
       </div>
       <div class="feedback-form">
         <div class="feedback-success" data-fs-success style="display:none">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d8a4e" stroke-width="2.5" style="vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
-          Message sent — thank you!
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--alert)" stroke-width="2.5" style="vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
+          Sent — stoked to hear from you!
         </div>
-        <div data-fs-error style="font-size:.78rem;color:#b42828;min-height:1.2em"></div>
+        <div data-fs-error style="font-size:.75rem;color:var(--glow);min-height:1.2em"></div>
         <form id="feedback-form">
           <textarea name="message" placeholder="Tell us what's on your mind…" rows="5" data-fs-field required></textarea>
-          <span data-fs-error="message" style="font-size:.72rem;color:#b42828"></span>
+          <span data-fs-error="message" style="font-size:.68rem;color:var(--glow)"></span>
           <div class="feedback-form-row" style="margin-top:.75rem">
             <input type="email" name="email" placeholder="Your email (optional)" data-fs-field>
-            <span data-fs-error="email" style="font-size:.72rem;color:#b42828"></span>
-            <button type="submit" class="feedback-send-btn" data-fs-submit-btn>Send</button>
+            <span data-fs-error="email" style="font-size:.68rem;color:var(--glow)"></span>
+            <button type="submit" class="feedback-send-btn" data-fs-submit-btn>Send It</button>
           </div>
         </form>
       </div>
@@ -628,12 +710,48 @@ footer p{font-size:.72rem;color:var(--tl);line-height:1.8}footer a{color:var(--a
   </div>
 </section>
 
-<footer><div class="fl">Powder<em>Watch</em></div><p>Data from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> and gathered twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> &middot; Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch</p></footer>
+<footer><div class="fl">Powder<em>Watch</em></div><p>Data from <a href="https://www.onthesnow.com/" target="_blank" rel="noopener">OnTheSnow</a> · Scraped twice daily<br>Maps via <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a> · Terrain via AWS Elevation Tiles<br>&copy; 2026 PowderWatch · Built by riders, for riders.</p></footer>
+
+<script>
+// ━━━ SNOWFALL CANVAS ━━━
+(function(){
+  const c = document.getElementById('snowCanvas');
+  const ctx = c.getContext('2d');
+  let flakes = [];
+  const MAX = 60;
+  function resize(){ c.width = window.innerWidth; c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for(let i=0;i<MAX;i++){
+    flakes.push({
+      x: Math.random()*c.width,
+      y: Math.random()*c.height,
+      r: Math.random()*2.5+.5,
+      dx: (Math.random()-.5)*.3,
+      dy: Math.random()*.6+.2,
+      o: Math.random()*.5+.1
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    flakes.forEach(f=>{
+      ctx.beginPath();
+      ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(100,130,160,${f.o})`;
+      ctx.fill();
+      f.x+=f.dx; f.y+=f.dy;
+      if(f.y>c.height+5){f.y=-5;f.x=Math.random()*c.width;}
+      if(f.x>c.width+5)f.x=-5;
+      if(f.x<-5)f.x=c.width+5;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
 
 <script>
 // ━━━ EMBEDDED SNOW DATA (updated by scraper agent) ━━━
-// In production, fetch this from snow_data.json served alongside this page.
-// For now, data is embedded directly so the prototype works standalone.
 const SNOW_DATA = {"resorts":[{"name":"Vail","state":"CO","lat":39.6403,"lng":-106.3742,"base_depth":35,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":8,"lifts_total":33,"runs_open":28,"runs_total":277,"status":"Open","last_updated":"Apr 01","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/vail/skireport"},{"name":"Breckenridge","state":"CO","lat":39.4817,"lng":-106.0384,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":10,"lifts_total":35,"runs_open":72,"runs_total":187,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/breckenridge/skireport"},{"name":"Keystone","state":"CO","lat":39.6045,"lng":-105.9498,"base_depth":40,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":128,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/keystone/skireport"},{"name":"Steamboat","state":"CO","lat":40.457,"lng":-106.804,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":9,"lifts_total":18,"runs_open":85,"runs_total":169,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/steamboat/skireport"},{"name":"Beaver Creek","state":"CO","lat":39.6042,"lng":-106.5165,"base_depth":38,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":5,"snowfall_24h":0,"lifts_open":0,"lifts_total":25,"runs_open":0,"runs_total":150,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/beaver-creek/skireport"},{"name":"Winter Park","state":"CO","lat":39.8868,"lng":-105.7625,"base_depth":55,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":10,"snowfall_24h":1,"lifts_open":12,"lifts_total":25,"runs_open":90,"runs_total":166,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/winter-park-resort/skireport"},{"name":"Copper Mountain","state":"CO","lat":39.5022,"lng":-106.1497,"base_depth":46,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":8,"snowfall_24h":0,"lifts_open":8,"lifts_total":23,"runs_open":65,"runs_total":140,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/copper-mountain-resort/skireport"},{"name":"Snowmass","state":"CO","lat":39.2084,"lng":-106.949,"base_depth":42,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":6,"lifts_total":21,"runs_open":45,"runs_total":98,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/snowmass/skireport"},{"name":"Telluride","state":"CO","lat":37.9375,"lng":-107.8123,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":4,"snowfall_24h":0,"lifts_open":0,"lifts_total":18,"runs_open":0,"runs_total":148,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/telluride/skireport"},{"name":"Aspen Mountain","state":"CO","lat":39.1869,"lng":-106.8182,"base_depth":33,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":8,"runs_open":0,"runs_total":76,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-mountain/skireport"},{"name":"Aspen Highlands","state":"CO","lat":39.1822,"lng":-106.8552,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":5,"runs_open":0,"runs_total":144,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/aspen-highlands/skireport"},{"name":"Crested Butte","state":"CO","lat":38.8986,"lng":-106.965,"base_depth":41,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":6,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/crested-butte-mountain-resort/skireport"},{"name":"Arapahoe Basin","state":"CO","lat":39.6426,"lng":-105.8719,"base_depth":50,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":1,"lifts_open":5,"lifts_total":9,"runs_open":45,"runs_total":147,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/arapahoe-basin-ski-area/skireport"},{"name":"Loveland","state":"CO","lat":39.68,"lng":-105.8978,"base_depth":44,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":7,"snowfall_24h":0,"lifts_open":4,"lifts_total":11,"runs_open":32,"runs_total":94,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/loveland/skireport"},{"name":"Wolf Creek","state":"CO","lat":37.4747,"lng":-106.7934,"base_depth":72,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":12,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":77,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/colorado/wolf-creek-ski-area/skireport"},{"name":"Park City","state":"UT","lat":40.6461,"lng":-111.498,"base_depth":63,"surface_condition":"","snowfall_7d":13,"snowfall_24h":0,"lifts_open":6,"lifts_total":41,"runs_open":13,"runs_total":349,"status":"Open","last_updated":"Apr 05","mid_depth":0,"summit_depth":0,"scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/park-city-mountain-resort/skireport"},{"name":"Snowbird","state":"UT","lat":40.583,"lng":-111.6538,"base_depth":82,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":16,"snowfall_24h":2,"lifts_open":8,"lifts_total":13,"runs_open":65,"runs_total":170,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbird-ski-summer-resort/skireport"},{"name":"Alta","state":"UT","lat":40.5884,"lng":-111.6386,"base_depth":90,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":18,"snowfall_24h":3,"lifts_open":7,"lifts_total":11,"runs_open":72,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/alta-ski-area/skireport"},{"name":"Deer Valley","state":"UT","lat":40.6374,"lng":-111.4783,"base_depth":52,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":10,"snowfall_24h":0,"lifts_open":4,"lifts_total":21,"runs_open":22,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/deer-valley-resort/skireport"},{"name":"Brighton","state":"UT","lat":40.598,"lng":-111.5832,"base_depth":68,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":13,"snowfall_24h":1,"lifts_open":4,"lifts_total":7,"runs_open":40,"runs_total":66,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/brighton-resort/skireport"},{"name":"Solitude","state":"UT","lat":40.6199,"lng":-111.5927,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":3,"lifts_total":8,"runs_open":35,"runs_total":82,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/solitude-mountain-resort/skireport"},{"name":"Snowbasin","state":"UT","lat":41.216,"lng":-111.8569,"base_depth":48,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":8,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":107,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/utah/snowbasin-resort/skireport"},{"name":"Mammoth Mountain","state":"CA","lat":37.6308,"lng":-119.0326,"base_depth":38,"mid_depth":48,"summit_depth":107,"surface_condition":"Powder","snowfall_7d":4,"snowfall_24h":4,"lifts_open":19,"lifts_total":25,"runs_open":121,"runs_total":180,"status":"Open","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/mammoth-mountain-ski-area/skireport"},{"name":"Heavenly","state":"CA","lat":38.9353,"lng":-119.94,"base_depth":36,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":5,"snowfall_24h":0,"lifts_open":6,"lifts_total":28,"runs_open":30,"runs_total":97,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/heavenly-mountain-resort/skireport"},{"name":"Palisades Tahoe","state":"CA","lat":39.1968,"lng":-120.2354,"base_depth":58,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":12,"lifts_total":30,"runs_open":95,"runs_total":270,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/palisades-tahoe/skireport"},{"name":"Northstar","state":"CA","lat":39.2746,"lng":-120.121,"base_depth":34,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":20,"runs_open":28,"runs_total":100,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/northstar-california/skireport"},{"name":"Bear Mountain","state":"CA","lat":34.2275,"lng":-116.859,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":12,"runs_open":0,"runs_total":32,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/bear-mountain/skireport"},{"name":"Snow Summit","state":"CA","lat":34.2326,"lng":-116.8728,"base_depth":0,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":35,"status":"Closed","last_updated":"Mar 16","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/snow-summit/skireport"},{"name":"Sugar Bowl","state":"CA","lat":39.3049,"lng":-120.3344,"base_depth":60,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":8,"snowfall_24h":0,"lifts_open":6,"lifts_total":13,"runs_open":50,"runs_total":103,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/california/sugar-bowl-resort/skireport"},{"name":"Jackson Hole","state":"WY","lat":43.5877,"lng":-110.828,"base_depth":56,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":50,"runs_total":133,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/jackson-hole/skireport"},{"name":"Grand Targhee","state":"WY","lat":43.7903,"lng":-110.9572,"base_depth":78,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":15,"snowfall_24h":3,"lifts_open":4,"lifts_total":7,"runs_open":55,"runs_total":79,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/wyoming/grand-targhee-resort/skireport"},{"name":"Big Sky","state":"MT","lat":45.2833,"lng":-111.4014,"base_depth":45,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":7,"snowfall_24h":0,"lifts_open":8,"lifts_total":39,"runs_open":75,"runs_total":317,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/big-sky-resort/skireport"},{"name":"Whitefish","state":"MT","lat":48.4816,"lng":-114.3582,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":2,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":105,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/montana/whitefish-mountain-resort/skireport"},{"name":"Sun Valley","state":"ID","lat":43.6977,"lng":-114.3514,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":3,"snowfall_24h":0,"lifts_open":0,"lifts_total":19,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Apr 01","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/sun-valley/skireport"},{"name":"Schweitzer","state":"ID","lat":48.3678,"lng":-116.623,"base_depth":65,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":48,"runs_total":92,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/idaho/schweitzer-mountain-resort/skireport"},{"name":"Crystal Mountain","state":"WA","lat":46.9282,"lng":-121.5045,"base_depth":80,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":14,"snowfall_24h":2,"lifts_open":7,"lifts_total":11,"runs_open":40,"runs_total":57,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/crystal-mountain/skireport"},{"name":"Stevens Pass","state":"WA","lat":47.7448,"lng":-121.089,"base_depth":74,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":12,"snowfall_24h":1,"lifts_open":6,"lifts_total":10,"runs_open":35,"runs_total":52,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/stevens-pass-resort/skireport"},{"name":"Mt. Baker","state":"WA","lat":48.8566,"lng":-121.6647,"base_depth":126,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":20,"snowfall_24h":3,"lifts_open":8,"lifts_total":10,"runs_open":31,"runs_total":38,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/washington/mt-baker/skireport"},{"name":"Mt. Bachelor","state":"OR","lat":43.9792,"lng":-121.6886,"base_depth":62,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":9,"snowfall_24h":0,"lifts_open":7,"lifts_total":15,"runs_open":60,"runs_total":121,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-bachelor/skireport"},{"name":"Mt. Hood Meadows","state":"OR","lat":45.3307,"lng":-121.6649,"base_depth":70,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":11,"snowfall_24h":1,"lifts_open":8,"lifts_total":14,"runs_open":55,"runs_total":87,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/oregon/mt-hood-meadows/skireport"},{"name":"Alyeska","state":"AK","lat":60.9604,"lng":-149.0987,"base_depth":96,"mid_depth":0,"summit_depth":0,"surface_condition":"Powder","snowfall_7d":22,"snowfall_24h":4,"lifts_open":7,"lifts_total":9,"runs_open":55,"runs_total":76,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/alaska/alyeska-resort/skireport"},{"name":"Killington","state":"VT","lat":43.6045,"lng":-72.8201,"base_depth":28,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":4,"snowfall_24h":0,"lifts_open":5,"lifts_total":22,"runs_open":25,"runs_total":155,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/killington-resort/skireport"},{"name":"Okemo","state":"VT","lat":43.4012,"lng":-72.7173,"base_depth":18,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":20,"runs_open":0,"runs_total":121,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/okemo-mountain-resort/skireport"},{"name":"Stowe","state":"VT","lat":44.5303,"lng":-72.7814,"base_depth":24,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":3,"snowfall_24h":0,"lifts_open":3,"lifts_total":14,"runs_open":18,"runs_total":116,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stowe-mountain-resort/skireport"},{"name":"Sugarbush","state":"VT","lat":44.1359,"lng":-72.9013,"base_depth":20,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":2,"snowfall_24h":0,"lifts_open":0,"lifts_total":16,"runs_open":0,"runs_total":111,"status":"Closed","last_updated":"Mar 30","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/sugarbush/skireport"},{"name":"Stratton","state":"VT","lat":43.1134,"lng":-72.9079,"base_depth":16,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":1,"snowfall_24h":0,"lifts_open":0,"lifts_total":11,"runs_open":0,"runs_total":99,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/stratton-mountain/skireport"},{"name":"Jay Peak","state":"VT","lat":44.9267,"lng":-72.529,"base_depth":30,"mid_depth":0,"summit_depth":0,"surface_condition":"Loose Granular","snowfall_7d":5,"snowfall_24h":0,"lifts_open":3,"lifts_total":9,"runs_open":22,"runs_total":81,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/vermont/jay-peak/skireport"},{"name":"Sunday River","state":"ME","lat":44.4733,"lng":-70.8567,"base_depth":22,"mid_depth":0,"summit_depth":0,"surface_condition":"Machine Groomed","snowfall_7d":3,"snowfall_24h":0,"lifts_open":4,"lifts_total":18,"runs_open":28,"runs_total":135,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sunday-river/skireport"},{"name":"Sugarloaf","state":"ME","lat":45.0314,"lng":-70.3131,"base_depth":32,"mid_depth":0,"summit_depth":0,"surface_condition":"Packed Powder","snowfall_7d":5,"snowfall_24h":0,"lifts_open":5,"lifts_total":15,"runs_open":40,"runs_total":162,"status":"Open","last_updated":"Apr 05","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/maine/sugarloaf/skireport"},{"name":"Snowshoe","state":"WV","lat":38.4073,"lng":-79.994,"base_depth":14,"mid_depth":0,"summit_depth":0,"surface_condition":"","snowfall_7d":0,"snowfall_24h":0,"lifts_open":0,"lifts_total":14,"runs_open":0,"runs_total":61,"status":"Closed","last_updated":"Mar 23","scraped_at":"2026-04-06T12:00:00Z","url":"https://www.onthesnow.com/west-virginia/snowshoe-mountain-resort/skireport"}],"generated_at":"2026-04-06T12:00:00Z"};
 
 const NEAREST_TOWNS = {
@@ -1008,7 +1126,7 @@ function toggleFilterPanel(){
   }
 }
 
-function dCol(d){if(d>=120)return'#1e3f66';if(d>=80)return'#2e5a88';if(d>=40)return'#3a6e9e';if(d>=20)return'#7aadcc';return'#b5d4e6';}
+function dCol(d){if(d>=120)return'#1e3f66';if(d>=80)return'#2e5a88';if(d>=40)return'#3a6e9e';if(d>=20)return'#7aadcc';return'#a8cce0';}
 function dSz(d){return Math.max(16,Math.min(44,16+d/4));}
 function cLvl(r){
   if(r.status==='Closed')return{label:'Closed',cls:'closed'};
@@ -1055,7 +1173,7 @@ function updateStats(generatedAt){
 function renderCards(resorts){resorts=resorts||data;
   const g=document.getElementById('grid');g.innerHTML='';
   if(curFilter==='favorites' && resorts.length===0){
-    g.innerHTML=`<div class="no-favs"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>No saved parks yet — tap the ♥ on any card to save it here.</div>`;
+    g.innerHTML=`<div class="no-favs"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>No saved parks yet — tap the ♥ on any card to stash it here.</div>`;
     return;
   }
   [...resorts].sort((a,b)=>b.snowfall_7d-a.snowfall_7d).forEach((r,i)=>{
@@ -1130,11 +1248,24 @@ function showDetail(r){
   document.getElementById('rdSub').textContent = r.state + ' · ' + r.status;
   document.getElementById('rdLodging').href = getLodgingUrl(r);
   document.getElementById('rdFlights').href = getFlightsUrl(r);
+  const rentalLoc = NEAREST_TOWNS[r.name] || (r.name + ' ' + r.state);
+  document.getElementById('rdRentals').href = 'https://www.google.com/maps/search/ski+snowboard+rental+near+' + encodeURIComponent(rentalLoc);
 
   if(isMobile){
-    // On mobile: hide stats/meta from panel (they go in the map popup instead)
-    document.getElementById('rdStats').innerHTML = '';
-    document.getElementById('rdMeta').innerHTML = '';
+    // On mobile: show stats + meta in the panel too
+    document.getElementById('rdStats').innerHTML = `
+      <div class="rd-stat"><div class="v">${r.base_depth}<span class="u">"</span></div><div class="l">Base Depth</div></div>
+      <div class="rd-stat"><div class="v">${r.snowfall_7d}<span class="u">"</span></div><div class="l">7-Day Snow</div></div>
+      <div class="rd-stat"><div class="v">${r.snowfall_24h}<span class="u">"</span></div><div class="l">Fresh 24h</div></div>
+      <div class="rd-stat"><div class="v">${r.lifts_open}<span class="u">/${r.lifts_total}</span></div><div class="l">Lifts Open</div></div>`;
+    const mobileMetaParts = [];
+    if(r.runs_open) mobileMetaParts.push(`${r.runs_open}/${r.runs_total} runs`);
+    if(r.surface_condition) mobileMetaParts.push(r.surface_condition);
+    if(r.last_updated) mobileMetaParts.push(`Updated ${r.last_updated}`);
+    if(trend) mobileMetaParts.push(`${trend.arrow} ${trend.label}`);
+    document.getElementById('rdMeta').innerHTML =
+      mobileMetaParts.map(p=>`<span>${p}</span>`).join('') +
+      `<a href="${r.url}" target="_blank" rel="noopener" class="rd-ots-link">OTS Snow Report <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`;
   } else {
     // Desktop: show full stats in panel
     document.getElementById('rdStats').innerHTML = `
@@ -1192,8 +1323,8 @@ function showDetail(r){
     map.on('move', map._mobilepopuphandler);
   } else {
     const c = cLvl(r);
-    const statusColor = r.status === 'Open' ? '#2d8a4e' : '#b42828';
-    const statusBg = r.status === 'Open' ? 'rgba(52,168,83,.08)' : 'rgba(180,40,40,.06)';
+    const statusColor = r.status === 'Open' ? '#2d8a4e' : '#c45a20';
+    const statusBg = r.status === 'Open' ? 'rgba(52,168,83,.08)' : 'rgba(196,90,32,.06)';
     activePopup = new maplibregl.Popup({
       offset:[0,-38], closeButton:false, closeOnClick:false, anchor:'bottom', maxWidth:'280px',
       className:'resort-popup'
@@ -1203,26 +1334,26 @@ function showDetail(r){
         <div style="font-family:var(--sans)">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.6rem">
             <div>
-              <div style="font-family:var(--serif);font-size:1.05rem;line-height:1.15;color:var(--text)">${r.name}</div>
+              <div style="font-family:var(--heading);font-size:1.05rem;line-height:1.15;color:var(--text);text-transform:uppercase;font-weight:600;letter-spacing:.02em">${r.name}</div>
               <div style="font-size:.58rem;color:var(--tm);text-transform:uppercase;letter-spacing:.08em;margin-top:2px">${r.state}</div>
             </div>
-            <span style="padding:3px 10px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:${statusBg};color:${statusColor};white-space:nowrap;flex-shrink:0">${r.status}</span>
+            <span style="padding:3px 10px;border-radius:3px;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:${statusBg};color:${statusColor};white-space:nowrap;flex-shrink:0;font-family:var(--heading)">${r.status}</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:${r.surface_condition||r.last_updated?'.6rem':'0'}">
             <div style="text-align:center;background:var(--bg);border-radius:6px;padding:6px 3px">
-              <div style="font-family:var(--serif);font-size:1.1rem;line-height:1;color:var(--ac)">${r.base_depth}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
+              <div style="font-family:var(--heading);font-size:1.1rem;line-height:1;color:var(--ac)">${r.base_depth}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
               <div style="font-size:.47rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px">Base</div>
             </div>
             <div style="text-align:center;background:var(--bg);border-radius:6px;padding:6px 3px">
-              <div style="font-family:var(--serif);font-size:1.1rem;line-height:1;color:var(--ac)">${r.snowfall_7d}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
+              <div style="font-family:var(--heading);font-size:1.1rem;line-height:1;color:var(--ac)">${r.snowfall_7d}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
               <div style="font-size:.47rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px">7-Day</div>
             </div>
             <div style="text-align:center;background:var(--bg);border-radius:6px;padding:6px 3px">
-              <div style="font-family:var(--serif);font-size:1.1rem;line-height:1;color:var(--ac)">${r.snowfall_24h}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
+              <div style="font-family:var(--heading);font-size:1.1rem;line-height:1;color:var(--ac)">${r.snowfall_24h}<span style="font-size:.7rem;color:var(--tm)">"</span></div>
               <div style="font-size:.47rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px">24h</div>
             </div>
             <div style="text-align:center;background:var(--bg);border-radius:6px;padding:6px 3px">
-              <div style="font-family:var(--serif);font-size:1.1rem;line-height:1;color:var(--ac)">${r.lifts_open}<span style="font-size:.7rem;color:var(--tm)">/${r.lifts_total}</span></div>
+              <div style="font-family:var(--heading);font-size:1.1rem;line-height:1;color:var(--ac)">${r.lifts_open}<span style="font-size:.7rem;color:var(--tm)">/${r.lifts_total}</span></div>
               <div style="font-size:.47rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tl);margin-top:2px">Lifts</div>
             </div>
           </div>
@@ -1248,20 +1379,20 @@ let activePopup=null, hoverPopup=null;
 // Resolve overlapping resorts by nudging coordinates
 
 function pinColor(r){
-  if(r.status==='Closed') return '#c0392b';
+  if(r.status==='Closed') return '#c45a20';
   const s = r.snowfall_7d;
-  if(s>=20) return '#0d3b6e';
-  if(s>=15) return '#1e5a94';
-  if(s>=10) return '#3a7abf';
-  if(s>=5)  return '#6aaad8';
+  if(s>=20) return '#1e3f66';
+  if(s>=15) return '#2e5a88';
+  if(s>=10) return '#3a6e9e';
+  if(s>=5)  return '#7aadcc';
   if(s>0)   return '#a8cce0';
-  return '#b5c9d4';
+  return '#b5d4e6';
 }
 
 function makePinSVG(color){
   return `<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="${color}" stroke="white" stroke-width="2"/>
-    <circle cx="14" cy="14" r="5" fill="white" opacity="0.9"/>
+    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="${color}" stroke="white" stroke-width="1.5"/>
+    <circle cx="14" cy="14" r="5" fill="rgba(255,255,255,0.9)"/>
   </svg>`;
 }
 
@@ -1304,7 +1435,7 @@ async function initMap(){
         hoverPopup = new maplibregl.Popup({offset:[0,-32],closeButton:false,closeOnClick:false,className:'hover-popup'})
           .setLngLat([r.lng,r.lat])
           .setHTML(isClosed
-            ? `<strong>${r.name}</strong><br><span style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:100px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:rgba(180,40,40,.06);color:#b42828">Closed</span>`
+            ? `<strong>${r.name}</strong><br><span style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:3px;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(196,90,32,.06);color:#c45a20;font-family:var(--heading)">Closed</span>`
             : `<strong>${r.name}</strong><br>
                <span style="color:var(--ac);font-weight:600">${r.snowfall_7d}"</span>
                <span style="font-size:.65rem;color:var(--tm)"> 7-day &middot; </span>
@@ -1330,18 +1461,20 @@ async function initMap(){
 function resetMap(){if(!map)return;const isMobile=window.innerWidth<=1000;map.flyTo({center:isMobile?[-96,38]:[-108,43],zoom:isMobile?2.8:4.2,pitch:0,bearing:0,duration:1200,essential:true});}
 function positionBadges(){
   const card = document.getElementById('heroCard');
-  const b1   = document.getElementById('badge1');
   const b2   = document.getElementById('badge2');
-  if(!card||!b1||!b2) return;
+  if(!card||!b2) return;
   const r = card.getBoundingClientRect();
   const scrollY = window.scrollY;
-  // badge1 (Updated) — top-right corner
-  b1.style.left = (r.right - b1.offsetWidth / 2) + 'px';
-  b1.style.top  = (scrollY + r.top - b1.offsetHeight / 2) + 'px';
-  // badge2 (Tracked) — bottom-left corner
-  b2.style.left = (r.left - b2.offsetWidth / 2) + 'px';
-  const mobileNudge = window.innerWidth <= 900 ? 10 : 0;
-  b2.style.top  = (scrollY + r.bottom - b2.offsetHeight / 2 + mobileNudge) + 'px';
+  const isMobile = window.innerWidth <= 900;
+  if(isMobile){
+    // top-right, sitting on the card top edge, nudged down
+    b2.style.left = (r.right - b2.offsetWidth - 10) + 'px';
+    b2.style.top  = (scrollY + r.top - b2.offsetHeight / 2 + 15) + 'px';
+  } else {
+    // bottom-left corner on desktop
+    b2.style.left = (r.left - b2.offsetWidth / 2) + 'px';
+    b2.style.top  = (scrollY + r.bottom - b2.offsetHeight / 2) + 'px';
+  }
 }
 // Run after fonts/layout settle, and on resize
 window.addEventListener('load', ()=>{ setTimeout(positionBadges, 300); });
@@ -1446,7 +1579,9 @@ function shareResort(mode){
 window.formspree = window.formspree || function(){ (formspree.q = formspree.q || []).push(arguments); };
 formspree('initForm', { formElement: '#feedback-form', formId: 'xjgjbdwr' });
 </script>
-<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+
+</script>
+
 <div id="shareToast" class="share-toast">Link copied!</div>
 </body>
 </html>
