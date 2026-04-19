@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PowderWatch — Live Snow Conditions</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8LNJ1T5VW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-H8LNJ1T5VW');
+</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -130,7 +138,7 @@ nav.scrolled{background:rgba(240,237,230,.92);backdrop-filter:blur(20px);border-
 /* ── Resort cards ── */
 .rs{padding:0 2rem 5rem;max-width:1400px;margin:0 auto}
 .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1rem;margin-top:2rem}
-.rc{background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--r);padding:1rem 1.25rem;cursor:pointer;transition:all .4s var(--ease);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.rc{background:var(--sf);border:1px solid var(--bg3);border-radius:var(--r);padding:1rem 1.25rem;cursor:pointer;transition:all .4s var(--ease);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
 .rc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--acl));opacity:0;transition:opacity .3s;pointer-events:none}
 .rc:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.08);border-color:var(--bg4)}
 .rc:hover::before{opacity:1}
@@ -182,7 +190,7 @@ nav.scrolled{background:rgba(240,237,230,.92);backdrop-filter:blur(20px);border-
 
 /* ── Popups ── */
 .maplibregl-popup-content{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px);border:1px solid var(--bg3)!important;border-radius:10px!important;padding:14px 16px!important;color:var(--text)!important;font-family:var(--sans)!important;box-shadow:0 8px 32px rgba(0,0,0,0.1)!important;min-width:220px}
-.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:8px 14px!important;border-radius:6px!important;font-size:.8rem!important;box-shadow:var(--sh)!important}
+.hover-popup .maplibregl-popup-content{min-width:auto!important;padding:10px 14px!important;border-radius:var(--r)!important;font-size:.8rem!important;box-shadow:var(--shl)!important;font-family:var(--heading)!important;text-transform:uppercase!important;letter-spacing:.02em!important}
 .resort-popup .maplibregl-popup-content{padding:14px 16px!important;min-width:260px}
 .maplibregl-popup{z-index:20!important}
 .maplibregl-popup-close-button{display:none!important}
@@ -1438,13 +1446,15 @@ async function initMap(){
         hoverPopup = new maplibregl.Popup({offset:[0,-32],closeButton:false,closeOnClick:false,className:'hover-popup'})
           .setLngLat([r.lng,r.lat])
           .setHTML(isClosed
-            ? `<strong>${r.name}</strong><br><span style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:3px;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(196,90,32,.06);color:#c45a20;font-family:var(--heading)">Closed</span>`
-            : `<strong>${r.name}</strong><br>
-               <span style="color:var(--ac);font-weight:600">${r.snowfall_7d}"</span>
-               <span style="font-size:.65rem;color:var(--tm)"> 7-day &middot; </span>
-               <span style="color:var(--ac);font-weight:600">${r.base_depth}"</span>
-               <span style="font-size:.65rem;color:var(--tm)"> base &middot; </span>
-               <span style="font-size:.65rem;color:var(--tm)">${r.lifts_open}/${r.lifts_total} lifts</span>`)
+            ? `<div style="font-family:var(--heading);text-transform:uppercase;letter-spacing:.02em"><span style="font-weight:600;font-size:.9rem;color:var(--text)">${r.name}</span> <span style="font-size:.55rem;color:var(--t2);font-family:var(--mono);letter-spacing:.1em;margin-left:.3rem">${r.state}</span><br><span style="display:inline-block;margin-top:5px;padding:3px 10px;border-radius:3px;font-size:.55rem;font-weight:700;letter-spacing:.06em;background:var(--glow);color:#fff">Closed</span></div>`
+            : `<div style="font-family:var(--heading);text-transform:uppercase;letter-spacing:.02em">
+                 <span style="font-weight:600;font-size:.9rem;color:var(--text)">${r.name}</span> <span style="font-size:.55rem;color:var(--t2);font-family:var(--mono);letter-spacing:.1em;margin-left:.3rem">${r.state}</span>
+                 <div style="display:flex;gap:.6rem;margin-top:6px;padding-top:6px;border-top:1px solid var(--bg3)">
+                   <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--text)">${r.snowfall_7d}<span style="font-size:.7rem;color:var(--t2)">"</span></div><div style="font-size:.4rem;color:var(--t2);font-family:var(--mono);letter-spacing:.12em">7-DAY</div></div>
+                   <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--text)">${r.base_depth}<span style="font-size:.7rem;color:var(--t2)">"</span></div><div style="font-size:.4rem;color:var(--t2);font-family:var(--mono);letter-spacing:.12em">BASE</div></div>
+                   <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--text)">${r.lifts_open}<span style="font-size:.7rem;color:var(--t2)">/${r.lifts_total}</span></div><div style="font-size:.4rem;color:var(--t2);font-family:var(--mono);letter-spacing:.12em">LIFTS</div></div>
+                 </div>
+               </div>`)
           .addTo(map);
       });
       el.addEventListener('mouseleave', ()=>{
